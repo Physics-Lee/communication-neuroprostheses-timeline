@@ -1,5 +1,7 @@
 # Living Timeline of Communication Neuroprostheses (`communication-neuroprostheses-timeline`)
 
+**English** | [简体中文 (`README.zh-CN.md`)](README.zh-CN.md)
+
 A **weekly-updated, open-source living benchmark and timeline** of intracortical and electrocorticographic (ECoG) communication neuroprostheses—spanning **speech**, **typing**, and **handwriting**—for people with paralysis (2021–present).
 
 ![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
@@ -9,6 +11,7 @@ A **weekly-updated, open-source living benchmark and timeline** of intracortical
 - **Standalone layout & verification engine**: [`render_timeline.py`](render_timeline.py)
 - **Weekly literature & preprint patrol**: [`weekly_patrol.py`](weekly_patrol.py)
 - **Automated CI/CD**: [`.github/workflows/weekly_update.yml`](.github/workflows/weekly_update.yml)
+- **AI Agent & contributor guide**: [`AGENTS.md`](AGENTS.md)
 
 ---
 
@@ -31,6 +34,13 @@ Each study records four standardized quantitative metrics under `metrics:`:
 2. **`sentences`** (Sentence / trial count & data volume): training and evaluation corpus volume (e.g., `"10,880 sentences (24 sessions: 9,680 labeled train/val + 1,200 competition test)"`).
 3. **`wer`** (Error rate): headline word, character, phoneme, or naive-listener error rate (e.g., `"WER 23.9%"`, `"listener WER 20%"`, `"CER 8.9% (WER n/r)"`).
 4. **`speed`** (Communication speed): communication rate in words or characters per minute (e.g., `"62 wpm"`, `"110 cpm"`, `"n/r"`).
+
+### Date Convention (`date` Field)
+Because the timeline includes three distinct entry types (peer-reviewed journal articles, preprints/conference papers, and company announcements), `date` follows three unambiguous rules:
+
+1. **Published Journal Articles**: Use the journal's official **Issue Date** (for online-only journals without print issues, such as *Nat. Commun.* or *Adv. Sci.*, use the sole **Article Publication Date**).
+2. **Preprints & Conference Papers**: Use the preprint posting date or the conference proceedings publication date.
+3. **Company Announcements**: Use the official announcement release date (with the card header formatted directly as `Name, yyyy.mm.dd`).
 
 ---
 

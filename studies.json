@@ -60,7 +60,7 @@
     {
       "id": "metzger2022",
       "citation": "Metzger et al., 2022",
-      "date": "2022-11-08",
+      "date": "2022-11-23",
       "year_fraction": 2022.89,
       "lane": "speech",
       "electrode": "ecog",
@@ -84,8 +84,8 @@
     {
       "id": "metzger2023",
       "citation": "Metzger et al., 2023",
-      "date": "2023-08-23",
-      "year_fraction": 2023.64,
+      "date": "2023-08-31",
+      "year_fraction": 2023.66,
       "lane": "speech",
       "electrode": "ecog",
       "data_availability": "on_request",
@@ -108,8 +108,8 @@
     {
       "id": "willett2023",
       "citation": "Willett et al., 2023",
-      "date": "2023-08-23",
-      "year_fraction": 2023.64,
+      "date": "2023-08-31",
+      "year_fraction": 2023.66,
       "lane": "speech",
       "electrode": "utah",
       "data_availability": "open",
@@ -229,7 +229,7 @@
     {
       "id": "card2024",
       "citation": "Card et al., 2024",
-      "date": "2024-08-14",
+      "date": "2024-08-15",
       "year_fraction": 2024.62,
       "lane": "speech",
       "electrode": "utah",
@@ -593,8 +593,8 @@
     {
       "id": "jude2026b",
       "citation": "Jude et al., 2026b",
-      "date": "2026-03-30",
-      "year_fraction": 2026.24,
+      "date": "2026-04-28",
+      "year_fraction": 2026.32,
       "lane": "speech",
       "electrode": "utah",
       "data_availability": "open",
