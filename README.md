@@ -1,0 +1,84 @@
+# Living Timeline of Communication Neuroprostheses (`communication-neuroprostheses-timeline`)
+
+A **weekly-updated, open-source living benchmark and timeline** of intracortical and electrocorticographic (ECoG) communication neuroprostheses—spanning **speech**, **typing**, and **handwriting**—for people with paralysis (2021–present).
+
+![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
+
+- **Vector PDF (TrueType Type-42 embedded)**: [`communication_neuroprostheses_timeline.pdf`](communication_neuroprostheses_timeline.pdf)
+- **Structured dataset (YAML primary + auto-synced JSON)**: [`studies.yaml`](studies.yaml) · [`studies.json`](studies.json)
+- **Standalone layout & verification engine**: [`render_timeline.py`](render_timeline.py)
+- **Weekly literature & preprint patrol**: [`weekly_patrol.py`](weekly_patrol.py)
+- **Automated CI/CD**: [`.github/workflows/weekly_update.yml`](.github/workflows/weekly_update.yml)
+
+---
+
+## 1. Visual Encoding Specification (6 Dimensions + 4 Structured Metrics)
+
+Every study in [`studies.yaml`](studies.yaml) is encoded across **six orthogonal visual dimensions** plus a **four-item structured `metrics` block** (`vocab_size`, `sentences`, `wer`, `speed`), validated programmatically before rendering:
+
+| Dimension | Field in `studies.yaml` | Visual Encoding | Allowed Values |
+|---|---|---|---|
+| **1. Data availability** | `data_availability` | Marker color + vertical track position (`open` sits directly on the track line; all other classes hang `0.52` units toward their label side) | `open` (`#00A087` teal) · `on_request` (`#c07f00` amber) · `closed` (`#cc3324` red) · `preprint` (`#7F7F7F` gray) · `reanalysis` (`#7B3294` purple) |
+| **2. Decoding mode** | `decoding_mode` | Marker fill | `online` (solid fill = real-time closed-loop participant demo) · `offline` (hollow center with thick colored ring = offline analysis / reanalysis) |
+| **3. Electrode type** | `electrode` | Marker shape | `ecog` (`o` circle) · `utah` (`s` square) · `thin_film` (`h` hexagon, e.g., Neuralink N1) · `microwire` (`v` down-triangle, e.g., Paradromics Connexus) |
+| **4. Speech ability** | `participants` suffix | Triangle suffix after each participant ID | `▲` = participants who can speak naturally · `△` = participants who have vocal paralysis (dysarthria / anarthria / locked-in syndrome) |
+| **5. Task instruction** | `task_instruction` | Lozenge suffix on line 1 (citation line) | `inner` (`◆` inner speech) · `intended` (`◇` overt / mouthing / intended movement) · `both` (`◆/◇` decoded under both instructions) |
+| **6. Decoded output** | `decoded_output` | Pentagon suffix on line 2 (after descriptor) | `voice` (`⬟` direct neural-to-voice synthesis) · `text` (`⬠` brain-to-text, including optional TTS read-aloud of decoded text) · `both` (`⬟/⬠` both demonstrated) |
+
+### Four-Item `metrics` Schema
+Each study records four standardized quantitative metrics under `metrics:`:
+1. **`vocab_size`** (Vocabulary size): e.g., `"vocab 125k"`, `"open vocab"`, `"vocab 1,024"`, `"vocab 50"`, `"vocab n/r"`.
+2. **`sentences`** (Sentence / trial count & data volume): training and evaluation corpus volume (e.g., `"10,880 sentences (24 sessions: 9,680 labeled train/val + 1,200 competition test)"`).
+3. **`wer`** (Error rate): headline word, character, phoneme, or naive-listener error rate (e.g., `"WER 23.9%"`, `"listener WER 20%"`, `"CER 8.9% (WER n/r)"`).
+4. **`speed`** (Communication speed): communication rate in words or characters per minute (e.g., `"62 wpm"`, `"110 cpm"`, `"n/r"`).
+
+---
+
+## 2. Quick Start (Re-render Locally)
+
+```bash
+pip install -r requirements.txt
+python render_timeline.py --yaml studies.yaml --out communication_neuroprostheses_timeline --check-overlaps
+```
+
+`render_timeline.py` performs:
+1. **Schema & invariant gate checks**: verifies all 6 visual-encoding dimensions, all 4 `metrics` keys (`vocab_size`, `sentences`, `wer`, `speed`), green-on-track placement, and same-tier marker separation (`>= 0.045 yr`), and exports [`studies.json`](studies.json) automatically.
+2. **Automatic cohort accounting**: deduplicates participant IDs per modality lane and across the full figure (resolving re-implant aliases such as `B1r -> B1`).
+3. **Two-pass layout solver**: estimates text widths in pass 1, measures exact pixel bounding boxes from the renderer in pass 2, packs cards with staggered vertical stems and horizontal rails, and equalizes inter-legend gaps to `<= 0.5 px`.
+4. **Zero-overlap gate**: checks every pairwise text and legend bounding box and fails closed if any pair overlaps by `> 1 px`.
+
+---
+
+## 3. Weekly Update Workflow
+
+### Automated Weekly Patrol (`weekly_patrol.py`)
+Every Monday (`0 9 * * 1`), the patrol script runs two automated checks:
+1. **Preprint-to-journal graduation check**: queries the Crossref API (`is-preprint-of` relations) for every `preprint` card in `studies.yaml` to detect when a bioRxiv/medRxiv preprint is formally published in a peer-reviewed journal.
+2. **New literature discovery**: queries Europe PMC (covering PubMed, bioRxiv, and medRxiv) and the arXiv API over the past 7 days for new intracortical/ECoG speech, typing, and handwriting neuroprosthesis demonstrations, and generates ready-to-paste `studies.yaml` templates.
+
+```bash
+python weekly_patrol.py --days 7 --output weekly_candidates.md
+```
+
+### Adding a New Study (Community Pull Requests Welcome)
+Append an entry to [`studies.yaml`](studies.yaml) and run `python render_timeline.py`:
+
+```yaml
+  - id: author2026
+    citation: "Author et al., 2026"
+    date: "2026-11-06"
+    lane: speech                  # speech | typing | handwriting
+    electrode: utah               # utah | ecog | thin_film | microwire
+    data_availability: open       # open | on_request | closed | preprint | reanalysis
+    decoding_mode: online         # online | offline
+    task_instruction: intended    # inner | intended | both
+    decoded_output: text          # voice | text | both
+    descriptor: "large-vocab decoding"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,000 sentences (20 sessions)"
+      wer: "WER 5.0%"
+      speed: "62 wpm"
+    participants: ["T15△"]
+    doi: "10.1038/..."
+```

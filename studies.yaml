@@ -1,0 +1,717 @@
+# ============================================================================
+# Living Timeline of Communication Neuroprostheses for People with Paralysis
+# Repository: communication-neuroprostheses-timeline
+# ============================================================================
+# Weekly-updated dataset driving `communication_neuroprostheses_timeline.{png,pdf}`.
+#
+# Visual encoding (6 dimensions per study card):
+#   1. data_availability : open | on_request | closed | preprint | reanalysis
+#   2. decoding_mode     : online (closed-loop participant demo) | offline (reanalysis / offline-only)
+#   3. electrode         : ecog (circle) | utah (square) | thin_film (hexagon) | microwire (down-triangle)
+#   4. participants      : suffix ▲ = can speak naturally; △ = vocal paralysis (dysarthria / anarthria / LIS)
+#   5. task_instruction  : inner (◆) | intended (◇, overt / mouthing / intended) | both (◆/◇)
+#   6. decoded_output    : voice (⬟, direct neural-to-voice synthesis) | text (⬠, brain-to-text) | both (⬟/⬠)
+#
+# Structured 4-item `metrics` schema per study:
+#   - vocab_size : Vocabulary size (e.g. "vocab 125k", "open vocab", "vocab 50", "vocab n/r")
+#   - sentences  : Sentence / trial count (training + evaluation data volume)
+#   - wer        : Word / character / phoneme / listener error rate
+#   - speed      : Communication rate (wpm / cpm, or "n/r" if not reported / offline)
+# ============================================================================
+
+metadata:
+  title: "Living Timeline of Communication Neuroprostheses for People with Paralysis"
+  repository: "communication-neuroprostheses-timeline"
+  last_updated: "2026-11-06"
+  update_cadence: "weekly"
+  home_use_summary: "1 used a system at home (T15)"
+  participant_aliases:
+    B1r: B1  # Bravo-1r is Bravo-1's higher-density re-implant (same individual)
+
+studies:
+  - id: willett2021
+    citation: "Willett et al., 2021"
+    date: "2021-05-12"
+    year_fraction: 2021.36
+    lane: handwriting
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "brain-to-text"
+    metrics:
+      vocab_size: "open vocab"
+      sentences: "1,000 sentences (10 sentence sessions, 95 blocks, 8,198 words)"
+      wer: "WER 25.1%"
+      speed: "90 cpm"
+    participants: ["T5▲"]
+    doi: "10.1038/s41586-021-03506-2"
+    data_doi: "10.5061/dryad.wh70rxwmv"
+
+  - id: moses2021
+    citation: "Moses et al., 2021"
+    date: "2021-07-15"
+    year_fraction: 2021.53
+    lane: speech
+    electrode: ecog
+    data_availability: closed
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "real-time sentence decoding"
+    metrics:
+      vocab_size: "vocab 50"
+      sentences: "9,800 isolated-word trials (22.5 h) + 250 sentence trials (2.1 h)"
+      wer: "WER 25.6%"
+      speed: "15.2 wpm"
+    participants: ["B1△"]
+    doi: "10.1056/NEJMoa2027540"
+
+  - id: metzger2022
+    citation: "Metzger et al., 2022"
+    date: "2022-11-08"
+    year_fraction: 2022.89
+    lane: speech
+    electrode: ecog
+    data_availability: on_request
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "NATO code-word spelling"
+    metrics:
+      vocab_size: "vocab 1,152"
+      sentences: "150 sentence copy trials (75 unique AAC sentences) + isolated NATO code-word trials"
+      wer: "WER 10.5%"
+      speed: "29.4 cpm"
+    card_show_speed: false
+    participants: ["B1△"]
+    doi: "10.1038/s41467-022-33611-3"
+
+  - id: metzger2023
+    citation: "Metzger et al., 2023"
+    date: "2023-08-23"
+    year_fraction: 2023.64
+    lane: speech
+    electrode: ecog
+    data_availability: on_request
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: both
+    descriptor: "78 wpm + avatar"
+    metrics:
+      vocab_size: "vocab 1,024"
+      sentences: "9,506 training sentence trials (~22.4 h across 14 days) + 249 held-out evaluation trials"
+      wer: "WER 25.5%"
+      speed: "78 wpm"
+    card_show_speed: false
+    participants: ["B3△"]
+    doi: "10.1038/s41586-023-06443-4"
+
+  - id: willett2023
+    citation: "Willett et al., 2023"
+    date: "2023-08-23"
+    year_fraction: 2023.64
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "large-vocab decoding"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,880 sentences (24 sessions: 9,680 labeled train/val + 1,200 competition test)"
+      wer: "WER 23.9%"
+      speed: "62 wpm"
+    participants: ["T12△"]
+    doi: "10.1038/s41586-023-06377-x"
+    data_doi: "10.5061/dryad.x69p8czpq"
+
+  - id: angrick2024
+    citation: "Angrick et al., 2024"
+    date: "2024-04-26"
+    year_fraction: 2024.32
+    lane: speech
+    electrode: ecog
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: voice
+    descriptor: "speech synthesis"
+    metrics:
+      vocab_size: "vocab 6"
+      sentences: "6 isolated command words across chronic online sessions"
+      wer: "listener WER 20%"
+      speed: "n/r"
+    participants: ["CC01△"]
+    doi: "10.1038/s41598-024-60277-2"
+    data_doi: "10.17605/OSF.IO/49RT7"
+
+  - id: fan2023
+    citation: "Fan et al., 2023"
+    date: "2023-12-01"
+    year_fraction: 2023.92
+    lane: handwriting
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "403-day plug-and-play"
+    metrics:
+      vocab_size: "vocab 130k"
+      sentences: "1,315 released sentences (21 sessions, 105 blocks, 9,926 words; 11 seed + 15 eval sessions in paper)"
+      wer: "WER 4.0%"
+      speed: "73.2 cpm"
+    card_show_speed: false
+    participants: ["T5▲"]
+    doi: "10.1038/s41467-023-42555-1"
+    data_doi: "10.5061/dryad.hqbzkh1p6"
+
+  - id: wandelt2024
+    citation: "Wandelt et al., 2024"
+    date: "2024-05-13"
+    year_fraction: 2024.37
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: both
+    decoded_output: text
+    descriptor: "internal speech"
+    metrics:
+      vocab_size: "vocab 8"
+      sentences: "8 isolated words (6 English words + 2 pseudowords; 64–160 trials/session)"
+      wer: "WER 21%/77%"
+      speed: "n/r"
+    participants: ["P1▲", "P2▲"]
+    doi: "10.1038/s41562-024-01867-y"
+    data_doi: "10.5281/zenodo.10697024"
+
+  - id: silva2024b
+    citation: "Silva et al., 2024b"
+    date: "2024-05-20"
+    year_fraction: 2024.38
+    lane: speech
+    electrode: ecog
+    data_availability: on_request
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "bilingual"
+    metrics:
+      vocab_size: "vocab 178"
+      sentences: "Bilingual English + Spanish phrase trials from 111-word core / 178-word extended lexicon"
+      wer: "WER 25.0%"
+      speed: "n/r"
+    participants: ["B1△"]
+    doi: "10.1038/s41551-024-01207-5"
+
+  - id: card2024
+    citation: "Card et al., 2024"
+    date: "2024-08-14"
+    year_fraction: 2024.62
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "rapid calibration"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,948 released sentences (45 sessions: 9,498 labeled + 1,450 test; 10,481 copy sentences / 67.4 h in paper)"
+      wer: "WER 4.9%"
+      speed: "31.6 wpm"
+    card_show_speed: false
+    participants: ["T15△"]
+    doi: "10.1056/NEJMoa2314132"
+    data_doi: "10.5061/dryad.dncjsxm85"
+
+  - id: feng2024
+    citation: "Feng et al., 2024"
+    date: "2024-09-01"
+    year_fraction: 2024.67
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "E2E RNN-LLM"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)"
+      wer: "WER 26.3% (B2T 24.69%)"
+      speed: "n/r"
+    participants: ["T12△"]
+    doi: "10.21437/Interspeech.2024-382"
+
+  - id: karpowicz2024
+    citation: "Karpowicz et al., 2024"
+    date: "2024-12-10"
+    year_fraction: 2024.94
+    lane: handwriting
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "FALCON H2 benchmark"
+    metrics:
+      vocab_size: "vocab 130k"
+      sentences: "1,315 sentences (reanalysis of Fan et al., 2023 H2 handwriting dataset)"
+      wer: "WER 11.0% (held-in 2.0%)"
+      speed: "n/r"
+    participants: ["T5▲"]
+    doi: "10.52202/079017-2439"
+
+  - id: littlejohn2025
+    citation: "Littlejohn et al., 2025"
+    date: "2025-03-31"
+    year_fraction: 2025.25
+    lane: speech
+    electrode: ecog
+    data_availability: on_request
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: voice
+    descriptor: "streaming voice"
+    metrics:
+      vocab_size: "vocab 1,024"
+      sentences: "9,655 training sentences (1024-word-General + AAC phrases) + 249 held-out evaluation trials"
+      wer: "listener WER 58.8%"
+      speed: "47.5 wpm"
+    card_show_speed: false
+    participants: ["B3△"]
+    doi: "10.1038/s41593-025-01905-6"
+
+  - id: wairagkar2025
+    citation: "Wairagkar et al., 2025"
+    date: "2025-06-12"
+    year_fraction: 2025.44
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: voice
+    descriptor: "voice synthesis"
+    metrics:
+      vocab_size: "open vocab"
+      sentences: "8,489 cued sentences (37 sessions, 53,278 words; 956 vocalized + 58 mimed held-out)"
+      wer: "listener WER 43.8%"
+      speed: "n/r"
+    participants: ["T15△"]
+    doi: "10.1038/s41586-025-09127-3"
+    data_doi: "10.5061/dryad.dncjsxm85"
+
+  - id: xu2025
+    citation: "Xu et al., 2025"
+    date: "2025-07-28"
+    year_fraction: 2025.57
+    lane: handwriting
+    electrode: utah
+    data_availability: on_request
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "video-cued trajectory decoding"
+    metrics:
+      vocab_size: "vocab 1,000"
+      sentences: "30 basic strokes + video-guided Chinese character trials across multi-day sessions"
+      wer: "CER 8.9% (WER n/r)"
+      speed: "n/r"
+    participants: ["Z1▲"]
+    doi: "10.1002/advs.202504761"
+
+  - id: kunz2025
+    citation: "Kunz et al., 2025"
+    date: "2025-08-21"
+    year_fraction: 2025.64
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: both
+    decoded_output: text
+    descriptor: "inner speech"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "1,670 released inner/attempted sentences (6 days, 44 blocks: T12 500, T15 720, T16 450)"
+      wer: "WER 23.7%/51.3%/46.6%"
+      speed: "n/r"
+    participants: ["T12△", "T15△", "T16△"]
+    doi: "10.1016/j.cell.2025.06.015"
+    data_doi: "10.5061/dryad.k6djh9wjc"
+
+  - id: li2025
+    citation: "Li et al., 2025"
+    date: "2025-10-15"
+    year_fraction: 2025.79
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "DConD-LIFT"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)"
+      wer: "WER 5.77% (1-model 8.06%)"
+      speed: "n/r"
+    participants: ["T12△"]
+    doi: "10.1088/1741-2552/adfab1"
+
+  - id: feghhi2025
+    citation: "Feghhi et al., 2025"
+    date: "2025-12-01"
+    year_fraction: 2025.92
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "time-masked Transformer"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)"
+      wer: "WER 7.98% (ens. 5.68%)"
+      speed: "n/r"
+    participants: ["T12△"]
+    doi: "10.48550/arXiv.2507.02800"
+
+  - id: levin2026_speech
+    citation: "Levin et al., 2026"
+    date: "2026-01-15"
+    year_fraction: 2026.04
+    lane: speech
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "cross-brain transfer"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "40 speech sessions across T12/T15/T16 (24 public + 16 new T16 sessions)"
+      wer: "PER 23-40% (WER n/r)"
+      speed: "n/r"
+    participants: ["T12△", "T15△", "T16△"]
+    doi: "10.1101/2026.01.14.699561"
+
+  - id: levin2026_handwriting
+    citation: "Levin et al., 2026"
+    date: "2026-01-15"
+    year_fraction: 2026.04
+    lane: handwriting
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "cross-brain transfer"
+    sep_after_output: "; "
+    metrics:
+      vocab_size: "open vocab"
+      sentences: "25 handwriting sessions across T5/T12/T18 (21 public T5 + 3 T12 + 1 T18 session)"
+      wer: "CER 2% (WER n/r)"
+      speed: "n/r"
+    participants: ["T5▲", "T12△", "T18▲"]
+    doi: "10.1101/2026.01.14.699561"
+
+  - id: yzhang2026_bit
+    citation: "Y. Zhang et al., 2026"
+    date: "2026-01-26"
+    year_fraction: 2026.07
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: both
+    decoded_output: text
+    descriptor: "BraIn-to-Text (BIT)"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "21,828 sentences across T12 (10,880) + T15 (10,948) open benchmarks + multi-species pretraining"
+      wer: "WER 5.10%/1.76% (E2E 10.22%/7.76%)"
+      speed: "n/r"
+    participants: ["T12△", "T15△"]
+    doi: "10.48550/arXiv.2601.18977"
+
+  - id: nason2026
+    citation: "Nason-Tomaszewski et al., 2026"
+    date: "2026-02-20"
+    year_fraction: 2026.14
+    lane: speech
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "Q&A 27.7 wpm"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "11,274 copy-task sentences (93 days) + spontaneous ChatGPT Q&A blocks"
+      wer: "WER 35.2%"
+      speed: "27.7 wpm"
+    card_show_speed: false
+    participants: ["T16△"]
+    doi: "10.1101/2026.02.19.26346583"
+
+  - id: boccato2026
+    citation: "Boccato et al., 2026"
+    date: "2026-03-03"
+    year_fraction: 2026.17
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: both
+    decoded_output: text
+    descriptor: "cross-subject CTC"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "27,172 sentences across T12/T15/T16/T17 public Dryad releases"
+      wer: "WER 10.3%/5.9%"
+      speed: "n/r"
+    participants: ["T12△", "T15△", "T16△", "T17△"]
+    doi: "10.1088/1741-2552/ae8576"
+
+  - id: jude2026a
+    citation: "Jude et al., 2026a"
+    date: "2026-03-16"
+    year_fraction: 2026.20
+    lane: typing
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "touch typing neuroprosthesis"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "1,701 released sentences (17 sentence sessions, 144 blocks: T17 668, T18 1,033)"
+      wer: "WER 12.5%/3.4%"
+      speed: "110 cpm"
+    participants: ["T17△", "T18▲"]
+    doi: "10.1038/s41593-026-02218-y"
+    data_doi: "10.5061/dryad.cz8w9gjjk"
+
+  - id: jude2026b
+    citation: "Jude et al., 2026b"
+    date: "2026-03-30"
+    year_fraction: 2026.24
+    lane: speech
+    electrode: utah
+    data_availability: open
+    decoding_mode: online
+    task_instruction: both
+    decoded_output: text
+    descriptor: "intended speech in LIS"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "3,674 released sentences (13 sentence sessions, 96 blocks; 3,763 copy trials in Fogg et al., 2026)"
+      wer: "WER 66.5%"
+      speed: "45-60 wpm"
+    card_show_speed: false
+    participants: ["T17△"]
+    doi: "10.1016/j.celrep.2026.117162"
+    data_doi: "10.5061/dryad.vq83bk481"
+
+  - id: yoon2026
+    citation: "Yoon et al., 2026"
+    date: "2026-06-02"
+    year_fraction: 2026.42
+    lane: speech
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "real-time ensembles"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "Bilateral 6-array T12 online blocks + offline T12/T15/T16 Switchboard corpora"
+      wer: "WER 33.7→26.0%"
+      speed: "65.4 wpm"
+    card_show_speed: false
+    participants: ["T12△"]
+    doi: "10.1101/2026.06.02.729705"
+
+  - id: card2026
+    citation: "Card et al., 2026"
+    date: "2026-06-14"
+    year_fraction: 2026.45
+    lane: speech
+    electrode: utah
+    data_availability: closed
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "3,800 h home"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "260,424 self-generated home sentences (183,060 personal-use + copy benchmarks across 748 d)"
+      wer: "WER 0.8-3.5%"
+      speed: "56 wpm"
+    card_show_speed: false
+    participants: ["T15△"]
+    doi: "10.1038/s41591-026-04414-6"
+
+  - id: wairagkar2026
+    citation: "Wairagkar et al., 2026"
+    date: "2026-06-28"
+    year_fraction: 2026.49
+    lane: speech
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: voice
+    descriptor: "Brain2voice 2.0"
+    metrics:
+      vocab_size: "open vocab"
+      sentences: "8,489 cued sentences (reanalysis of Wairagkar et al., 2025 37-session Dryad corpus)"
+      wer: "listener WER 5.24%"
+      speed: "n/r"
+    participants: ["T15△"]
+    doi: "10.1101/2026.06.30.735633"
+
+  - id: fogg2026
+    citation: "Fogg et al., 2026"
+    date: "2026-07-24"
+    year_fraction: 2026.56
+    lane: speech
+    electrode: utah
+    data_availability: preprint
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "multi-user"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "311,602 total training sentences across 6 participants (51,178 copy + 260,424 T15 home)"
+      wer: "WER 3.9-8.0%"
+      speed: "n/r"
+    participants: ["T12△", "T15△", "T16△", "T17△", "T21△", "T22△"]
+    doi: "10.1101/2026.07.23.739430"
+
+  - id: zzhang2026_align
+    citation: "Z. Zhang et al., 2026"
+    date: "2026-08-18"
+    year_fraction: 2026.63
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "ALIGN cross-day"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "20,378 sentences across T12 (9,680) + T15 (10,698) multi-day benchmarks"
+      wer: "unseen-day WER 32.2%/45.5%"
+      speed: "n/r"
+    participants: ["T12△", "T15△"]
+    doi: "10.48550/arXiv.2608.11120"
+
+  - id: brosler2026
+    citation: "Brosler et al., 2026"
+    date: "2026-09-14"
+    year_fraction: 2026.70
+    lane: speech
+    electrode: ecog
+    data_availability: on_request
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "speech+gesture avatar"
+    metrics:
+      vocab_size: "vocab 5-10"
+      sentences: "Closed sets of 5 phrases × 4 gestures (B1r) and 10 phrases × 10 gestures (B6) + conversational blocks"
+      wer: "WER 30.0%"
+      speed: "n/r"
+    participants: ["B1r△", "B3△", "B6△"]
+    doi: "10.1038/s41593-026-02446-2"
+
+  - id: paradromics2026
+    citation: "Paradromics, 2026"
+    date: "2026-09-14"
+    year_fraction: 2026.70
+    lane: speech
+    electrode: microwire
+    data_availability: closed
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "real-time speech"
+    metrics:
+      vocab_size: "vocab n/r"
+      sentences: "n/r"
+      wer: "WER n/r"
+      speed: "n/r"
+    participants: ["C1△"]
+    url: "https://www.paradromics.com/news/paradromics-achieves-real-time-speech-connexus-brain-computer-interface"
+
+  - id: feghhi2026
+    citation: "Feghhi et al., 2026"
+    date: "2026-10-01"
+    year_fraction: 2026.75
+    lane: speech
+    electrode: utah
+    data_availability: reanalysis
+    decoding_mode: offline
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "LightBeam"
+    metrics:
+      vocab_size: "vocab 100k"
+      sentences: "20,378 sentences across T12 (Brain-to-Text '24) + T15 (Brain-to-Text '25)"
+      wer: "WER 5.01%/2.36%"
+      speed: "n/r"
+    participants: ["T12△", "T15△"]
+    doi: "10.21437/Interspeech.2026-2947"
+
+  - id: pouratian2026
+    citation: "Pouratian et al., 2026"
+    date: "2026-10-23"
+    year_fraction: 2026.81
+    lane: speech
+    electrode: thin_film
+    data_availability: closed
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "fully implanted speech BCI"
+    metrics:
+      vocab_size: "vocab 125k"
+      sentences: "n/r (125k-word structured evaluation in V2/V3; 220-word set in V1)"
+      wer: "WER 5.8%"
+      speed: "75 wpm"
+    participants: ["V1△", "V2△", "V3△"]
+    doi: "10.1002/mus.70436"
+
+  # Listed after Jude et al., 2026a so Jude retains the typing below-row slot
+  # and Neuralink P7 occupies the typing above-row slot at its exact date.
+  - id: neuralink2026_p7
+    citation: "Neuralink, 2026"
+    date: "2026-01-28"
+    year_fraction: 2026.08
+    lane: typing
+    electrode: thin_film
+    data_availability: closed
+    decoding_mode: online
+    task_instruction: intended
+    decoded_output: text
+    descriptor: "ten-finger typing"
+    metrics:
+      vocab_size: "vocab n/r"
+      sentences: "n/r"
+      wer: "WER n/r"
+      speed: "40 wpm"
+    participants: ["P7▲"]
+    url: "https://neuralink.com/updates/two-years-of-telepathy/"
