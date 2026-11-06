@@ -639,7 +639,7 @@ studies:
     doi: "10.1038/s41593-026-02446-2"
 
   - id: paradromics2026
-    citation: "Paradromics, 2026"
+    citation: "Paradromics, 2026.09.14"
     date: "2026-09-14"
     year_fraction: 2026.70
     lane: speech
@@ -698,7 +698,7 @@ studies:
   # Listed after Jude et al., 2026a so Jude retains the typing below-row slot
   # and Neuralink P7 occupies the typing above-row slot at its exact date.
   - id: neuralink2026_p7
-    citation: "Neuralink, 2026"
+    citation: "Neuralink, 2026.01.28"
     date: "2026-01-28"
     year_fraction: 2026.08
     lane: typing
