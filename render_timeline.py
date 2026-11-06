@@ -619,19 +619,6 @@ def main():
           f"{summary['lane_totals']['handwriting']} handwriting)")
     print("     Overlap check: ALL CLEAN")
 
-    # Auto-sync to sibling review repository if present on local disk
-    review_fig_dir = os.path.normpath(os.path.join(
-        here, "..", "20261012_Comment_on_Recent_Progress_of_Language_BCI", "figures"
-    ))
-    if os.path.isdir(review_fig_dir):
-        import shutil
-        for ext in (".png", ".pdf"):
-            src = args.out + ext
-            if os.path.exists(src):
-                shutil.copyfile(src, os.path.join(review_fig_dir, "fig1_timeline" + ext))
-                shutil.copyfile(src, os.path.join(review_fig_dir, "main_fig_1" + ext))
-        print(f"     Synced -> {review_fig_dir}/{{fig1_timeline,main_fig_1}}.{{png,pdf}}")
-
 
 if __name__ == "__main__":
     main()
