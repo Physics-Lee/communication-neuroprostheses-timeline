@@ -116,12 +116,13 @@ def load_studies(yaml_path, sync_json=True):
     home_summary = meta.get("home_use_summary", "1 used a system at home (T15)")
 
     items = []
+    study_records = []
     lane_sets = {LANE_SPEECH: set(), LANE_TYPE: set(), LANE_HAND: set()}
     all_participants = set()
 
     required_metric_keys = ("vocab_size", "sentences", "wer", "speed")
 
-    for entry in doc["studies"]:
+    for idx, entry in enumerate(doc["studies"]):
         cit = entry["citation"].strip()
         task_k = entry["task_instruction"]
         if task_k not in TASK_GLYPH:
@@ -178,12 +179,47 @@ def load_studies(yaml_path, sync_json=True):
         if mode not in ("online", "offline"):
             raise ValueError(f"{entry['id']}: invalid decoding_mode {mode!r}")
 
+        unique_pids = []
         for p in parts:
             uid = normalize_participant_id(p, aliases)
             lane_sets[lane].add(uid)
             all_participants.add(uid)
+            if uid not in unique_pids:
+                unique_pids.append(uid)
+
+        speech_abilities = []
+        if any(p.endswith("\u25b2") for p in parts):
+            speech_abilities.append("intact")
+        if any(p.endswith("\u25b3") for p in parts):
+            speech_abilities.append("paralysis")
 
         items.append((name_line, xm, shape, opn, metric_line, lane, mode))
+        study_records.append({
+            "idx": idx,
+            "id": entry["id"],
+            "citation": cit,
+            "date": str(entry["date"]),
+            "xm": xm,
+            "name_line": name_line,
+            "metric_line": metric_line,
+            "descriptor": desc,
+            "lane": lane,
+            "electrode": elec_k,
+            "shape": shape,
+            "data_availability": avail_k,
+            "opn": opn,
+            "decoding_mode": mode,
+            "task_instruction": task_k,
+            "decoded_output": out_k,
+            "speech_abilities": speech_abilities,
+            "participants": list(parts),
+            "unique_pids": unique_pids,
+            "n_count": n_count,
+            "metrics": dict(m_obj) if isinstance(m_obj, dict) else {"raw": str(m_obj)},
+            "doi": str(entry.get("doi", "")).strip(),
+            "data_doi": str(entry.get("data_doi", "")).strip(),
+            "url": str(entry.get("url", "")).strip(),
+        })
 
     counts_summary = {
         "lane_totals": {
@@ -192,6 +228,8 @@ def load_studies(yaml_path, sync_json=True):
         },
         "total_unique": len(all_participants),
         "home_summary": home_summary,
+        "study_records": study_records,
+        "metadata": meta,
     }
     return items, counts_summary
 
@@ -589,9 +627,64 @@ def render_timeline(yaml_path="studies.yaml",
             msg = "\n".join(f"  {pct:5.1f}%: {a!r} <-> {b!r}" for a, b, pct in bad)
             raise RuntimeError(f"Overlap check failed:\n{msg}")
 
+    # Capture exact geometry for the interactive HTML/SVG before closing `fig`
+    fig_w_px, fig_h_px = fig.canvas.get_width_height()
+    p_x0_y0 = ax.transData.transform((x0, -4.62))
+    p_x1_y1 = ax.transData.transform((x1, 27.25))
+    svg_geom = {
+        "fig_w": round(fig_w_px * 0.5, 2),
+        "fig_h": round(fig_h_px * 0.5, 2),
+        "sx0": round(p_x0_y0[0] * 0.5, 3),
+        "sy1": round((fig_h_px - p_x0_y0[1]) * 0.5, 3),
+        "sx1": round(p_x1_y1[0] * 0.5, 3),
+        "sy0": round((fig_h_px - p_x1_y1[1]) * 0.5, 3),
+        "x0": x0,
+        "x1": x1,
+        "y0": -4.62,
+        "y1": 27.25,
+        "yax": yax,
+        "vis_end": vis_end,
+        "max_yr_tick": max_yr_tick,
+        "tracks": TRACKS,
+        "rows": ROWS,
+        "gap": GAP,
+        "padx_l": PADX_L,
+        "padx_r": PADX_R,
+        "maxshift": MAXSHIFT,
+        "leg_x_end": x0 + 0.56 * (x1 - x0),
+        "legend_boxes": [
+            {
+                "x": round(bb.x0 * 0.5, 2),
+                "y": round((fig_h_px - bb.y1) * 0.5, 2),
+                "w": round(bb.width * 0.5, 2),
+                "h": round(bb.height * 0.5, 2),
+            }
+            for bb in bbs
+        ],
+    }
+
+    out_by_idx = {entry[0]: entry for entry in out}
+    study_records = counts_summary.get("study_records", [])
+    for rec in study_records:
+        idx = rec["idx"]
+        _, _, _, cx, y, side, _, _, _ = out_by_idx[idx]
+        rec["hw"] = round(float(h_true[idx]), 5)
+        rec["static_cx"] = round(float(cx), 5)
+        rec["static_y"] = round(float(y), 5)
+        rec["static_side"] = side
+        rec["static_mark_x"] = round(float(MARK[idx][0]), 5)
+        rec["static_mark_y"] = round(float(MARK[idx][1]), 5)
+
     fig.savefig(out_stem + ".png", bbox_inches="tight")
     fig.savefig(out_stem + ".pdf", bbox_inches="tight")
     plt.close(fig)
+
+    export_interactive_html(
+        out_html=out_stem + ".html",
+        studies=study_records,
+        geom=svg_geom,
+        counts_summary=counts_summary,
+    )
     return len(items), counts_summary
 
 
