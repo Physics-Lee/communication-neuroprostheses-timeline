@@ -7,6 +7,7 @@ A **weekly-updated, open-source living benchmark and timeline** of intracortical
 ![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
 
 - **Vector PDF (TrueType Type-42 embedded)**: [`communication_neuroprostheses_timeline.pdf`](communication_neuroprostheses_timeline.pdf)
+- **Interactive HTML edition (single file, no dependencies)**: [`communication_neuroprostheses_timeline.html`](communication_neuroprostheses_timeline.html) — click the in-figure legends or the filter sidebar to toggle study classes (data availability incl. preprint/reanalysis, brain-to-voice vs. brain-to-text, online vs. offline, electrode type, speech ability, task instruction, lane; plus free-text search). Three display modes: **reflow** (cards re-pack around their time anchors), **hide in place**, and **dim**. Cohort counts (`n = … unique participants`) update live, and clicking any timeline card opens a standalone study card reporting all 6 legend dimensions, participants, and the four structured metrics (`vocab_size`, `sentences`, `wer`, `speed`) with DOI / dataset links.
 - **Structured dataset (YAML primary + auto-synced JSON)**: [`studies.yaml`](studies.yaml) · [`studies.json`](studies.json)
 - **Standalone layout & verification engine**: [`render_timeline.py`](render_timeline.py)
 - **Weekly literature & preprint patrol**: [`weekly_patrol.py`](weekly_patrol.py)

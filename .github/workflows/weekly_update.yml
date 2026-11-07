@@ -38,8 +38,8 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if ! git diff --quiet -- communication_neuroprostheses_timeline.png communication_neuroprostheses_timeline.pdf studies.json; then
-            git add communication_neuroprostheses_timeline.png communication_neuroprostheses_timeline.pdf studies.json
-            git commit -m "auto: re-render communication_neuroprostheses_timeline.{png,pdf} and sync studies.json"
+          if ! git diff --quiet -- communication_neuroprostheses_timeline.png communication_neuroprostheses_timeline.pdf communication_neuroprostheses_timeline.html studies.json; then
+            git add communication_neuroprostheses_timeline.png communication_neuroprostheses_timeline.pdf communication_neuroprostheses_timeline.html studies.json
+            git commit -m "auto: re-render communication_neuroprostheses_timeline.{png,pdf,html} and sync studies.json"
             git push
           fi

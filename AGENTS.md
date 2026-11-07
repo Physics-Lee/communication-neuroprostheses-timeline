@@ -14,7 +14,8 @@ This repository maintains the **Living Timeline of Communication Neuroprostheses
 | [`weekly_patrol.py`](weekly_patrol.py) | Automated literature patrol (Europe PMC + arXiv) and preprint-to-journal graduation checker (Crossref `is-preprint-of`). | Edit only when refining search queries or report formatting. |
 | [`communication_neuroprostheses_timeline.png`](communication_neuroprostheses_timeline.png) | Rendered 200 DPI raster figure (`27.0 × 19.2 in`). | **Generated artifact** — always re-render after changing `studies.yaml` or `render_timeline.py`. |
 | [`communication_neuroprostheses_timeline.pdf`](communication_neuroprostheses_timeline.pdf) | Deterministic vector PDF (`SOURCE_DATE_EPOCH=946684800`, TrueType Type-42 font embedding `pdf.fonttype=42`). | **Generated artifact** — re-render alongside `.png`. |
-| [`.github/workflows/weekly_update.yml`](.github/workflows/weekly_update.yml) | GitHub Actions workflow triggered on pushes to `studies.yaml` or `render_timeline.py` on `main`; re-renders `.png`/`.pdf` and commits `studies.json`. | Keep font package `fonts-dejavu-core` installed so CI bounding boxes match local runs. |
+| [`communication_neuroprostheses_timeline.html`](communication_neuroprostheses_timeline.html) | Single-file **interactive SVG edition**: clickable in-figure legends + sidebar filters across all 6 dimensions (data availability incl. purple/gray classes, B2V/B2T, online/offline, electrode, speech ability, task instruction, lane) + search, three display modes (reflow / hide-in-place / dim), live cohort recount, and one standalone study card per publication (6 legend dimensions + participants + the 4 structured metrics). Reuses Pass-2 measured geometries; re-runs the packing solver in JS on every filter change. | **Generated artifact** — re-render alongside `.png`/`.pdf`; never hand-edit (regenerate via `python render_timeline.py`). |
+| [`.github/workflows/weekly_update.yml`](.github/workflows/weekly_update.yml) | GitHub Actions workflow triggered on pushes to `studies.yaml` or `render_timeline.py` on `main`; re-renders `.png`/`.pdf`/`.html` and commits `studies.json`. | Keep font package `fonts-dejavu-core` installed so CI bounding boxes match local runs. |
 | [`README.md`](README.md) / [`README.zh-CN.md`](README.zh-CN.md) | English and Simplified Chinese documentation. | Keep both files synchronized when updating schema or rules. |
 
 ---
@@ -25,7 +26,8 @@ This repository maintains the **Living Timeline of Communication Neuroprostheses
 studies.yaml  ──►  python render_timeline.py --yaml studies.yaml --out communication_neuroprostheses_timeline --check-overlaps
                         ├──► studies.json                                    (auto-synced JSON mirror)
                         ├──► communication_neuroprostheses_timeline.png      (200 DPI raster)
-                        └──► communication_neuroprostheses_timeline.pdf      (Type-42 vector PDF)
+                        ├──► communication_neuroprostheses_timeline.pdf      (Type-42 vector PDF)
+                        └──► communication_neuroprostheses_timeline.html     (single-file interactive edition)
 ```
 
 ### Standard Verification Command
@@ -36,6 +38,7 @@ python render_timeline.py --yaml studies.yaml --out communication_neuroprosthese
 Expected clean output:
 ```text
 [ok] Rendered <N> cards -> .../communication_neuroprostheses_timeline.{png,pdf}
+[ok] Interactive edition -> .../communication_neuroprostheses_timeline.html
      Cohort: <M> unique participants (...)
      Overlap check: ALL CLEAN
 ```
