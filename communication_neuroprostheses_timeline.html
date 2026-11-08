@@ -3,256 +3,306 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Living Timeline of Communication Neuroprostheses for People with Paralysis — Interactive Timeline</title>
+<title>Living Timeline of Communication Neuroprostheses for People with Paralysis · Interactive Edition</title>
 <style>
-  :root { --accent: #0053b3; }
+  :root {
+    --ink: #1f2937; --muted: #6b7280; --faint: #9aa3af;
+    --line: #e5e7eb; --canvas: #f5f6f8; --card: #ffffff;
+    --accent: #0f4c81; --accent-soft: rgba(15, 76, 129, .08);
+  }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #eef1f4; color: #1a1a1a;
-         font-family: "DejaVu Sans", "Segoe UI", Arial, "PingFang SC", "Microsoft YaHei", sans-serif; }
-  .wrap { max-width: 1560px; margin: 0 auto; padding: 20px 22px 60px; }
-  h1 { font-size: 21px; margin: 4px 0 2px; }
-  .sub { color: #667; font-size: 13px; margin-bottom: 16px; }
-  .box { background: #fff; border-radius: 12px; padding: 14px 18px;
-         box-shadow: 0 1px 3px rgba(0,0,0,.09); margin-bottom: 16px; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--canvas); color: var(--ink);
+         font: 14px/1.45 "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+         -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1600px; margin: 0 auto; padding: 0 28px 80px; }
 
-  /* ---- control panel ---- */
-  .status-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
-                padding-bottom: 10px; border-bottom: 1px solid #e5e8ec; margin-bottom: 12px; }
-  .status-row b { color: var(--accent); }
-  .controls { display: flex; flex-wrap: wrap; gap: 6px 26px; align-items: flex-start; }
-  .fgroup { min-width: 148px; }
-  .fg-title { font-size: 12px; font-weight: 700; color: #445; margin: 4px 0 4px;
-              display: flex; align-items: center; gap: 6px; }
-  .allbtn { font-size: 10px; border: 1px solid #ccd; background: #f5f7fa; border-radius: 999px;
-            padding: 1px 7px; cursor: pointer; color: #567; }
-  .allbtn:hover { background: #e8edf5; }
-  .fgroup label { display: flex; align-items: center; gap: 6px; font-size: 12.5px;
-                  color: #334; margin: 2px 0; cursor: pointer; user-select: none; }
-  .fgroup input[type=checkbox] { accent-color: var(--accent); }
-  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; flex: none; }
-  .mg { display: inline-block; width: 14px; text-align: center; flex: none; font-size: 12px; }
-  #search { padding: 6px 10px; border: 1px solid #ccd; border-radius: 8px; font-size: 13px;
-            width: 250px; }
-  .modepick { font-size: 12.5px; color: #334; display: flex; gap: 4px; align-items: center; }
-  .modepick label { cursor: pointer; padding: 2px 6px; border-radius: 6px; }
-  .modepick input { accent-color: var(--accent); }
-  #reset { padding: 6px 14px; border: 1px solid #ccd; background: #f5f7fa; border-radius: 8px;
-           font-size: 12.5px; cursor: pointer; color: #345; }
-  #reset:hover { background: #e8edf5; }
+  /* ---------- header ---------- */
+  header { position: sticky; top: 0; z-index: 50; background: rgba(245, 246, 248, .92);
+           backdrop-filter: blur(6px); border-bottom: 1px solid var(--line);
+           margin: 0 -28px; padding: 12px 28px; }
+  .head-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; max-width: 1600px; margin: 0 auto; }
+  h1 { font-size: 17px; font-weight: 650; margin: 0; letter-spacing: .01em; }
+  .head-sub { color: var(--muted); font-size: 12.5px; }
+  .head-tools { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+          padding: 3px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .stat b { color: var(--ink); font-weight: 650; }
+  #search { border: 1px solid var(--line); border-radius: 999px; padding: 5px 14px;
+            font-size: 12.5px; width: 230px; background: var(--card); color: var(--ink); outline: none; }
+  #search:focus { border-color: var(--accent); }
+  #reset { border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+           padding: 5px 14px; font-size: 12.5px; color: var(--muted); cursor: pointer; }
+  #reset:hover { color: var(--ink); border-color: var(--faint); }
 
-  /* ---- figure ---- */
-  .fig-hint { font-size: 12.5px; color: #778; margin: 2px 0 8px; }
-  #tl-svg { width: 100%; height: auto; display: block; }
-  #tl-svg text { font-family: "DejaVu Sans", Arial, sans-serif; }
+  /* ---------- filter bar ---------- */
+  #panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+           margin: 18px 0; padding: 14px 18px 10px; }
+  .groups { display: flex; flex-wrap: wrap; gap: 10px 30px; }
+  .fgroup { display: flex; flex-direction: column; gap: 5px; }
+  .fg-title { font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+              text-transform: uppercase; color: var(--faint); }
+  .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line);
+          background: #fafbfc; color: var(--muted); border-radius: 999px;
+          padding: 2.5px 11px; font-size: 12px; cursor: pointer; user-select: none;
+          transition: all .12s ease; }
+  .chip:hover { border-color: var(--faint); color: var(--ink); }
+  .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .chip .sw { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+  .chip .mg { font-size: 11px; flex: none; opacity: .85; }
+
+  /* ---------- view mode ---------- */
+  .bottom-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+                border-top: 1px solid var(--line); margin-top: 12px; padding-top: 10px; }
+  .mode-lbl { font-size: 10.5px; font-weight: 700; letter-spacing: .08em;
+              text-transform: uppercase; color: var(--faint); }
+  #modebar { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+  #modebar button { border: none; background: transparent; padding: 4px 14px; font-size: 12px;
+                    color: var(--muted); cursor: pointer; }
+  #modebar button + button { border-left: 1px solid var(--line); }
+  #modebar button.on { background: var(--accent); color: #fff; font-weight: 600; }
+  .hint { font-size: 12px; color: var(--faint); margin-left: auto; }
+
+  /* ---------- figure ---------- */
+  #figbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+            padding: 10px 10px 4px; }
+  #tl-svg { width: 100%; height: auto; display: block; border-radius: 8px; }
+  #tl-svg text { font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
   .card { cursor: pointer; }
-  .card .t-name { paint-order: stroke; stroke: rgba(255,255,255,.92); stroke-width: 3px; }
-  .card.selected .t-name { fill: var(--accent); text-decoration: underline; }
+  .card text { paint-order: stroke; stroke: rgba(255,255,255,.94); stroke-width: 3px;
+               transition: fill .12s ease; }
+  .card:hover .t-name, .card.selected .t-name { fill: var(--accent); }
+  .card.selected .t-name { font-weight: 700; }
   .mark { cursor: pointer; }
   .legend { cursor: pointer; }
-  .legend:hover .frame { stroke: #909090; }
-  .legend.off { opacity: .55; }
-  .legend.off .frame { stroke-dasharray: 4 3; }
-  .lg-row.off text { fill: #aab; }
-  .lg-row.off circle, .lg-row.off rect, .lg-row.off polygon { opacity: .3; }
+  .legend .frame { transition: stroke .12s ease; }
+  .legend:hover .frame { stroke: var(--faint); }
+  .lg-row text { transition: fill .12s ease; }
+  .lg-row:hover text { fill: var(--ink); }
+  .lg-row.off text { fill: #c3c9d1; text-decoration: line-through; text-decoration-color: #c3c9d1; }
+  .lg-row.off circle, .lg-row.off rect, .lg-row.off polygon { opacity: .25; }
 
-  /* ---- spotlight & cards ---- */
-  #spotlight { position: relative; border: 2px solid var(--accent); border-radius: 14px;
-               background: #fbfcff; padding: 18px 20px 12px; margin: 20px 0 8px; max-width: 700px; }
-  #sp-close { position: absolute; top: 8px; right: 10px; border: none; background: none;
-              font-size: 20px; color: #889; cursor: pointer; }
-  #sp-close:hover { color: #234; }
-  .sp-nav { display: flex; gap: 10px; align-items: center; margin-top: 10px; }
-  .sp-nav button { border: 1px solid #cdd; background: #f5f7fa; border-radius: 8px;
-                   padding: 5px 12px; font-size: 12.5px; cursor: pointer; }
-  .sp-nav button:hover { background: #e8edf5; }
-  #sp-pos { font-size: 12.5px; color: #667; }
-  .cards-header { font-size: 15px; font-weight: 700; color: #334; margin: 26px 0 10px; }
-  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
-  .study-card { border: 1px solid #dde; border-radius: 12px; padding: 12px 14px; background: #fff;
-                cursor: pointer; transition: box-shadow .15s, border-color .15s; }
-  .study-card:hover { box-shadow: 0 2px 10px rgba(20,40,90,.13); }
-  .study-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,83,179,.22); }
-  .sc-head { display: flex; align-items: center; gap: 7px; }
-  .sc-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; border: 1.5px solid #fff;
-            box-shadow: 0 0 0 1px rgba(0,0,0,.15); }
-  .sc-title { font-weight: 700; font-size: 14px; }
-  .sc-shape { margin-left: auto; color: #556; font-size: 13px; }
-  .sc-date { font-size: 12px; color: #778; margin: 3px 0 1px; }
-  .sc-desc { font-size: 12.5px; color: #445; margin-bottom: 8px; }
-  .sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0; }
-  .sc-cell { background: #f6f8fb; border-radius: 9px; padding: 7px 9px; }
+  /* ---------- section headers ---------- */
+  .sec { display: flex; align-items: baseline; gap: 12px; margin: 34px 2px 14px; }
+  .sec h2 { font-size: 16px; font-weight: 650; margin: 0; letter-spacing: .01em; }
+  .sec .count { color: var(--muted); font-size: 12.5px; }
+  .sec .rule { flex: 1; border-top: 1px solid var(--line); transform: translateY(-4px); }
+
+  /* ---------- spotlight ---------- */
+  #spotlight { position: relative; border: 1.5px solid var(--accent); border-radius: 16px;
+               background: #fdfeff; padding: 22px 26px 16px; margin-bottom: 24px; }
+  #spotlight::before { content: "SELECTED STUDY"; position: absolute; top: -9px; left: 22px;
+                       background: var(--accent); color: #fff; font-size: 9.5px; font-weight: 700;
+                       letter-spacing: .12em; padding: 2px 10px; border-radius: 999px; }
+  #sp-close { position: absolute; top: 10px; right: 12px; border: none; background: none;
+              font-size: 22px; line-height: 1; color: var(--faint); cursor: pointer; }
+  #sp-close:hover { color: var(--ink); }
+  .sp-nav { display: flex; gap: 10px; align-items: center; margin-top: 14px;
+            border-top: 1px dashed var(--line); padding-top: 10px; }
+  .sp-nav button { border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+                   padding: 4px 14px; font-size: 12px; color: var(--muted); cursor: pointer; }
+  .sp-nav button:hover:not(:disabled) { color: var(--accent); border-color: var(--accent); }
+  .sp-nav button:disabled { opacity: .35; cursor: default; }
+  #sp-pos { font-size: 12px; color: var(--faint); margin-left: auto; }
+
+  /* ---------- study cards ---------- */
+  #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .study-card { --spine: #9aa3af; background: var(--card); border: 1px solid var(--line);
+                border-left: 4px solid var(--spine); border-radius: 12px; padding: 14px 16px 12px;
+                cursor: pointer; transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease; }
+  .study-card:hover { box-shadow: 0 4px 18px rgba(15, 36, 64, .10); transform: translateY(-1px); }
+  .study-card.selected { border-color: var(--accent); border-left-color: var(--accent);
+                         box-shadow: 0 0 0 2px var(--accent-soft); }
+  .sc-head { display: flex; align-items: center; gap: 8px; }
+  .sc-dot { width: 10px; height: 10px; border-radius: 50%; flex: none;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.10); }
+  .sc-title { font-size: 14.5px; font-weight: 650; }
+  .sc-glyph { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .sc-date { font-size: 11.5px; color: var(--faint); margin: 2px 0 1px; letter-spacing: .02em; }
+  .sc-desc { font-size: 12.5px; color: var(--muted); margin: 2px 0 10px; }
+  .sc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .sc-cell { background: #f8f9fb; border-radius: 9px; padding: 7px 10px 6px; }
   .sc-cell.span2 { grid-column: span 2; }
-  .sc-cell .k { font-size: 10.5px; color: #889; letter-spacing: .02em; margin-bottom: 2px; }
-  .sc-cell .v { font-size: 13px; font-weight: 600; color: #223; overflow-wrap: anywhere; }
-  .sc-chips { margin: 6px 0 4px; }
-  .chip { display: inline-block; font-size: 11px; border: 1px solid #d4d9e0; border-radius: 999px;
-          padding: 1.5px 8px; margin: 2px 4px 2px 0; color: #445; background: #fafbfd; }
-  .chip .cdot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-                margin-right: 4px; vertical-align: -0.5px; }
-  .sc-parts { font-size: 12.5px; color: #334; margin-top: 4px; }
-  .sc-links { margin-top: 7px; font-size: 12px; }
-  .sc-links a { color: var(--accent); text-decoration: none; margin-right: 12px; }
+  .sc-cell .k { font-size: 9.5px; font-weight: 700; letter-spacing: .07em; color: var(--faint);
+                text-transform: uppercase; margin-bottom: 2px; }
+  .sc-cell .v { font-size: 13px; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+  .sc-parts { font-size: 12.5px; color: var(--ink); margin-top: 9px; }
+  .sc-parts .plabel { color: var(--faint); font-size: 11px; }
+  .sc-links { margin-top: 8px; font-size: 12px; }
+  .sc-links a { color: var(--accent); text-decoration: none; margin-right: 14px; font-weight: 600; }
   .sc-links a:hover { text-decoration: underline; }
+  #cards-empty { display: none; color: var(--faint); font-size: 13px; padding: 26px 0;
+                 text-align: center; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Living Timeline of Communication Neuroprostheses for People with Paralysis</h1>
-  <div class="sub">Interactive edition · 交互版 — hover a card for a quick summary, click it for the full
-    standalone study card; toggle figure legends or the filters below to choose which studies are shown.</div>
-
-  <div class="box" id="panel">
-    <div class="status-row">
-      <span>Showing 展示: <b id="vis-count"></b></span>
-      <span>Unique participants 被试: <b id="vis-people"></b></span>
-      <span class="modepick">Layout 排版:
-        <label><input type="radio" name="mode" value="reflow" checked>reflow 重排</label>
-        <label><input type="radio" name="mode" value="hide">hide in place 原位隐藏</label>
-        <label><input type="radio" name="mode" value="dim">dim 淡出</label>
-      </span>
-      <input id="search" type="search" placeholder="Search 搜索: author / participant / descriptor…">
-      <button id="reset">Reset 重置</button>
+  <header>
+    <div class="head-row">
+      <h1>Living Timeline of Communication Neuroprostheses for People with Paralysis</h1>
+      <span class="head-sub">Interactive edition · click any card for details, toggle filters to explore</span>
+      <div class="head-tools">
+        <span class="stat">Studies <b id="vis-count"></b></span>
+        <span class="stat">Participants <b id="vis-people"></b></span>
+        <input id="search" type="search" placeholder="Search author, participant, method…">
+        <button id="reset">Reset</button>
+      </div>
     </div>
-    <div class="controls" id="controls"></div>
+  </header>
+
+  <div id="panel">
+    <div class="groups" id="controls"></div>
+    <div class="bottom-row">
+      <span class="mode-lbl">Layout</span>
+      <div id="modebar">
+        <button data-mode="reflow" class="on">Reflow</button>
+        <button data-mode="hide">Hide in place</button>
+        <button data-mode="dim">Dim</button>
+      </div>
+      <span class="hint">Refiltering re-packs the remaining cards around their time anchors · the in-figure legends are clickable too</span>
+    </div>
   </div>
 
-  <div class="box">
-    <div class="fig-hint">Tip 提示: click a legend entry above a lane track to toggle a class (e.g. the purple
-      reanalysis or gray preprint markers); click any small timeline card or marker to open its standalone
-      study card below.</div>
+  <div id="figbox">
     <svg id="tl-svg" viewBox="0 0 2694 1914" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="2694" height="1914" fill="#ffffff"/>
-<line x1="168.8" y1="1806.7" x2="1977.5" y2="1806.7" stroke="#3a3a3a" stroke-width="1.67"/>
-<line x1="212.2" y1="1806.7" x2="212.2" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="212.2" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2021</text>
-<line x1="501.6" y1="1806.7" x2="501.6" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="501.6" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2022</text>
-<line x1="791.0" y1="1806.7" x2="791.0" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="791.0" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2023</text>
-<line x1="1080.4" y1="1806.7" x2="1080.4" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="1080.4" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2024</text>
-<line x1="1369.8" y1="1806.7" x2="1369.8" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="1369.8" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2025</text>
-<line x1="1659.2" y1="1806.7" x2="1659.2" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="1659.2" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2026</text>
-<line x1="1948.6" y1="1806.7" x2="1948.6" y2="1815.6" stroke="#3a3a3a" stroke-width="1.67"/>
-<text x="1948.6" y="1844.1" font-size="13.9" fill="#3a3a3a" text-anchor="middle" dominant-baseline="central">2027</text>
-<line x1="168.8" y1="546.3" x2="2860.1" y2="546.3" stroke="#d3d3d3" stroke-width="1.81"/>
-<text x="116.7" y="546.3" font-size="16.0" font-weight="bold" fill="#404040" text-anchor="end" dominant-baseline="central">Speech</text>
-<line x1="168.8" y1="1098.7" x2="2860.1" y2="1098.7" stroke="#d3d3d3" stroke-width="1.81"/>
-<text x="116.7" y="1098.7" font-size="16.0" font-weight="bold" fill="#404040" text-anchor="end" dominant-baseline="central">Typing</text>
-<line x1="168.8" y1="1651.1" x2="2860.1" y2="1651.1" stroke="#d3d3d3" stroke-width="1.81"/>
-<text x="116.7" y="1651.1" font-size="16.0" font-weight="bold" fill="#404040" text-anchor="end" dominant-baseline="central">Handwriting</text>
+<line x1="168.8" y1="1806.7" x2="1977.5" y2="1806.7" stroke="#9aa3af" stroke-width="1.67"/>
+<line x1="212.2" y1="1806.7" x2="212.2" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="212.2" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2021</text>
+<line x1="501.6" y1="1806.7" x2="501.6" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="501.6" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2022</text>
+<line x1="791.0" y1="1806.7" x2="791.0" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="791.0" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2023</text>
+<line x1="1080.4" y1="1806.7" x2="1080.4" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1080.4" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2024</text>
+<line x1="1369.8" y1="1806.7" x2="1369.8" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1369.8" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2025</text>
+<line x1="1659.2" y1="1806.7" x2="1659.2" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1659.2" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2026</text>
+<line x1="1948.6" y1="1806.7" x2="1948.6" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1948.6" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2027</text>
+<line x1="168.8" y1="546.3" x2="2860.1" y2="546.3" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.7" y="546.3" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Speech</text>
+<line x1="168.8" y1="1098.7" x2="2860.1" y2="1098.7" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.7" y="1098.7" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Typing</text>
+<line x1="168.8" y1="1651.1" x2="2860.1" y2="1651.1" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.7" y="1651.1" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Handwriting</text>
 <g class="legend" data-dim="data_availability">
-<rect class="frame" x="184.7" y="18.9" width="176.3" height="106.4" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="192.7" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">data availability</text>
+<rect class="frame" x="184.7" y="18.9" width="176.3" height="106.4" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="196.7" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DATA AVAILABILITY</text>
 <g class="lg-row" data-dim="data_availability" data-val="open">
-<circle cx="197.66" cy="46.92" r="5" fill="#00A087" stroke="white" stroke-width="1"/>
-<text x="208.7" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">open data</text>
+<circle cx="201.66" cy="50.92" r="5" fill="#00A087" stroke="white" stroke-width="1"/>
+<text x="214.7" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">open data</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="partial">
-<circle cx="197.66" cy="62.42" r="5" fill="#c07f00" stroke="white" stroke-width="1"/>
-<text x="208.7" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">data on request</text>
+<circle cx="201.66" cy="66.42" r="5" fill="#c07f00" stroke="white" stroke-width="1"/>
+<text x="214.7" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">data on request</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="closed">
-<circle cx="197.66" cy="77.92" r="5" fill="#cc3324" stroke="white" stroke-width="1"/>
-<text x="208.7" y="77.9" font-size="10.8" fill="#303030" dominant-baseline="central">closed data</text>
+<circle cx="201.66" cy="81.92" r="5" fill="#cc3324" stroke="white" stroke-width="1"/>
+<text x="214.7" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">closed data</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="unknown">
-<circle cx="197.66" cy="93.42" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="208.7" y="93.4" font-size="10.8" fill="#303030" dominant-baseline="central">preprint</text>
+<circle cx="201.66" cy="97.42" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="214.7" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">preprint</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="reanalysis">
-<circle cx="197.66" cy="108.92" r="5" fill="#7B3294" stroke="white" stroke-width="1"/>
-<text x="208.7" y="108.9" font-size="10.8" fill="#303030" dominant-baseline="central">reanalysis on open data</text>
+<circle cx="201.66" cy="112.92" r="5" fill="#7B3294" stroke="white" stroke-width="1"/>
+<text x="214.7" y="112.9" font-size="10.8" fill="#374151" dominant-baseline="central">reanalysis on open data</text>
 </g>
 </g>
 <g class="legend" data-dim="decoding_mode">
-<rect class="frame" x="418.4" y="18.9" width="104.7" height="58.5" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="426.4" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">decoding mode</text>
+<rect class="frame" x="418.4" y="18.9" width="104.7" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="430.4" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODING MODE</text>
 <g class="lg-row" data-dim="decoding_mode" data-val="online">
-<circle cx="431.41" cy="46.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="442.4" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">online</text>
+<circle cx="435.41" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="448.4" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">online</text>
 </g>
 <g class="lg-row" data-dim="decoding_mode" data-val="offline">
-<circle cx="431.41" cy="62.42" r="3.6" fill="white" stroke="#7F7F7F" stroke-width="1.8"/>
-<text x="442.4" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">offline</text>
+<circle cx="435.41" cy="66.42" r="3.6" fill="white" stroke="#7F7F7F" stroke-width="1.8"/>
+<text x="448.4" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">offline</text>
 </g>
 </g>
 <g class="legend" data-dim="electrode">
-<rect class="frame" x="580.6" y="18.9" width="136.8" height="90.5" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="588.6" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">electrode type</text>
+<rect class="frame" x="580.6" y="18.9" width="136.8" height="90.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="592.6" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">ELECTRODE TYPE</text>
 <g class="lg-row" data-dim="electrode" data-val="ecog">
-<circle cx="593.56" cy="46.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="604.6" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">ECoG</text>
+<circle cx="597.56" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="610.6" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">ECoG</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="utah">
-<rect x="589.56" y="58.42" width="8" height="8" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="604.6" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">Utah array</text>
+<rect x="593.56" y="62.42" width="8" height="8" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="610.6" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">Utah array</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="thin_film">
-<polygon points="598.56,77.92 596.06,82.25 591.06,82.25 588.56,77.92 591.06,73.59 596.06,73.59" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="604.6" y="77.9" font-size="10.8" fill="#303030" dominant-baseline="central">thin-film threads</text>
+<polygon points="602.56,81.92 600.06,86.25 595.06,86.25 592.56,81.92 595.06,77.59 600.06,77.59" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="610.6" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">thin-film threads</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="microwire">
-<polygon points="593.56,88.42 597.89,95.92 589.23,95.92" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="604.6" y="93.4" font-size="10.8" fill="#303030" dominant-baseline="central">microwire array</text>
+<polygon points="597.56,92.42 601.89,99.92 593.23,99.92" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="610.6" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">microwire array</text>
 </g>
 </g>
 <g class="legend" data-dim="speech_ability">
-<rect class="frame" x="774.8" y="18.9" width="250.5" height="58.5" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="782.8" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">speech ability</text>
+<rect class="frame" x="774.8" y="18.9" width="250.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="786.8" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">SPEECH ABILITY</text>
 <g class="lg-row" data-dim="speech_ability" data-val="intact">
-<polygon points="787.81,52.12 783.31,44.32 792.31,44.32" fill="#1a1a1a" stroke="white" stroke-width="1"/>
-<text x="798.8" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">participants who can speak naturally</text>
+<polygon points="791.81,56.12 787.31,48.32 796.31,48.32" fill="#1a1a1a" stroke="white" stroke-width="1"/>
+<text x="804.8" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">can speak naturally</text>
 </g>
 <g class="lg-row" data-dim="speech_ability" data-val="paralysis">
-<polygon points="787.81,66.82 784.00,60.22 791.62,60.22" fill="white" stroke="#7F7F7F" stroke-width="1"/>
-<text x="798.8" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">participants who have vocal paralysis</text>
+<polygon points="791.81,70.82 788.00,64.22 795.62,64.22" fill="white" stroke="#7F7F7F" stroke-width="1"/>
+<text x="804.8" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">vocal paralysis</text>
 </g>
 </g>
 <g class="legend" data-dim="task_instruction">
-<rect class="frame" x="1082.8" y="18.9" width="197.5" height="58.5" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="1090.8" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">task instruction</text>
+<rect class="frame" x="1082.8" y="18.9" width="197.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="1094.8" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">TASK INSTRUCTION</text>
 <g class="lg-row" data-dim="task_instruction" data-val="inner">
-<polygon points="1095.79,51.52 1091.19,46.92 1095.79,42.32 1100.39,46.92" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
-<text x="1106.8" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">inner speech</text>
+<polygon points="1099.79,55.52 1095.19,50.92 1099.79,46.32 1104.39,50.92" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="1112.8" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">inner speech</text>
 </g>
 <g class="lg-row" data-dim="task_instruction" data-val="intended">
-<polygon points="1095.79,67.02 1091.19,62.42 1095.79,57.82 1100.39,62.42" fill="white" stroke="#1a1a1a" stroke-width="1"/>
-<text x="1106.8" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">overt / mouthing / intended</text>
+<polygon points="1099.79,71.02 1095.19,66.42 1099.79,61.82 1104.39,66.42" fill="white" stroke="#1a1a1a" stroke-width="1"/>
+<text x="1112.8" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">overt / intended</text>
 </g>
 </g>
 <g class="legend" data-dim="decoded_output">
-<rect class="frame" x="1337.8" y="18.9" width="121.4" height="58.5" fill="white" fill-opacity="0.95" stroke="#cccccc"/>
-<text class="lg-title" x="1345.8" y="31.9" font-size="11.4" font-weight="bold" fill="#303030">decoded output</text>
+<rect class="frame" x="1337.8" y="18.9" width="121.4" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="1349.8" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODED OUTPUT</text>
 <g class="lg-row" data-dim="decoded_output" data-val="voice">
-<polygon points="1350.77,51.92 1346.01,48.47 1347.83,42.87 1353.71,42.87 1355.53,48.47" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
-<text x="1361.8" y="46.9" font-size="10.8" fill="#303030" dominant-baseline="central">brain-to-voice</text>
+<polygon points="1354.77,55.92 1350.01,52.47 1351.83,46.87 1357.71,46.87 1359.53,52.47" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="1367.8" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-voice</text>
 </g>
 <g class="lg-row" data-dim="decoded_output" data-val="text">
-<polygon points="1350.77,67.42 1346.01,63.97 1347.83,58.37 1353.71,58.37 1355.53,63.97" fill="white" stroke="#1a1a1a" stroke-width="1"/>
-<text x="1361.8" y="62.4" font-size="10.8" fill="#303030" dominant-baseline="central">brain-to-text</text>
+<polygon points="1354.77,71.42 1350.01,67.97 1351.83,62.37 1357.71,62.37 1359.53,67.97" fill="white" stroke="#1a1a1a" stroke-width="1"/>
+<text x="1367.8" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-text</text>
 </g>
 </g>
 <text id="total-note" x="2686.5" y="1882.1" font-size="11.4" font-style="italic" fill="#3C5488" text-anchor="end" dominant-baseline="central"></text>
 <text id="lt-speech" x="2677.8" y="557.0" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
 <text id="lt-typing" x="2677.8" y="1109.4" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
 <text id="lt-handwriting" x="2677.8" y="1661.8" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
-<g id="empty-msg" style="display:none"><text x="1428" y="960" font-size="15" fill="#666666" text-anchor="middle">No study cards match the current filters · 当前筛选条件下没有匹配的研究</text></g></svg>
+<g id="empty-msg" style="display:none"><text x="1428" y="960" font-size="16" fill="#8a93a0" text-anchor="middle">No studies match the current filters</text></g></svg>
   </div>
 
   <div id="spotlight" style="display:none">
-    <button id="sp-close" title="Close 关闭">×</button>
+    <button id="sp-close" title="Close">×</button>
     <div id="sp-body"></div>
     <div class="sp-nav">
-      <button id="sp-prev">◀ Prev 上一篇</button>
+      <button id="sp-prev">← Previous</button>
+      <button id="sp-next">Next →</button>
       <span id="sp-pos"></span>
-      <button id="sp-next">Next 下一篇 ▶</button>
     </div>
   </div>
 
-  <div class="cards-header">Standalone study cards · 研究卡片 (<span id="cards-count"></span>)</div>
+  <div class="sec">
+    <h2>Study cards</h2>
+    <span class="count" id="cards-count"></span>
+    <span class="rule"></span>
+  </div>
   <div id="cards"></div>
+  <div id="cards-empty">No studies match the current filters.</div>
 </div>
 
 <script>
@@ -269,15 +319,14 @@ const KY = (GEOM.sy0 - GEOM.sy1) / (GEOM.y1 - GEOM.y0);   // negative: data grow
 const X = v => GEOM.sx0 + (v - GEOM.x0) * KX;
 const Y = v => GEOM.sy1 + (v - GEOM.y0) * KY;
 const COLORS = { open:'#00A087', partial:'#c07f00', closed:'#cc3324', unknown:'#7F7F7F', reanalysis:'#7B3294' };
-const AVAIL_LBL = { open:'open data 开源', partial:'data on request 按需', closed:'closed data 未公开',
-                    unknown:'preprint 预印本', reanalysis:'reanalysis 再分析' };
-const MODE_LBL = { online:'online 实时闭环', offline:'offline 离线分析' };
+const AVAIL_LBL = { open:'open data', partial:'data on request', closed:'closed data',
+                    unknown:'preprint', reanalysis:'reanalysis on open data' };
+const MODE_LBL = { online:'online', offline:'offline' };
 const ELEC_LBL = { ecog:'ECoG', utah:'Utah array', thin_film:'thin-film', microwire:'microwire' };
-const ELEC_CHAR = { ecog:'●', utah:'■', thin_film:'⬢', microwire:'▼' };
-const TASK_LBL = { inner:'inner speech 内隐', intended:'overt / intended 外显', both:'inner+overt 两者' };
-const OUT_LBL = { voice:'brain-to-voice B2V', text:'brain-to-text B2T', both:'B2V + B2T' };
-const OUT_CHAR = { voice:'⬟', text:'⬠', both:'⬟/⬠' };
-const SHAPE_CHAR = { o:'●', s:'■', h:'⬢', v:'▼' };
+const ELEC_GLYPH = { ecog:'●', utah:'■', thin_film:'⬢', microwire:'▼' };
+const TASK_LBL = { inner:'inner speech ◆', intended:'overt / intended ◇', both:'inner ◆ + overt ◇' };
+const OUT_LBL = { voice:'brain-to-voice ⬟', text:'brain-to-text ⬠', both:'voice ⬟ + text ⬠' };
+const SHAPE_GLYPH = { o:'●', s:'■', h:'⬢', v:'▼' };
 const LANE_LBL = { speech:'Speech', typing:'Typing', handwriting:'Handwriting' };
 const LANES = ['speech', 'typing', 'handwriting'];
 const TRACKS = GEOM.tracks, ROWS = GEOM.rows;
@@ -296,19 +345,22 @@ function markerPath(shape, r){
     return `M ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 Z`;
   let p;
   if (shape === 's'){ const k = r * 0.92; p = [[k,k],[-k,k],[-k,-k],[k,-k]]; }
-  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = Math.PI/i*0 + i*Math.PI/3; p.push([r*1.06*Math.cos(a), r*1.06*Math.sin(a)]); } }
+  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = i*Math.PI/3; p.push([r*1.06*Math.cos(a), r*1.06*Math.sin(a)]); } }
   else { p = [[0,-r*1.12],[r*1.05, r*0.78],[-r*1.05, r*0.78]]; }
   return 'M ' + p.map(q => q[0].toFixed(2) + ' ' + q[1].toFixed(2)).join(' L ') + ' Z';
 }
 
-/* ---------- filter state ---------- */
+/* ---------- filter state ----------
+   decoded_output and task_instruction intentionally expose exactly TWO options
+   each (voice/text, inner/intended). Studies recorded as "both" remain visible
+   while at least one of the two options is selected. */
 const DIMS = {
   data_availability: ['open','partial','closed','unknown','reanalysis'],
-  decoded_output: ['voice','text','both'],
   decoding_mode: ['online','offline'],
+  decoded_output: ['voice','text'],
   electrode: ['ecog','utah','thin_film','microwire'],
   speech_ability: ['intact','paralysis'],
-  task_instruction: ['inner','intended','both'],
+  task_instruction: ['inner','intended'],
   lane: ['speech','typing','handwriting'],
 };
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
@@ -316,11 +368,13 @@ let searchStr = '', mode = 'reflow', selectedId = null;
 
 function matches(rec){
   if (!sel.data_availability.has(rec.opn)) return false;
-  if (!sel.decoded_output.has(rec.decoded_output)) return false;
   if (!sel.decoding_mode.has(rec.decoding_mode)) return false;
   if (!sel.electrode.has(rec.electrode)) return false;
   if (!sel.lane.has(rec.lane)) return false;
-  if (!sel.task_instruction.has(rec.task_instruction)) return false;
+  const dsel = sel.decoded_output;
+  if (rec.decoded_output === 'both' ? dsel.size === 0 : !dsel.has(rec.decoded_output)) return false;
+  const tsel = sel.task_instruction;
+  if (rec.task_instruction === 'both' ? tsel.size === 0 : !tsel.has(rec.task_instruction)) return false;
   if (rec.speech_abilities.length &&
       !rec.speech_abilities.some(a => sel.speech_ability.has(a))) return false;
   if (searchStr){
@@ -349,10 +403,10 @@ const nodes = STUDIES.map(rec => {
                 'stroke-width': 2.0 * PT}, gMark);
   const gStem = el('g', {}, layerStems);
   const gCard = el('g', {class:'card'}, layerCards);
-  const t1 = el('text', {class:'t-name', 'font-size': (8*PT).toFixed(2), 'font-weight': 700,
-                         fill:'#1a1a1a', 'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
+  const t1 = el('text', {class:'t-name', 'font-size': (8*PT).toFixed(2), 'font-weight': 600,
+                         fill:'#1f2937', 'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
   t1.textContent = rec.name_line;
-  const t2 = el('text', {class:'t-metric', 'font-size': (7*PT).toFixed(2), fill:'#555555',
+  const t2 = el('text', {class:'t-metric', 'font-size': (7*PT).toFixed(2), fill:'#6b7280',
                          'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
   t2.textContent = rec.metric_line;
   const rv = {rec, gMark, gStem, gCard, t1, t2};
@@ -459,7 +513,7 @@ function drawAll(active, geomOf){
     const yStart = mark.y + sgn * 0.17;
     const mk = pts => el('polyline', {
       points: pts.map(p => P(X(p[0])) + ',' + P(Y(p[1]))).join(' '),
-      fill:'none', stroke:'#b8b8b8', 'stroke-width': 0.8 * PT }, n.gStem);
+      fill:'none', stroke:'#c3c9d1', 'stroke-width': 0.8 * PT }, n.gStem);
     if (Math.abs(g.cx - xs) > 0.02){
       const xLo = Math.min(xs, g.cx), xHi = Math.max(xs, g.cx);
       const rk = rec.lane + '|' + g.side + '|' + g.y;
@@ -486,34 +540,25 @@ function drawAll(active, geomOf){
 /* ---------- standalone study cards ---------- */
 function cardHtml(rec){
   const m = rec.metrics;
-  const chips = [
-    `<span class="chip"><span class="cdot" style="background:${COLORS[rec.opn]}"></span>${AVAIL_LBL[rec.opn] || rec.data_availability}</span>`,
-    `<span class="chip">${MODE_LBL[rec.decoding_mode]}</span>`,
-    `<span class="chip">${ELEC_CHAR[rec.shape]} ${ELEC_LBL[rec.electrode]}</span>`,
-    `<span class="chip">${TASK_LBL[rec.task_instruction]}</span>`,
-    `<span class="chip">${OUT_CHAR[rec.decoded_output]} ${OUT_LBL[rec.decoded_output]}</span>`,
-    `<span class="chip">${LANE_LBL[rec.lane]}</span>`,
-    rec.speech_abilities.includes('intact') ? '<span class="chip">▲ can speak naturally</span>' : '',
-    rec.speech_abilities.includes('paralysis') ? '<span class="chip">△ vocal paralysis</span>' : '',
-  ].join('');
   const links = [
-    rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper DOI ↗</a>` : '',
-    rec.data_doi ? `<a href="https://doi.org/${encodeURIComponent(rec.data_doi)}" target="_blank" rel="noopener">Dataset DOI ↗</a>` : '',
+    rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper ↗</a>` : '',
+    rec.data_doi ? `<a href="https://doi.org/${encodeURIComponent(rec.data_doi)}" target="_blank" rel="noopener">Dataset ↗</a>` : '',
     rec.url ? `<a href="${rec.url}" target="_blank" rel="noopener">Announcement ↗</a>` : '',
   ].join('');
   return `
     <div class="sc-head"><span class="sc-dot" style="background:${COLORS[rec.opn]}"></span>
-      <span class="sc-title">${esc(rec.citation)}</span><span class="sc-shape">${ELEC_CHAR[rec.shape]}</span></div>
-    <div class="sc-date">${esc(rec.date)} · ${LANE_LBL[rec.lane]} lane</div>
+      <span class="sc-title">${esc(rec.citation)}</span>
+      <span class="sc-glyph">${ELEC_GLYPH[rec.shape]} ${ELEC_LBL[rec.electrode]}</span></div>
+    <div class="sc-date">${esc(rec.date)} · ${LANE_LBL[rec.lane]} lane · ${AVAIL_LBL[rec.opn]} · ${MODE_LBL[rec.decoding_mode]}</div>
     <div class="sc-desc">${esc(rec.descriptor)}</div>
     <div class="sc-grid">
-      <div class="sc-cell"><div class="k">VOCABULARY 词库大小</div><div class="v">${esc(m.vocab_size || 'n/r')}</div></div>
-      <div class="sc-cell"><div class="k">SPEED 速度</div><div class="v">${esc(m.speed || 'n/r')}</div></div>
-      <div class="sc-cell"><div class="k">ERROR RATE 错误率</div><div class="v">${esc(m.wer || 'n/r')}</div></div>
-      <div class="sc-cell span2"><div class="k">SENTENCES 数据量（句子）</div><div class="v">${esc(m.sentences || 'n/r')}</div></div>
+      <div class="sc-cell"><div class="k">Vocabulary</div><div class="v">${esc(m.vocab_size || 'n/r')}</div></div>
+      <div class="sc-cell"><div class="k">Speed</div><div class="v">${esc(m.speed || 'n/r')}</div></div>
+      <div class="sc-cell"><div class="k">Error rate</div><div class="v">${esc(m.wer || 'n/r')}</div></div>
+      <div class="sc-cell span2"><div class="k">Sentences / data volume</div><div class="v">${esc(m.sentences || 'n/r')}</div></div>
     </div>
-    <div class="sc-chips">${chips}</div>
-    <div class="sc-parts">n = ${rec.n_count} · ${rec.participants.map(esc).join(' / ')}</div>
+    <div class="sc-parts"><span class="plabel">PARTICIPANTS (n=${rec.n_count})</span>&ensp;${rec.participants.map(esc).join(' · ')}</div>
+    <div class="sc-parts"><span class="plabel">TASK</span>&ensp;${TASK_LBL[rec.task_instruction]}&ensp;·&ensp;<span class="plabel">OUTPUT</span>&ensp;${OUT_LBL[rec.decoded_output]}${rec.speech_abilities.includes('intact') ? '&ensp;·&ensp;▲ can speak naturally' : ''}${rec.speech_abilities.includes('paralysis') ? '&ensp;·&ensp;△ vocal paralysis' : ''}</div>
     <div class="sc-links">${links}</div>`;
 }
 
@@ -523,16 +568,14 @@ function rebuildCards(visNodes){
   for (const n of visNodes.slice().sort((a, b) => a.rec.xm - b.rec.xm)){
     const d = document.createElement('div');
     d.className = 'study-card'; d.dataset.id = n.rec.id;
+    d.style.setProperty('--spine', COLORS[n.rec.opn]);
     d.innerHTML = cardHtml(n.rec);
     d.addEventListener('click', () => selectStudy(n.rec.id, false));
-    d.addEventListener('click', () => {
-      const sp = document.getElementById('spotlight');
-      sp.scrollIntoView({behavior:'smooth', block:'nearest'});
-    });
     cardsBox.appendChild(d);
   }
+  document.getElementById('cards-empty').style.display = visNodes.length ? 'none' : '';
   document.getElementById('cards-count').textContent =
-    visNodes.length + ' / ' + N;
+    visNodes.length + ' of ' + N + ' studies';
 }
 
 /* ---------- spotlight ---------- */
@@ -555,19 +598,24 @@ function updateSpotlightNav(){
   const list = navList().map(n => n.rec.id);
   const i = list.indexOf(selectedId);
   document.getElementById('sp-pos').textContent =
-    (i >= 0 ? (i + 1) + ' / ' + list.length + ' shown' : 'filtered out') +
-    ' · ' + (STUDIES.findIndex(r => r.id === selectedId) + 1) + ' / ' + N + ' total';
+    (i >= 0 ? (i + 1) + ' of ' + list.length + ' shown' : 'filtered out') +
+    ' · ' + (STUDIES.findIndex(r => r.id === selectedId) + 1) + ' of ' + N + ' total';
   document.getElementById('sp-prev').disabled = i <= 0;
   document.getElementById('sp-next').disabled = i < 0 || i >= list.length - 1;
 }
+function stepSpotlight(delta){
+  const list = navList().map(n => n.rec.id), i = list.indexOf(selectedId);
+  if (i >= 0 && i + delta >= 0 && i + delta < list.length)
+    selectStudy(list[i + delta]);
+}
 document.getElementById('sp-close').addEventListener('click', () => selectStudy(null));
-document.getElementById('sp-prev').addEventListener('click', () => {
-  const list = navList().map(n => n.rec.id), i = list.indexOf(selectedId);
-  if (i > 0) selectStudy(list[i - 1]);
-});
-document.getElementById('sp-next').addEventListener('click', () => {
-  const list = navList().map(n => n.rec.id), i = list.indexOf(selectedId);
-  if (i >= 0 && i < list.length - 1) selectStudy(list[i + 1]);
+document.getElementById('sp-prev').addEventListener('click', () => stepSpotlight(-1));
+document.getElementById('sp-next').addEventListener('click', () => stepSpotlight(1));
+document.addEventListener('keydown', e => {
+  if (!selectedId) return;
+  if (e.key === 'Escape') selectStudy(null);
+  else if (e.key === 'ArrowLeft') stepSpotlight(-1);
+  else if (e.key === 'ArrowRight') stepSpotlight(1);
 });
 
 /* ---------- totals ---------- */
@@ -576,7 +624,7 @@ function updateTotals(visNodes){
   for (const n of visNodes) for (const pid of n.rec.unique_pids){
     all.add(pid); perLane[n.rec.lane].add(pid);
   }
-  document.getElementById('vis-count').textContent = visNodes.length + ' / ' + N + ' studies';
+  document.getElementById('vis-count').textContent = visNodes.length + ' / ' + N;
   document.getElementById('vis-people').textContent = all.size + ' / ' + META.total_unique;
   document.getElementById('total-note').textContent = visNodes.length
     ? all.size + ' unique participants in total; ' + META.home_summary
@@ -620,55 +668,61 @@ function apply(){
 }
 
 /* ---------- control panel ---------- */
-const GROUP_TITLES = {
-  data_availability: 'Data availability 数据状态', decoded_output: 'Decoded output 解码输出',
-  decoding_mode: 'Decoding mode 解码模式', electrode: 'Electrode 电极',
-  speech_ability: 'Speech ability 言语能力', task_instruction: 'Task instruction 任务范式',
-  lane: 'Modality lane 模态',
-};
-const GROUP_META = {
-  data_availability: {sw: v => COLORS[v] === '#7F7F7F' ? '#7F7F7F' : COLORS[v], lbl: AVAIL_LBL},
-  decoded_output: {mg: v => OUT_CHAR[v], lbl: OUT_LBL},
-  decoding_mode: {mg: () => '●', lbl: MODE_LBL},
-  electrode: {mg: v => ELEC_CHAR[v === 'ecog' ? 'o' : v === 'utah' ? 's' : v === 'thin_film' ? 'h' : 'v'], lbl: ELEC_LBL},
-  speech_ability: {mg: v => v === 'intact' ? '▲' : '△',
-                   lbl: {intact: 'can speak naturally 有自然言语', paralysis: 'vocal paralysis 言语瘫痪'}},
-  task_instruction: {mg: v => v === 'inner' ? '◆' : v === 'intended' ? '◇' : '◆/◇', lbl: TASK_LBL},
-  lane: {mg: () => '—', lbl: {speech:'Speech', typing:'Typing', handwriting:'Handwriting'}},
-};
+const GROUPS = [
+  {dim:'data_availability', title:'Data availability', opts:[
+    {v:'open', label:'open', color:COLORS.open},
+    {v:'partial', label:'on request', color:COLORS.partial},
+    {v:'closed', label:'closed', color:COLORS.closed},
+    {v:'unknown', label:'preprint', color:COLORS.unknown},
+    {v:'reanalysis', label:'reanalysis', color:COLORS.reanalysis}]},
+  {dim:'decoding_mode', title:'Decoding mode', opts:[
+    {v:'online', label:'online', glyph:'●'},
+    {v:'offline', label:'offline', glyph:'○'}]},
+  {dim:'decoded_output', title:'Decoded output', opts:[
+    {v:'voice', label:'brain-to-voice', glyph:'⬟'},
+    {v:'text', label:'brain-to-text', glyph:'⬠'}]},
+  {dim:'task_instruction', title:'Task instruction', opts:[
+    {v:'inner', label:'inner', glyph:'◆'},
+    {v:'intended', label:'overt / intended', glyph:'◇'}]},
+  {dim:'electrode', title:'Electrode', opts:[
+    {v:'ecog', label:'ECoG', glyph:'●'},
+    {v:'utah', label:'Utah', glyph:'■'},
+    {v:'thin_film', label:'thin-film', glyph:'⬢'},
+    {v:'microwire', label:'microwire', glyph:'▼'}]},
+  {dim:'speech_ability', title:'Speech ability', opts:[
+    {v:'intact', label:'▲ can speak', glyph:'▲'},
+    {v:'paralysis', label:'△ paralysis', glyph:'△'}]},
+  {dim:'lane', title:'Modality', opts:[
+    {v:'speech', label:'speech'},
+    {v:'typing', label:'typing'},
+    {v:'handwriting', label:'handwriting'}]},
+];
 const controls = document.getElementById('controls');
-for (const dim in DIMS){
-  const grp = document.createElement('div'); grp.className = 'fgroup';
-  const title = document.createElement('div'); title.className = 'fg-title';
-  title.innerHTML = GROUP_TITLES[dim] +
-    ` <button class="allbtn" data-dim="${dim}">all 全选</button>`;
-  grp.appendChild(title);
-  for (const val of DIMS[dim]){
-    const lab = document.createElement('label');
-    const cb = document.createElement('input');
-    cb.type = 'checkbox'; cb.checked = true;
-    cb.dataset.dim = dim; cb.dataset.val = val;
-    lab.appendChild(cb);
-    const meta = GROUP_META[dim];
-    if (meta.sw){ const sw = document.createElement('span'); sw.className = 'sw';
-      sw.style.background = meta.sw(val); lab.appendChild(sw); }
-    else if (meta.mg){ const mg = document.createElement('span'); mg.className = 'mg';
-      mg.textContent = meta.mg(val); lab.appendChild(mg); }
-    const sp = document.createElement('span'); sp.textContent = meta.lbl[val] || val;
-    lab.appendChild(sp);
-    cb.addEventListener('change', () => toggleVal(dim, val, cb.checked));
-    grp.appendChild(lab);
+for (const grp of GROUPS){
+  const g = document.createElement('div'); g.className = 'fgroup';
+  const t = document.createElement('div'); t.className = 'fg-title'; t.textContent = grp.title;
+  g.appendChild(t);
+  const chips = document.createElement('div'); chips.className = 'chips';
+  for (const o of grp.opts){
+    const chip = document.createElement('button');
+    chip.type = 'button'; chip.className = 'chip on';
+    chip.dataset.dim = grp.dim; chip.dataset.val = o.v;
+    if (o.color){ const sw = document.createElement('span'); sw.className = 'sw';
+      sw.style.background = o.color; chip.appendChild(sw); }
+    if (o.glyph){ const mg = document.createElement('span'); mg.className = 'mg';
+      mg.textContent = o.glyph; chip.appendChild(mg); }
+    chip.appendChild(document.createTextNode(o.label));
+    chip.addEventListener('click', () =>
+      toggleVal(grp.dim, o.v, !sel[grp.dim].has(o.v)));
+    chips.appendChild(chip);
   }
-  controls.appendChild(grp);
+  g.appendChild(chips);
+  controls.appendChild(g);
 }
 
 function syncUI(){
-  document.querySelectorAll('#controls input[type=checkbox]').forEach(cb => {
-    cb.checked = sel[cb.dataset.dim].has(cb.dataset.val);
-  });
-  document.querySelectorAll('.legend').forEach(g => {
-    const dim = g.dataset.dim;
-    g.classList.toggle('off', !DIMS[dim].some(v => sel[dim].has(v)));
+  document.querySelectorAll('.chip[data-dim]').forEach(chip => {
+    chip.classList.toggle('on', sel[chip.dataset.dim].has(chip.dataset.val));
   });
   document.querySelectorAll('.lg-row').forEach(row => {
     row.classList.toggle('off', !sel[row.dataset.dim].has(row.dataset.val));
@@ -678,20 +732,25 @@ function toggleVal(dim, val, on){
   if (on) sel[dim].add(val); else sel[dim].delete(val);
   syncUI(); apply();
 }
-document.querySelectorAll('.allbtn').forEach(b => b.addEventListener('click', () => {
-  const dim = b.dataset.dim; sel[dim] = new Set(DIMS[dim]); syncUI(); apply();
-}));
 document.querySelectorAll('.lg-row').forEach(row =>
   row.addEventListener('click', ev => {
     ev.stopPropagation();
     const dim = row.dataset.dim, val = row.dataset.val;
     toggleVal(dim, val, !sel[dim].has(val));
   }));
+document.querySelectorAll('#modebar button').forEach(b =>
+  b.addEventListener('click', () => {
+    mode = b.dataset.mode;
+    document.querySelectorAll('#modebar button').forEach(x =>
+      x.classList.toggle('on', x === b));
+    apply();
+  }));
 document.getElementById('reset').addEventListener('click', () => {
   for (const d in DIMS) sel[d] = new Set(DIMS[d]);
   searchStr = ''; document.getElementById('search').value = '';
   mode = 'reflow';
-  const r = document.querySelector('input[name=mode][value=reflow]'); if (r) r.checked = true;
+  document.querySelectorAll('#modebar button').forEach(x =>
+    x.classList.toggle('on', x.dataset.mode === 'reflow'));
   selectStudy(null); syncUI(); apply();
 });
 let debounce = null;
@@ -699,12 +758,9 @@ document.getElementById('search').addEventListener('input', e => {
   clearTimeout(debounce);
   debounce = setTimeout(() => { searchStr = e.target.value.trim().toLowerCase(); apply(); }, 120);
 });
-document.querySelectorAll('input[name=mode]').forEach(r =>
-  r.addEventListener('change', () => { mode = r.value; apply(); }));
 
 syncUI();
 apply();
-selectStudy(STUDIES.length ? STUDIES[0].id : null, false);
 </script>
 </body>
 </html>

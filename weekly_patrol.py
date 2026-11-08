@@ -19,6 +19,7 @@ import argparse
 import datetime as dt
 import json
 import os
+from typing import Any, Optional
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
@@ -39,20 +40,65 @@ ARXIV_QUERY = (
 )
 
 
-def _http_get_json(url, timeout=15):
+def _http_get_json(url: str, timeout: int = 15) -> dict[str, Any]:
+    """Fetch a URL over HTTP(S) and decode the JSON response payload.
+
+    Parameters
+    ----------
+    url : str
+        Fully qualified HTTP or HTTPS endpoint URL.
+    timeout : int, default=15
+        Socket timeout in seconds for the HTTP request.
+
+    Returns
+    -------
+    dict of str to Any
+        Parsed JSON object returned by the remote endpoint.
+    """
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return json.loads(resp.read().decode("utf-8", errors="replace"))
 
 
-def _http_get_text(url, timeout=15):
+def _http_get_text(url: str, timeout: int = 15) -> str:
+    """Fetch a URL over HTTP(S) and decode the response body as UTF-8 text.
+
+    Parameters
+    ----------
+    url : str
+        Fully qualified HTTP or HTTPS endpoint URL.
+    timeout : int, default=15
+        Socket timeout in seconds for the HTTP request.
+
+    Returns
+    -------
+    str
+        Decoded UTF-8 text payload from the remote endpoint.
+    """
     req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         return resp.read().decode("utf-8", errors="replace")
 
 
-def check_preprint_graduations(studies):
-    """Check if any preprint in `studies.yaml` now has a linked journal DOI in Crossref."""
+def check_preprint_graduations(studies: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Check whether any tracked preprint in ``studies.yaml`` has graduated to a journal.
+
+    Queries the Crossref Works API for each preprint entry (excluding arXiv DOIs)
+    and inspects the ``relation.is-preprint-of`` field for linked peer-reviewed
+    journal DOIs.
+
+    Parameters
+    ----------
+    studies : list of dict of str to Any
+        Study records loaded from the ``studies`` list in ``studies.yaml``.
+
+    Returns
+    -------
+    list of dict of str to Any
+        Graduation status dictionaries containing ``id``, ``citation``,
+        ``preprint_doi``, and either ``journal_dois`` (when linked) or ``error``
+        (when the lookup failed).
+    """
     graduations = []
     for st in studies:
         doi = str(st.get("doi", "")).strip()
@@ -85,8 +131,26 @@ def check_preprint_graduations(studies):
     return graduations
 
 
-def query_europe_pmc(days=7, max_results=25):
-    """Search Europe PMC (PubMed + bioRxiv + medRxiv) for recent papers."""
+def query_europe_pmc(
+    days: int = 7, max_results: int = 25
+) -> tuple[list[dict[str, str]], Optional[str]]:
+    """Search Europe PMC (PubMed, bioRxiv, and medRxiv) for recent papers.
+
+    Parameters
+    ----------
+    days : int, default=7
+        Lookback window in calendar days from today's date.
+    max_results : int, default=25
+        Maximum number of records to request from Europe PMC.
+
+    Returns
+    -------
+    results : list of dict of str to str
+        Normalized paper metadata dictionaries with keys ``source``, ``title``,
+        ``authorString``, ``journalTitle``, ``pubDate``, and ``doi``.
+    error : str or None
+        Error message string if the HTTP/JSON request failed, otherwise ``None``.
+    """
     today = dt.date.today()
     since = today - dt.timedelta(days=days)
     date_filter = f"FIRST_PDATE:[{since.isoformat()} TO {today.isoformat()}]"
@@ -116,8 +180,26 @@ def query_europe_pmc(days=7, max_results=25):
     return results, None
 
 
-def query_arxiv(days=7, max_results=20):
-    """Search arXiv API for recent brain-to-text / speech neuroprosthesis preprints."""
+def query_arxiv(
+    days: int = 7, max_results: int = 20
+) -> tuple[list[dict[str, str]], Optional[str]]:
+    """Search the arXiv API for recent communication neuroprosthesis preprints.
+
+    Parameters
+    ----------
+    days : int, default=7
+        Lookback window in calendar days from today's date.
+    max_results : int, default=20
+        Maximum number of Atom feed entries to retrieve from arXiv.
+
+    Returns
+    -------
+    results : list of dict of str to str
+        Normalized preprint metadata dictionaries with keys ``source``, ``title``,
+        ``authorString``, ``journalTitle``, ``pubDate``, and ``doi``.
+    error : str or None
+        Error message string if the HTTP/XML request failed, otherwise ``None``.
+    """
     params = urllib.parse.urlencode({
         "search_query": ARXIV_QUERY,
         "sortBy": "submittedDate",
@@ -157,7 +239,34 @@ def query_arxiv(days=7, max_results=20):
     return results, None
 
 
-def format_report(studies_doc, days, graduations, candidates, errors):
+def format_report(
+    studies_doc: dict[str, Any],
+    days: int,
+    graduations: list[dict[str, Any]],
+    candidates: list[dict[str, str]],
+    errors: list[tuple[str, str]],
+) -> str:
+    """Format the weekly literature patrol and graduation findings as Markdown.
+
+    Parameters
+    ----------
+    studies_doc : dict of str to Any
+        Full parsed ``studies.yaml`` document containing ``studies`` and ``metadata``.
+    days : int
+        Lookback window in calendar days covered by the patrol run.
+    graduations : list of dict of str to Any
+        Preprint-to-journal graduation records returned by
+        :func:`check_preprint_graduations`.
+    candidates : list of dict of str to str
+        Deduplicated candidate paper records from Europe PMC and arXiv.
+    errors : list of tuple of (str, str)
+        Pairs of ``(source_name, error_message)`` for any non-fatal query warnings.
+
+    Returns
+    -------
+    str
+        Complete Markdown report text with ready-to-paste ``studies.yaml`` templates.
+    """
     today = dt.date.today().isoformat()
     studies = studies_doc.get("studies", [])
     lines = [
@@ -231,7 +340,15 @@ def format_report(studies_doc, days, graduations, candidates, errors):
     return "\n".join(lines) + "\n"
 
 
-def main():
+def main() -> None:
+    """Parse CLI arguments, run the weekly literature patrol, and emit the report.
+
+    Returns
+    -------
+    None
+        Writes the Markdown report to ``--output`` if specified, or prints it to
+        standard output.
+    """
     here = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--yaml", default=os.path.join(here, "studies.yaml"),
