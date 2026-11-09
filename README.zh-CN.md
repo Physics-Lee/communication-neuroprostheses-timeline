@@ -7,7 +7,7 @@
 ![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
 
 - **矢量 PDF（内嵌 TrueType Type-42 字体）**：[`communication_neuroprostheses_timeline.pdf`](communication_neuroprostheses_timeline.pdf)
-- **交互式 HTML 版（单文件、零依赖、界面为全英文）**：[`communication_neuroprostheses_timeline.html`](communication_neuroprostheses_timeline.html) — 点击图内图例或筛选 chips 即可按任意维度切换研究显示（数据可用性含预印本/再分析、B2V 语音 vs. B2T 文本、实时 vs. 离线、电极类型、言语能力、任务范式、模态轨道，另支持自由文本搜索）。其中 **解码输出与任务范式各只提供两个选项**；记录为 `both`（两者兼具）的研究在任一选项开启时保持可见。提供三种排版模式：**Reflow 紧凑重排**（卡片围绕时间锚点重新装箱）、**Hide 原位隐藏**、**Dim 半透明淡出**；队列计数（`n = … unique participants`）实时联动。点击时间轴上任意小卡片即可展开该研究的独立详情卡，完整汇报 6 个图例维度、受试者信息与四项结构化指标（`vocab_size` 词库大小、`sentences` 数据量、`wer` 词错率、`speed` 速度），并附论文 / 数据集 DOI 直达链接。
+- **交互式 HTML 版（单文件、零依赖、界面为全英文）**：[`communication_neuroprostheses_timeline.html`](communication_neuroprostheses_timeline.html) — **在线地址 <https://physics-lee.github.io/communication-neuroprostheses-timeline/>**（GitHub Pages）。点击图内图例或筛选 chips 即可按任意维度切换研究显示（数据可用性含预印本/再分析、B2V 语音 vs. B2T 文本、实时 vs. 离线、电极类型、言语能力、任务范式、模态轨道，另支持自由文本搜索）。其中 **解码输出与任务范式各只提供两个选项**；记录为 `both`（两者兼具）的研究在任一选项开启时保持可见。提供三种排版模式（默认 **Dim 淡出**、**Reflow 紧凑重排**、**Hide 原位隐藏**）；队列计数（`n = … unique participants`）实时联动。点击时间轴上任意小卡片即可展开该研究的独立详情卡，完整汇报 6 个图例维度、受试者信息与四项结构化指标（`vocab_size` 词库大小、`sentences` 数据量、`wer` 词错率、`speed` 速度），并附论文 / 数据集 DOI 直达链接。
 - **结构化数据集（YAML 主数据源 + 自动同步 JSON）**：[`studies.yaml`](studies.yaml) · [`studies.json`](studies.json)
 - **独立排版与校验引擎**：[`render_timeline.py`](render_timeline.py)
 - **每周文献与预印本自动巡检脚本**：[`weekly_patrol.py`](weekly_patrol.py)
