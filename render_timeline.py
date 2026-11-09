@@ -983,12 +983,12 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
             ("solid-tri-v", GRAY, "microwire array", "microwire"),
         ]),
         ("speech_ability", "speech ability", [
-            ("solid-tri-up", "#1a1a1a", "can speak naturally", "intact"),
-            ("hollow-tri-up", GRAY, "vocal paralysis", "paralysis"),
+            ("solid-tri-up", "#1a1a1a", "participants who can speak naturally", "intact"),
+            ("hollow-tri-up", GRAY, "participants who have vocal paralysis", "paralysis"),
         ]),
         ("task_instruction", "task instruction", [
             ("solid-diamond", "#1a1a1a", "inner speech", "inner"),
-            ("hollow-diamond", "#1a1a1a", "overt / intended", "intended"),
+            ("hollow-diamond", "#1a1a1a", "overt / mouthing / intended", "intended"),
         ]),
         ("decoded_output", "decoded output", [
             ("solid-pentagon", "#1a1a1a", "brain-to-voice", "voice"),
@@ -1603,8 +1603,8 @@ const GROUPS = [
     {v:'thin_film', label:'thin-film', glyph:'⬢'},
     {v:'microwire', label:'microwire', glyph:'▼'}]},
   {dim:'speech_ability', title:'Speech ability', opts:[
-    {v:'intact', label:'▲ can speak', glyph:'▲'},
-    {v:'paralysis', label:'△ paralysis', glyph:'△'}]},
+    {v:'intact', label:'participants who can speak naturally', glyph:'▲'},
+    {v:'paralysis', label:'participants who have vocal paralysis', glyph:'△'}]},
   {dim:'lane', title:'Modality', opts:[
     {v:'speech', label:'speech'},
     {v:'typing', label:'typing'},
