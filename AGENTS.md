@@ -66,6 +66,7 @@ Every card in `studies.yaml` belongs to one of three entry types and must follow
   - Optional `n_override: <int>` overrides the displayed `n=` count when a study's participant count differs from `len(participants)`.
 - `task_instruction`: `inner` (`◆`) | `intended` (`◇`) | `both` (`◆/◇`) — appended automatically to Line 1 (`citation`).
 - `decoded_output`: `voice` (`⬟`) | `text` (`⬠`) | `both` (`⬟/⬠`) — appended automatically after `descriptor` on Line 2.
+- Link fields (interactive HTML edition only): `doi:` (Paper ↗), `data_doi:` (Dataset ↗ via `https://doi.org/<data_doi>`), `data_url:` (Dataset ↗ direct URL — use **only** when the repository deposit has no registered DOI, e.g. the Angrick et al., 2024 OSF view-only link `https://osf.io/49rt7/`), `url:` (Announcement ↗). Before adding preprint DOIs, note **bioRxiv/medRxiv switched their DOI prefix from `10.1101` to `10.64898`** (e.g. `10.64898/2026.06.30.735633`); older deposits keep `10.1101`.
 
 ### 3. Four-Item `metrics` Block & Card Line 2 Formatting
 Every entry must define all four keys under `metrics:`:

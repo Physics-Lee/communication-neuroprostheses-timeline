@@ -272,6 +272,7 @@ def load_studies(
             "metrics": dict(m_obj) if isinstance(m_obj, dict) else {"raw": str(m_obj)},
             "doi": str(entry.get("doi", "")).strip(),
             "data_doi": str(entry.get("data_doi", "")).strip(),
+            "data_url": str(entry.get("data_url", "")).strip(),
             "url": str(entry.get("url", "")).strip(),
         })
 
@@ -1498,9 +1499,10 @@ function drawAll(active, geomOf){
 /* ---------- standalone study cards ---------- */
 function cardHtml(rec){
   const m = rec.metrics;
+  const dataHref = rec.data_url || (rec.data_doi ? 'https://doi.org/' + encodeURIComponent(rec.data_doi) : '');
   const links = [
     rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper ↗</a>` : '',
-    rec.data_doi ? `<a href="https://doi.org/${encodeURIComponent(rec.data_doi)}" target="_blank" rel="noopener">Dataset ↗</a>` : '',
+    dataHref ? `<a href="${esc(dataHref)}" target="_blank" rel="noopener">Dataset ↗</a>` : '',
     rec.url ? `<a href="${rec.url}" target="_blank" rel="noopener">Announcement ↗</a>` : '',
   ].join('');
   return `

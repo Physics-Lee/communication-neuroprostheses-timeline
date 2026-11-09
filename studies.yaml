@@ -146,7 +146,7 @@ studies:
       speed: "n/r"
     participants: ["CC01△"]
     doi: "10.1038/s41598-024-60277-2"
-    data_doi: "10.17605/OSF.IO/49RT7"
+    data_url: "https://osf.io/49rt7/"
 
   - id: fan2023
     citation: "Fan et al., 2023"
@@ -324,7 +324,7 @@ studies:
       wer: "CER 8.9% (WER n/r)"
       speed: "n/r"
     participants: ["Z1▲"]
-    doi: "10.1002/advs.202504761"
+    doi: "10.1002/advs.202505492"
 
   - id: kunz2025
     citation: "Kunz et al., 2025"
@@ -344,7 +344,7 @@ studies:
       speed: "n/r"
     participants: ["T12△", "T15△", "T16△"]
     doi: "10.1016/j.cell.2025.06.015"
-    data_doi: "10.5061/dryad.k6djh9wjc"
+    data_doi: "10.5061/dryad.gf1vhhn1j"
 
   - id: li2025
     citation: "Li et al., 2025"
@@ -401,7 +401,7 @@ studies:
       wer: "PER 23-40% (WER n/r)"
       speed: "n/r"
     participants: ["T12△", "T15△", "T16△"]
-    doi: "10.1101/2026.01.14.699561"
+    doi: "10.64898/2026.01.12.699110"
 
   - id: levin2026_handwriting
     citation: "Levin et al., 2026"
@@ -421,7 +421,7 @@ studies:
       wer: "CER 2% (WER n/r)"
       speed: "n/r"
     participants: ["T5▲", "T12△", "T18▲"]
-    doi: "10.1101/2026.01.14.699561"
+    doi: "10.64898/2026.01.12.699110"
 
   - id: yzhang2026_bit
     citation: "Y. Zhang et al., 2026"
@@ -460,7 +460,7 @@ studies:
       speed: "27.7 wpm"
     card_show_speed: false
     participants: ["T16△"]
-    doi: "10.1101/2026.02.19.26346583"
+    doi: "10.64898/2026.02.19.26346583"
 
   - id: boccato2026
     citation: "Boccato et al., 2026"
@@ -540,7 +540,7 @@ studies:
       speed: "65.4 wpm"
     card_show_speed: false
     participants: ["T12△"]
-    doi: "10.1101/2026.06.02.729705"
+    doi: "10.64898/2026.06.02.729705"
 
   - id: card2026
     citation: "Card et al., 2026"
@@ -579,7 +579,7 @@ studies:
       wer: "listener WER 5.24%"
       speed: "n/r"
     participants: ["T15△"]
-    doi: "10.1101/2026.06.30.735633"
+    doi: "10.64898/2026.06.30.735633"
 
   - id: fogg2026
     citation: "Fogg et al., 2026"
@@ -598,7 +598,7 @@ studies:
       wer: "WER 3.9-8.0%"
       speed: "n/r"
     participants: ["T12△", "T15△", "T16△", "T17△", "T21△", "T22△"]
-    doi: "10.1101/2026.07.23.739430"
+    doi: "10.64898/2026.07.23.739430"
 
   - id: zzhang2026_align
     citation: "Z. Zhang et al., 2026"
