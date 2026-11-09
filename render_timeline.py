@@ -1083,6 +1083,21 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   .chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
   .chip .sw { width: 9px; height: 9px; border-radius: 50%; flex: none; }
   .chip .mg { font-size: 11px; flex: none; opacity: .85; }
+  .date-range { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line);
+                background: #fafbfc; border-radius: 999px; padding: 2px 11px; font-size: 12px;
+                color: var(--muted); transition: all .12s ease; }
+  .date-range:hover { border-color: var(--faint); }
+  .date-range:focus-within { border-color: var(--accent); color: var(--ink); }
+  .date-range.filtered { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .date-range input[type="date"] { border: none; background: transparent; color: var(--ink);
+                                   font: inherit; font-size: 12px; padding: 0; outline: none;
+                                   cursor: pointer; }
+  .date-range.filtered input[type="date"] { color: var(--accent); font-weight: 600; }
+  .date-sep { color: var(--faint); user-select: none; }
+  #date-clear { border: none; background: none; color: var(--muted); font-size: 14px;
+                line-height: 1; padding: 0 2px; cursor: pointer; display: none; }
+  #date-clear:hover { color: var(--ink); }
+  .date-range.filtered #date-clear { display: inline-block; color: var(--accent); }
 
   /* ---------- view mode ---------- */
   .bottom-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
@@ -1097,9 +1112,28 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   .hint { font-size: 12px; color: var(--faint); margin-left: auto; }
 
   /* ---------- figure ---------- */
-  #figbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+  #figbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
             padding: 10px 10px 4px; }
+  #figbox:fullscreen, #figbox:-webkit-full-screen, #figbox.is-fullscreen {
+    background: var(--card); border: none; border-radius: 0; padding: 14px 18px;
+    display: flex; align-items: center; justify-content: center; overflow: auto;
+    width: 100vw; height: 100vh;
+  }
+  #figbox.is-fullscreen { position: fixed; inset: 0; z-index: 9999; }
   #tl-svg { width: 100%; height: auto; display: block; border-radius: 8px; }
+  #figbox:fullscreen #tl-svg, #figbox:-webkit-full-screen #tl-svg, #figbox.is-fullscreen #tl-svg {
+    width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+  }
+  #fs-btn { position: absolute; top: 14px; right: 16px; z-index: 10;
+            display: inline-flex; align-items: center; gap: 6px;
+            border: 1px solid var(--line); background: rgba(255, 255, 255, .92);
+            backdrop-filter: blur(4px); border-radius: 999px; padding: 5px 12px;
+            font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer;
+            box-shadow: 0 1px 4px rgba(15, 36, 64, .06); transition: all .12s ease; }
+  #fs-btn:hover { color: var(--ink); border-color: var(--faint);
+                  box-shadow: 0 2px 8px rgba(15, 36, 64, .10); }
+  #fs-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.8;
+                fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
   #tl-svg text { font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
   .card { cursor: pointer; }
   .card text { paint-order: stroke; stroke: rgba(255,255,255,.94); stroke-width: 3px;
@@ -1197,6 +1231,10 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   </div>
 
   <div id="figbox">
+    <button id="fs-btn" type="button" title="Toggle full screen (F)" aria-label="Toggle full screen">
+      <svg id="fs-ico" viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>
+      <span id="fs-lbl">Full screen</span>
+    </button>
     <svg id="tl-svg" viewBox="0 0 __VW__ __VH__" xmlns="http://www.w3.org/2000/svg">__CHROME__</svg>
   </div>
 
@@ -1277,7 +1315,10 @@ const DIMS = {
   lane: ['speech','typing','handwriting'],
 };
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
-let searchStr = '', mode = 'dim', selectedId = null;
+const ALL_DATES = STUDIES.map(r => r.date).sort();
+const MIN_DATE = ALL_DATES[0] || '2021-01-01';
+const MAX_DATE = ALL_DATES[ALL_DATES.length - 1] || '2026-12-31';
+let searchStr = '', dateFrom = MIN_DATE, dateTo = MAX_DATE, mode = 'dim', selectedId = null;
 
 function matches(rec){
   if (!sel.data_availability.has(rec.opn)) return false;
@@ -1290,6 +1331,10 @@ function matches(rec){
   if (rec.task_instruction === 'both' ? tsel.size === 0 : !tsel.has(rec.task_instruction)) return false;
   if (rec.speech_abilities.length &&
       !rec.speech_abilities.some(a => sel.speech_ability.has(a))) return false;
+  const lo = dateFrom && dateTo && dateFrom > dateTo ? dateTo : dateFrom;
+  const hi = dateFrom && dateTo && dateFrom > dateTo ? dateFrom : dateTo;
+  if (lo && rec.date < lo) return false;
+  if (hi && rec.date > hi) return false;
   if (searchStr){
     const hay = (rec.citation + ' ' + rec.id + ' ' + rec.participants.join(' ') + ' ' +
                  rec.descriptor + ' ' + (rec.metrics.sentences || '')).toLowerCase();
@@ -1505,7 +1550,10 @@ function selectStudy(id, scrollPage){
   document.getElementById('sp-body').innerHTML = cardHtml(rec);
   sp.style.display = '';
   updateSpotlightNav();
-  if (scrollPage !== false) sp.scrollIntoView({behavior:'smooth', block:'nearest'});
+  if (scrollPage !== false){
+    if (typeof isFs === 'function' && isFs()) exitFs();
+    sp.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
 }
 function updateSpotlightNav(){
   const list = navList().map(n => n.rec.id);
@@ -1525,6 +1573,14 @@ document.getElementById('sp-close').addEventListener('click', () => selectStudy(
 document.getElementById('sp-prev').addEventListener('click', () => stepSpotlight(-1));
 document.getElementById('sp-next').addEventListener('click', () => stepSpotlight(1));
 document.addEventListener('keydown', e => {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+  if ((e.key === 'f' || e.key === 'F') && !e.ctrlKey && !e.metaKey && !e.altKey){
+    e.preventDefault(); toggleFs(); return;
+  }
+  if (e.key === 'Escape' && figbox.classList.contains('is-fullscreen')){
+    exitFs(); return;
+  }
   if (!selectedId) return;
   if (e.key === 'Escape') selectStudy(null);
   else if (e.key === 'ArrowLeft') stepSpotlight(-1);
@@ -1633,6 +1689,35 @@ for (const grp of GROUPS){
   controls.appendChild(g);
 }
 
+const dateGrp = document.createElement('div'); dateGrp.className = 'fgroup';
+const dateTitle = document.createElement('div'); dateTitle.className = 'fg-title'; dateTitle.textContent = 'Time range';
+dateGrp.appendChild(dateTitle);
+const dateWrap = document.createElement('div'); dateWrap.className = 'date-range';
+dateWrap.innerHTML =
+  `<input id="date-from" type="date" aria-label="Start date" title="Start date" min="2021-01-01" max="2027-12-31" value="${MIN_DATE}">` +
+  `<span class="date-sep">–</span>` +
+  `<input id="date-to" type="date" aria-label="End date" title="End date" min="2021-01-01" max="2027-12-31" value="${MAX_DATE}">` +
+  `<button id="date-clear" type="button" title="Reset time range" aria-label="Reset time range">×</button>`;
+dateGrp.appendChild(dateWrap);
+controls.appendChild(dateGrp);
+const dateFromEl = document.getElementById('date-from');
+const dateToEl = document.getElementById('date-to');
+const dateClearEl = document.getElementById('date-clear');
+function onDateChange(){
+  dateFrom = dateFromEl.value || '';
+  dateTo = dateToEl.value || '';
+  syncUI(); apply();
+}
+dateFromEl.addEventListener('input', onDateChange);
+dateFromEl.addEventListener('change', onDateChange);
+dateToEl.addEventListener('input', onDateChange);
+dateToEl.addEventListener('change', onDateChange);
+dateClearEl.addEventListener('click', () => {
+  dateFrom = MIN_DATE; dateTo = MAX_DATE;
+  dateFromEl.value = MIN_DATE; dateToEl.value = MAX_DATE;
+  syncUI(); apply();
+});
+
 function syncUI(){
   document.querySelectorAll('.chip[data-dim]').forEach(chip => {
     chip.classList.toggle('on', sel[chip.dataset.dim].has(chip.dataset.val));
@@ -1640,6 +1725,8 @@ function syncUI(){
   document.querySelectorAll('.lg-row').forEach(row => {
     row.classList.toggle('off', !sel[row.dataset.dim].has(row.dataset.val));
   });
+  const isDateFiltered = Boolean((dateFrom && dateFrom > MIN_DATE) || (dateTo && dateTo < MAX_DATE));
+  dateWrap.classList.toggle('filtered', isDateFiltered);
 }
 function toggleVal(dim, val, on){
   if (on) sel[dim].add(val); else sel[dim].delete(val);
@@ -1661,11 +1748,58 @@ document.querySelectorAll('#modebar button').forEach(b =>
 document.getElementById('reset').addEventListener('click', () => {
   for (const d in DIMS) sel[d] = new Set(DIMS[d]);
   searchStr = ''; document.getElementById('search').value = '';
+  dateFrom = MIN_DATE; dateTo = MAX_DATE;
+  dateFromEl.value = MIN_DATE; dateToEl.value = MAX_DATE;
   mode = 'dim';
   document.querySelectorAll('#modebar button').forEach(x =>
     x.classList.toggle('on', x.dataset.mode === 'dim'));
   selectStudy(null); syncUI(); apply();
 });
+/* ---------- full screen ---------- */
+const figbox = document.getElementById('figbox');
+const fsBtn = document.getElementById('fs-btn');
+const fsLbl = document.getElementById('fs-lbl');
+const fsIco = document.getElementById('fs-ico');
+const FS_ENTER_PATH = 'M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4';
+const FS_EXIT_PATH  = 'M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4';
+function isFs(){
+  return Boolean(document.fullscreenElement === figbox ||
+                 document.webkitFullscreenElement === figbox ||
+                 figbox.classList.contains('is-fullscreen'));
+}
+function syncFsUI(){
+  const on = isFs();
+  fsLbl.textContent = on ? 'Exit full screen' : 'Full screen';
+  fsIco.innerHTML = `<path d="${on ? FS_EXIT_PATH : FS_ENTER_PATH}"/>`;
+  document.body.style.overflow = figbox.classList.contains('is-fullscreen') ? 'hidden' : '';
+}
+function exitFs(){
+  if (document.fullscreenElement === figbox && document.exitFullscreen)
+    document.exitFullscreen().catch(() => {});
+  else if (document.webkitFullscreenElement === figbox && document.webkitExitFullscreen)
+    document.webkitExitFullscreen();
+  figbox.classList.remove('is-fullscreen');
+  syncFsUI();
+}
+function toggleFs(){
+  if (isFs()){ exitFs(); return; }
+  const req = figbox.requestFullscreen || figbox.webkitRequestFullscreen;
+  if (req){
+    try {
+      const p = req.call(figbox);
+      if (p && typeof p.catch === 'function')
+        p.catch(() => { figbox.classList.add('is-fullscreen'); syncFsUI(); });
+    } catch (_) {
+      figbox.classList.add('is-fullscreen'); syncFsUI();
+    }
+  } else {
+    figbox.classList.add('is-fullscreen'); syncFsUI();
+  }
+}
+fsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleFs(); });
+document.addEventListener('fullscreenchange', syncFsUI);
+document.addEventListener('webkitfullscreenchange', syncFsUI);
+
 let debounce = null;
 document.getElementById('search').addEventListener('input', e => {
   clearTimeout(debounce);
