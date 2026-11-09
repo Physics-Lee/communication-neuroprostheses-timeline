@@ -850,8 +850,810 @@ def render_timeline(
         studies=study_records,
         geom=svg_geom,
         counts_summary=counts_summary,
+        verify_overlaps=verify_overlaps,
     )
     return len(items), counts_summary
+
+
+FIG2_UPPER_DATA: dict[str, list[dict[str, Any]]] = {
+    "panel_a_vocab_funnel": [
+        {"id": "angrick2024", "label": "Angrick et al., 2024 (CC01)", "vocab_num": 6, "vocab_display": "6", "study_key": "Angrick et al., 2024", "is_open_vocab": False, "openness_code": 2},
+        {"id": "wandelt2024", "label": "Wandelt et al., 2024 (P1/P2)", "vocab_num": 8, "vocab_display": "8", "study_key": "Wandelt et al., 2024", "is_open_vocab": False, "openness_code": 2},
+        {"id": "brosler2026", "label": "Brosler et al., 2026 (B1r/B3/B6)", "vocab_num": 10, "vocab_display": "5\u201310", "study_key": "Brosler et al., 2026", "is_open_vocab": False, "openness_code": 1},
+        {"id": "moses2021", "label": "Moses et al., 2021 (B1)", "vocab_num": 50, "vocab_display": "50", "study_key": "Moses et al., 2021", "is_open_vocab": False, "openness_code": 0},
+        {"id": "silva2024b", "label": "Silva et al., 2024b (B1)", "vocab_num": 178, "vocab_display": "178", "study_key": "Silva et al., 2024b", "is_open_vocab": False, "openness_code": 1},
+        {"id": "metzger2023", "label": "Metzger et al., 2023 (B3)", "vocab_num": 1024, "vocab_display": "1,024", "study_key": "Metzger et al., 2023", "is_open_vocab": False, "openness_code": 1},
+        {"id": "littlejohn2025", "label": "Littlejohn et al., 2025 (B3)", "vocab_num": 1024, "vocab_display": "1,024", "study_key": "Littlejohn et al., 2025", "is_open_vocab": False, "openness_code": 1},
+        {"id": "metzger2022", "label": "Metzger et al., 2022 (B1)", "vocab_num": 1152, "vocab_display": "1,152", "study_key": "Metzger et al., 2022", "is_open_vocab": False, "openness_code": 1},
+        {"id": "feghhi2026", "label": "Feghhi et al., 2026 (T12/T15)", "vocab_num": 100000, "vocab_display": "100k", "study_key": "Feghhi et al., 2026", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "willett2023", "label": "Willett et al., 2023 (T12)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Willett et al., 2023", "is_open_vocab": False, "openness_code": 2},
+        {"id": "card2024", "label": "Card et al., 2024 (T15)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Card et al., 2024", "is_open_vocab": False, "openness_code": 2},
+        {"id": "feng2024", "label": "Feng et al., 2024 (T12)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Feng et al., 2024", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T12/T15/T16)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Kunz et al., 2025", "is_open_vocab": False, "openness_code": 2},
+        {"id": "li2025", "label": "Li et al., 2025 (T12)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Li et al., 2025", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "feghhi2025", "label": "Feghhi et al., 2025 (T12)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Feghhi et al., 2025", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "levin2026_speech", "label": "Levin et al., 2026 (T12/T15/T16)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Levin et al., 2026", "is_open_vocab": False, "openness_code": "P"},
+        {"id": "yzhang2026_bit", "label": "Y. Zhang et al., 2026 (T12/T15)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Y. Zhang et al., 2026", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "nason2026", "label": "Nason-Tomaszewski\net al., 2026 (T16)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Nason-Tomaszewski et al., 2026", "is_open_vocab": False, "openness_code": "P"},
+        {"id": "boccato2026", "label": "Boccato et al., 2026\n(T12/T15/T16/T17)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Boccato et al., 2026", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "jude2026a", "label": "Jude et al., 2026a (T17/T18)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Jude et al., 2026a", "is_open_vocab": False, "openness_code": 2},
+        {"id": "jude2026b", "label": "Jude et al., 2026b (T17)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Jude et al., 2026b", "is_open_vocab": False, "openness_code": 2},
+        {"id": "yoon2026", "label": "Yoon et al., 2026 (T12)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Yoon et al., 2026", "is_open_vocab": False, "openness_code": "P"},
+        {"id": "card2026", "label": "Card et al., 2026 (T15)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Card et al., 2026", "is_open_vocab": False, "openness_code": 0},
+        {"id": "fogg2026", "label": "Fogg et al., 2026\n(T12/T15/T16/T17/T21/T22)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Fogg et al., 2026", "is_open_vocab": False, "openness_code": "P"},
+        {"id": "zzhang2026_align", "label": "Z. Zhang et al., 2026 (T12/T15)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Z. Zhang et al., 2026", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "pouratian2026", "label": "Pouratian et al., 2026 (V1/V2/V3)", "vocab_num": 125000, "vocab_display": "125k", "study_key": "Pouratian et al., 2026", "is_open_vocab": False, "openness_code": 0},
+        {"id": "fan2023", "label": "Fan et al., 2023 (T5)", "vocab_num": 130000, "vocab_display": "130k", "study_key": "Fan et al., 2023", "is_open_vocab": False, "openness_code": 2},
+        {"id": "karpowicz2024", "label": "Karpowicz et al., 2024 (T5)", "vocab_num": 130000, "vocab_display": "130k", "study_key": "Karpowicz et al., 2024", "is_open_vocab": False, "openness_code": "R"},
+        {"id": "willett2021", "label": "Willett et al., 2021 (T5)", "vocab_num": 300000, "vocab_display": "open", "study_key": "Willett et al., 2021", "is_open_vocab": True, "openness_code": 2},
+        {"id": "wairagkar2025", "label": "Wairagkar et al., 2025 (T15)", "vocab_num": 300000, "vocab_display": "open", "study_key": "Wairagkar et al., 2025", "is_open_vocab": True, "openness_code": 2},
+        {"id": "levin2026_handwriting", "label": "Levin et al., 2026 (T5/T12/T18)", "vocab_num": 300000, "vocab_display": "open", "study_key": "Levin et al., 2026", "is_open_vocab": True, "openness_code": "P"},
+        {"id": "wairagkar2026", "label": "Wairagkar et al., 2026 (T15)", "vocab_num": 300000, "vocab_display": "open", "study_key": "Wairagkar et al., 2026", "is_open_vocab": True, "openness_code": "P"},
+    ],
+    "panel_b_dataset_size": [
+        {"id": "willett2021", "label": "Willett et al., 2021 (T5)", "released_sentences": 1000, "sentences_display": "1,000", "study_key": "Willett et al., 2021", "span_note": "10 d/sess\n95 blks\nspan 253 d", "openness_code": 2},
+        {"id": "willett2023", "label": "Willett et al., 2023 (T12)", "released_sentences": 9680, "sentences_display": "9,680", "study_key": "Willett et al., 2023", "span_note": "24 d/sess\n275 blks\nspan 120 d", "openness_code": 2},
+        {"id": "fan2023", "label": "Fan et al., 2023 (T5)", "released_sentences": 1315, "sentences_display": "1,315", "study_key": "Fan et al., 2023", "span_note": "21 d/sess\n105 blks\nspan 287 d", "openness_code": 2},
+        {"id": "card2024", "label": "Card et al., 2024 (T15)", "released_sentences": 9498, "sentences_display": "9,498", "study_key": "Card et al., 2024", "span_note": "45 d/sess\n265 blks\nspan 612 d", "openness_code": 2},
+        {"id": "wairagkar2025", "label": "Wairagkar et al., 2025 (T15)", "released_sentences": 8489, "sentences_display": "8,489", "study_key": "Wairagkar et al., 2025", "span_note": "37 d/sess\nblks n/a\nspan 171 d", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T12)", "released_sentences": 500, "sentences_display": "500", "study_key": "Kunz et al., 2025", "span_note": "1 d/sess\n12 blks\nspan 1 d", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T15)", "released_sentences": 720, "sentences_display": "720", "study_key": "Kunz et al., 2025", "span_note": "3 d/sess\n18 blks\nspan 309 d", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T16)", "released_sentences": 450, "sentences_display": "450", "study_key": "Kunz et al., 2025", "span_note": "2 d/sess\n14 blks\nspan 234 d", "openness_code": 2},
+        {"id": "jude2026a", "label": "Jude et al., 2026a (T17)", "released_sentences": 668, "sentences_display": "668", "study_key": "Jude et al., 2026a", "span_note": "8 d/sess\n46 blks\nspan 89 d", "openness_code": 2},
+        {"id": "jude2026a", "label": "Jude et al., 2026a (T18)", "released_sentences": 1033, "sentences_display": "1,033", "study_key": "Jude et al., 2026a", "span_note": "9 d/sess\n98 blks\nspan 119 d", "openness_code": 2},
+        {"id": "jude2026b", "label": "Jude et al., 2026b (T17)", "released_sentences": 3674, "sentences_display": "3,674", "study_key": "Jude et al., 2026b", "span_note": "13 d/sess\n96 blks\nspan 141 d", "openness_code": 2},
+    ],
+    "panel_cd_online_wer_speed": [
+        {"id": "willett2021", "label": "Willett et al., 2021 (T5)", "wer_mean": 25.1, "wer_sd": 8.6, "speed_wpm_mean": 15.4, "speed_wpm_sd": 2.2, "study_key": "Willett et al., 2021", "vocab_tag": "open", "wer_caliber": "mean\u00b1SD\u2020\n5 of 10 d", "speed_caliber": "mean\u00b1SD\u2020\n5 of 10 d", "openness_code": 2},
+        {"id": "willett2023", "label": "Willett et al., 2023 (T12)", "wer_mean": 23.9, "wer_sd": 1.8, "speed_wpm_mean": 65.3, "speed_wpm_sd": 0.9, "study_key": "Willett et al., 2023", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2021\n5 of 24 d", "speed_caliber": "mean\u00b1SD\u2021\n5 of 24 d", "openness_code": 2},
+        {"id": "fan2023", "label": "Fan et al., 2023 (T5)", "wer_mean": 4.0, "wer_sd": 1.2, "speed_wpm_mean": 14.6, "speed_wpm_sd": 2.2, "study_key": "Fan et al., 2023", "vocab_tag": "130k", "wer_caliber": "mean\u00b1SD\u2020\n10 of 21 d", "speed_caliber": "mean\u00b1SD\n15 eval d\n(10 released)", "openness_code": 2},
+        {"id": "card2024", "label": "Card et al., 2024 (T15)", "wer_mean": 4.9, "wer_sd": 3.3, "speed_wpm_mean": 32.5, "speed_wpm_sd": 2.7, "study_key": "Card et al., 2024", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\n14 of 45 d", "speed_caliber": "mean\u00b1SD\n14 of 45 d", "openness_code": 2},
+        {"id": "wairagkar2025", "label": "Wairagkar et al., 2025 (T15)", "wer_mean": 43.8, "wer_sd": None, "speed_wpm_mean": None, "speed_wpm_sd": None, "study_key": "Wairagkar et al., 2025", "vocab_tag": "open", "wer_caliber": "listener median\n8 of 37 d", "speed_caliber": "n/r", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T12)", "wer_mean": 23.7, "wer_sd": 0.0, "speed_wpm_mean": None, "speed_wpm_sd": None, "study_key": "Kunz et al., 2025", "vocab_tag": "50-w", "wer_caliber": "mean\u00b1SD\u2020\n1 of 1 d", "speed_caliber": "n/r", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T15)", "wer_mean": 51.3, "wer_sd": 33.1, "speed_wpm_mean": None, "speed_wpm_sd": None, "study_key": "Kunz et al., 2025", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2020\n2 of 3 d", "speed_caliber": "n/r", "openness_code": 2},
+        {"id": "kunz2025", "label": "Kunz et al., 2025 (T16)", "wer_mean": 46.6, "wer_sd": 0.0, "speed_wpm_mean": None, "speed_wpm_sd": None, "study_key": "Kunz et al., 2025", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2020\n1 of 2 d", "speed_caliber": "n/r", "openness_code": 2},
+        {"id": "jude2026a", "label": "Jude et al., 2026a (T17)", "wer_mean": 12.5, "wer_sd": 2.5, "speed_wpm_mean": 6.8, "speed_wpm_sd": 1.8, "study_key": "Jude et al., 2026a", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2020\n6 of 8 d", "speed_caliber": "mean\u00b1SD\u2020\n6 of 8 d", "openness_code": 2},
+        {"id": "jude2026a", "label": "Jude et al., 2026a (T18)", "wer_mean": 3.4, "wer_sd": 0.8, "speed_wpm_mean": 14.0, "speed_wpm_sd": 4.5, "study_key": "Jude et al., 2026a", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2020\n7 of 9 d", "speed_caliber": "mean\u00b1SD\u2020\n7 of 9 d", "openness_code": 2},
+        {"id": "jude2026b", "label": "Jude et al., 2026b (T17)", "wer_mean": 66.5, "wer_sd": 18.1, "speed_wpm_mean": 34.1, "speed_wpm_sd": 7.7, "study_key": "Jude et al., 2026b", "vocab_tag": "125k", "wer_caliber": "mean\u00b1SD\u2020\n7 of 13 d", "speed_caliber": "mean\u00b1SD\u2020\n7 of 13 d", "openness_code": 2},
+    ],
+}
+
+
+def _build_fig2_upper_svg(
+    studies: list[dict[str, Any]], verify_overlaps: bool = True
+) -> tuple[str, int, int]:
+    """Render Figure 2's upper half (Panels a-d + funnel brace) as interactive SVG.
+
+    Constructs the exact Matplotlib layout for Panels (a)-(d), runs the pairwise
+    text bounding-box overlap check when ``verify_overlaps`` is True, and emits
+    semantic, clickable SVG markup linked to each study's timeline ``id``.
+
+    Parameters
+    ----------
+    studies : list of dict of str to Any
+        Loaded study records used to validate every bar's ``id``.
+    verify_overlaps : bool, default=True
+        Whether to run the bounding-box collision check on the Matplotlib figure.
+
+    Returns
+    -------
+    svg_inner : str
+        Inner SVG markup for ``<svg id="f2-svg">``.
+    vw : int
+        SVG viewBox width.
+    vh : int
+        SVG viewBox height.
+    """
+    import html as html_lib
+    import matplotlib.patches as mpatches
+    from matplotlib.colors import to_rgb
+    from matplotlib.path import Path as MplPath
+    from matplotlib.text import Text
+
+    valid_ids = {rec["id"] for rec in studies}
+    rows_a = FIG2_UPPER_DATA["panel_a_vocab_funnel"]
+    rows_b = FIG2_UPPER_DATA["panel_b_dataset_size"]
+    rows_cd = FIG2_UPPER_DATA["panel_cd_online_wer_speed"]
+    for grp in (rows_a, rows_b, rows_cd):
+        for r in grp:
+            assert r["id"] in valid_ids, f"Unknown study id {r['id']!r} in FIG2_UPPER_DATA"
+
+    open_how = {
+        "Willett et al., 2021": "brain-to-text\nwithout\nlanguage model",
+        "Wairagkar et al., 2025": "brain-to-voice",
+        "Levin et al., 2026": "brain-to-text\nwithout\nlanguage model",
+        "Wairagkar et al., 2026": "brain-to-voice",
+    }
+
+    fig_h = 14.05
+    fig = plt.figure(figsize=(22.4, fig_h), dpi=200)
+    outer = fig.add_gridspec(3, 1, height_ratios=(1.02, 0.08, 0.96), hspace=0.830447)
+    fig.subplots_adjust(left=0.045, right=0.985, top=1.0 - 0.92 / fig_h, bottom=2.95 / fig_h)
+
+    ax1 = fig.add_subplot(outer[0])
+    for x, r in enumerate(rows_a):
+        v = r["vocab_num"]
+        end = r["vocab_display"]
+        is_open = r["is_open_vocab"]
+        state_c = OPEN_C[r["openness_code"]]
+        if is_open:
+            ax1.bar(x, v, width=0.76, color=(*to_rgb(state_c), 0.18),
+                    edgecolor=state_c, linewidth=0.8, linestyle=(0, (3, 2)))
+        else:
+            ax1.bar(x, v, width=0.76, color=(*to_rgb(state_c), 0.35),
+                    edgecolor=state_c, linewidth=0.8)
+        ax1.text(x, v * 1.15, end, ha="center", va="bottom", fontsize=7.6)
+        how = open_how.get(r["study_key"]) if is_open else None
+        if how is not None:
+            ax1.text(x, v * 0.85, how, ha="center", va="top",
+                     fontsize=4.6, color="#555555", zorder=3)
+    for anchor_v, anchor_lab, above in (
+            (11100, "11,100 word families", False),
+            (42000, "42,000 lemmas", False),
+            (71400, "71,400 word forms", True)):
+        ax1.axhline(anchor_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
+        if above:
+            ax1.text(-0.55, anchor_v * 1.12, anchor_lab + " (Brysbaert et al., 2016)",
+                     ha="left", va="bottom", fontsize=7.0, color="#555555")
+        else:
+            ax1.text(-0.55, anchor_v * 0.72, anchor_lab + " (Brysbaert et al., 2016)",
+                     ha="left", va="top", fontsize=7.0, color="#555555")
+    ax1.set_yscale("log")
+    ax1.set_ylim(2.5, 1.5e6)
+    ax1.set_yticks([10 ** k for k in range(0, 7)])
+    ax1.set_yticklabels(["1", "10", "100", "1,000", "10,000", "100,000", "1,000,000"])
+    ax1.yaxis.set_minor_locator(
+        matplotlib.ticker.FixedLocator(
+            [m * 10 ** k for k in range(0, 6) for m in range(2, 10) if m * 10 ** k >= 2.5]
+        )
+    )
+    ax1.set_xticks(range(len(rows_a)))
+    ax1.set_xticklabels([r["label"] for r in rows_a], fontsize=6.7, rotation=75,
+                        ha="right", rotation_mode="anchor")
+    ax1.set_xlim(-0.7, len(rows_a) - 0.3)
+    ax1.set_ylabel("vocabulary size")
+    ax1.set_title(f"(a) Maximum vocabulary size used in the {len(rows_a)} language-BCI studies",
+                  fontsize=10, fontweight="bold")
+
+    gs_r2 = outer[2].subgridspec(1, 5, width_ratios=(1.176, 0.12, 1.176, 0.12, 1.176), wspace=0.0)
+    ax_b = fig.add_subplot(gs_r2[0, 0])
+    ax2 = fig.add_subplot(gs_r2[0, 2])
+    ax3 = fig.add_subplot(gs_r2[0, 4])
+
+    for x, r in enumerate(rows_b):
+        n_sent = r["released_sentences"]
+        state_c = OPEN_C[r["openness_code"]]
+        ax_b.bar(x, n_sent, width=0.76, color=(*to_rgb(state_c), 0.35),
+                 edgecolor=state_c, linewidth=0.8)
+        ax_b.text(x, n_sent + 220, r["sentences_display"], ha="center", va="bottom", fontsize=7.3)
+        ax_b.text(x, n_sent + 1150, r["span_note"], ha="center", va="bottom",
+                  fontsize=4.6, color="#555555", linespacing="normal")
+    ax_b.set_ylim(0, 14500)
+    ax_b.set_yticks(range(0, 12001, 2000))
+    ax_b.set_yticklabels([f"{v:,}" for v in range(0, 12001, 2000)])
+    ax_b.set_xticks(range(len(rows_b)))
+    ax_b.set_xticklabels([r["label"] for r in rows_b], fontsize=6.4, rotation=75,
+                         ha="right", rotation_mode="anchor")
+    ax_b.set_xlim(-0.75, len(rows_b) - 0.25)
+    ax_b.set_ylabel("released sentences")
+    ax_b.set_title("(b) Open-sourced dataset size\n", fontsize=9.8, fontweight="bold")
+
+    c_badges = []
+    for x, r in enumerate(rows_cd):
+        wmean = r["wer_mean"]
+        wsd = r["wer_sd"]
+        state_c = OPEN_C[r["openness_code"]]
+        ax2.bar(x, wmean, width=0.76, color=(*to_rgb(state_c), 0.35),
+                edgecolor=state_c, linewidth=0.8)
+        top = wmean + wsd if wsd is not None else wmean
+        if wsd is not None:
+            ax2.errorbar(x, wmean, yerr=wsd, color="#333333", capsize=2.0,
+                         elinewidth=1.0, capthick=1.0, zorder=4)
+        note = f"{wmean:.1f}\u00b1{wsd:.1f}" if wsd is not None else f"{wmean:.1f}"
+        ax2.text(x, top + 1.6, note, ha="center", va="bottom", fontsize=6.6)
+        ax2.text(x, top + 7.0, f"vocab {r['vocab_tag']}\n{r['wer_caliber']}",
+                 ha="center", va="bottom", fontsize=4.6, color="#555555", linespacing="normal")
+    for asr_v in (2.5, 5.8, 12.8):
+        ax2.axhline(asr_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
+    for asr_v, asr_lab, ly, lx_lead in (
+            (2.5, "2.5% LibriSpeech (Radford et al., 2022)", 62.6, 4.55),
+            (5.8, "5.8% Switchboard (Xiong et al., 2017)", 68.1, 3.44),
+            (12.8, "12.8% 14-dataset average (Radford et al., 2022)", 73.6, 2.50)):
+        ax2.plot([lx_lead, lx_lead], [asr_v, ly - 0.2], color="#999999", lw=0.55, zorder=2)
+        t_obj = ax2.text(5.50, ly, asr_lab, ha="right", va="bottom", fontsize=5.6,
+                         color="#666666", zorder=3,
+                         bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.88))
+        c_badges.append((asr_v, asr_lab, ly, lx_lead, t_obj))
+    ax2.set_ylim(0, 125)
+    ax2.set_yticks(range(0, 101, 25))
+    ax2.set_xticks(range(len(rows_cd)))
+    ax2.set_xticklabels([r["label"] for r in rows_cd], fontsize=6.4, rotation=75,
+                        ha="right", rotation_mode="anchor")
+    ax2.set_xlim(-0.75, len(rows_cd) - 0.25)
+    ax2.set_ylabel("word error rate (%)")
+    ax2.set_title("(c) Word error rate (online)\nno series printed: Wairagkar et al., 2025 (listener median)",
+                  fontsize=9.8, fontweight="bold")
+    dagger_note = (
+        "\u2020 recomputed from released data (decode outputs / trial timing / Source Data files)\n"
+        "\u2021 digitized from the paper's figure markers\n"
+        "error bar is calculated across days"
+    )
+    ax2.text(0.98, 0.985, dagger_note, transform=ax2.transAxes, ha="right", va="top",
+             fontsize=6.0, color="#555555", linespacing="normal")
+
+    d_badges = []
+    for x, r in enumerate(rows_cd):
+        spd = r["speed_wpm_mean"]
+        spdsd = r["speed_wpm_sd"]
+        state_c = OPEN_C[r["openness_code"]]
+        if spd is None:
+            ax3.text(x, 1.2, "n/r", ha="center", va="bottom", fontsize=5.6, color="#777777")
+            continue
+        ax3.bar(x, spd, width=0.76, color=(*to_rgb(state_c), 0.35),
+                edgecolor=state_c, linewidth=0.8)
+        top = spd + spdsd if spdsd is not None else spd
+        if spdsd is not None:
+            ax3.errorbar(x, spd, yerr=spdsd, color="#333333", capsize=2.0,
+                         elinewidth=1.0, capthick=1.0, zorder=4)
+        note = f"{spd:.1f}\u00b1{spdsd:.1f}" if spdsd is not None else f"{spd:.1f}"
+        ax3.text(x, top * 1.06 + 2.0, note, ha="center", va="bottom", fontsize=6.8)
+        ax3.text(x, max(top * 1.31, top * 1.06 + 8.0) + 2.0,
+                 f"vocab {r['vocab_tag']}\n{r['speed_caliber']}",
+                 ha="center", va="bottom", fontsize=4.6, color="#555555", linespacing="normal")
+    for spd_v in (160, 51.6, 36.2, 10, 8):
+        ax3.axhline(spd_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
+    LX = 3.92
+    for spd_v, spd_lab in (
+            (160, "160 wpm natural conversation (Card et al., 2024)"),
+            (51.6, "51.6 wpm keyboard typing (Dhakal et al., 2018)"),
+            (36.2, "36.2 wpm smartphone typing (Palin et al., 2019)"),
+            (10, "5\u201310 wpm eye typing (Hamid & Kristensson, 2024)")):
+        t_obj = ax3.text(LX, spd_v + 0.6, spd_lab, ha="left", va="bottom", fontsize=5.6,
+                         color="#666666", zorder=3,
+                         bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.88))
+        d_badges.append((spd_v + 0.6, spd_lab, t_obj))
+    ax3.plot([5.5, 5.5], [8, 19.8], color="#999999", lw=0.55, zorder=2)
+    t_obj_8 = ax3.text(LX, 20.0, "8 wpm point-and-click BCI (Willett et al., 2021)",
+                       ha="left", va="bottom", fontsize=5.6, color="#666666", zorder=3,
+                       bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.88))
+    d_badges.append((20.0, "8 wpm point-and-click BCI (Willett et al., 2021)", t_obj_8))
+    ax3.set_ylim(0, 200)
+    ax3.set_yticks(range(0, 201, 50))
+    ax3.set_xticks(range(len(rows_cd)))
+    ax3.set_xticklabels([r["label"] for r in rows_cd], fontsize=6.4, rotation=75,
+                        ha="right", rotation_mode="anchor")
+    ax3.set_xlim(-0.75, len(rows_cd) - 0.25)
+    ax3.set_ylabel("words per minute")
+    ax3.set_title("(d) Communication speed (online)\nn/r: speed not reported",
+                  fontsize=9.8, fontweight="bold")
+    ax3.text(0.98, 0.985, dagger_note, transform=ax3.transAxes, ha="right", va="top",
+             fontsize=6.0, color="#555555", linespacing="normal")
+
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    inv_fig = fig.transFigure.inverted()
+    selected_idx = [
+        i for i, r in enumerate(rows_a)
+        if r["vocab_num"] > 71400 and r["openness_code"] == 2
+    ]
+    xtick_objs = ax1.get_xticklabels()
+    drop_points = []
+    min_lbl_y0 = 1.0
+    for i, lbl in enumerate(xtick_objs):
+        bb = inv_fig.transform_bbox(lbl.get_window_extent(renderer))
+        if bb.y0 < min_lbl_y0:
+            min_lbl_y0 = bb.y0
+        if i in selected_idx:
+            x_anchor = 0.5 * (bb.x0 + bb.x1)
+            bar_x = inv_fig.transform(ax1.transData.transform((i, 2.5)))[0]
+            x_pt = 0.65 * bar_x + 0.35 * x_anchor
+            drop_points.append((rows_a[i]["id"], x_pt, bb.y0 - 0.0045))
+
+    title_y1 = max(
+        inv_fig.transform_bbox(ax.title.get_window_extent(renderer)).y1
+        for ax in (ax_b, ax2, ax3)
+    )
+    brace_x0 = ax_b.get_position().x0
+    brace_x1 = ax3.get_position().x1
+    brace_xm = 0.5 * (brace_x0 + brace_x1)
+
+    corridor = min_lbl_y0 - title_y1
+    y_bus = min_lbl_y0 - 0.28 * corridor
+    y_apex = title_y1 + 0.42 * corridor
+    y_arm = title_y1 + 0.22 * corridor
+    y_tip = title_y1 + 0.06 * corridor
+    guide_c = OPEN_C[2]
+    fig.text(
+        brace_xm - 0.008, 0.5 * (y_bus + y_arm) + 0.001,
+        "Filtered to 8 open-data studies exceeding native-speaker vocabulary (>71,400 word forms)",
+        ha="right", va="center", fontsize=7.4, fontweight="bold", color=guide_c
+    )
+
+    if verify_overlaps:
+        fig.canvas.draw()
+        r_chk = fig.canvas.get_renderer()
+        for ax in fig.axes:
+            items_t = []
+            for t in ax.findobj(Text):
+                if not t.get_visible() or not t.get_text().strip():
+                    continue
+                bb = t.get_window_extent(r_chk)
+                if bb.width <= 1 or bb.height <= 1:
+                    continue
+                items_t.append((t.get_text().strip().replace("\n", " | "), bb))
+            for i in range(len(items_t)):
+                s1, b1 = items_t[i]
+                for j in range(i + 1, len(items_t)):
+                    s2, b2 = items_t[j]
+                    dx = min(b1.x1, b2.x1) - max(b1.x0, b2.x0)
+                    dy = min(b1.y1, b2.y1) - max(b1.y0, b2.y0)
+                    if dx > 1.0 and dy > 1.0:
+                        plt.close(fig)
+                        raise RuntimeError(f"Figure 2 upper-half overlap: {s1!r} <-> {s2!r}")
+
+    # Convert Matplotlib pixel coordinates to 0.5-scale SVG coordinates (100 units/in)
+    w_px, h_px = fig.canvas.get_width_height()
+    vw, vh = int(round(w_px * 0.5)), int(round(h_px * 0.5))
+    PT = 1.3889
+    SW = lambda pt: round(pt * PT, 2)
+    SX = lambda px: px * 0.5
+    SY = lambda py: (h_px - py) * 0.5
+    esc = html_lib.escape
+
+    def d2svg(ax, dx, dy):
+        px, py = ax.transData.transform((dx, dy))
+        return SX(px), SY(py)
+
+    def f2svg(fx, fy):
+        px, py = fig.transFigure.transform((fx, fy))
+        return SX(px), SY(py)
+
+    def multiline_svg(
+        sx: float, sy: float, text: str, fs_pt: float, color: str,
+        anchor: str = "middle", va: str = "bottom", weight: str = "normal",
+        cls: str = ""
+    ) -> str:
+        lines = text.split("\n")
+        fs = fs_pt * PT
+        lh = fs * 1.20
+        cls_attr = f' class="{cls}"' if cls else ""
+        w_attr = f' font-weight="{weight}"' if weight != "normal" else ""
+        if len(lines) == 1:
+            if va == "bottom":
+                yy = sy - 0.12 * fs
+                dom = "alphabetic"
+            elif va == "top":
+                yy = sy + 0.82 * fs
+                dom = "alphabetic"
+            else:
+                yy = sy
+                dom = "central"
+            return (f'<text{cls_attr} x="{sx:.1f}" y="{yy:.1f}" font-size="{fs:.2f}" '
+                    f'fill="{color}"{w_attr} text-anchor="{anchor}" '
+                    f'dominant-baseline="{dom}">{esc(lines[0])}</text>')
+        out_t = [f'<text{cls_attr} x="{sx:.1f}" font-size="{fs:.2f}" fill="{color}"'
+                 f'{w_attr} text-anchor="{anchor}">']
+        n_l = len(lines)
+        for k, line in enumerate(lines):
+            if va == "bottom":
+                yy = sy - (n_l - 1 - k) * lh - 0.14 * fs
+            elif va == "top":
+                yy = sy + k * lh + 0.82 * fs
+            else:
+                yy = sy + (k - 0.5 * (n_l - 1)) * lh + 0.32 * fs
+            out_t.append(f'<tspan x="{sx:.1f}" y="{yy:.1f}">{esc(line)}</tspan>')
+        out_t.append("</text>")
+        return "".join(out_t)
+
+    def rot_xtick_svg(tx: float, ty: float, label: str, fs_pt: float) -> str:
+        lines = label.split("\n")
+        fs = fs_pt * PT
+        lh = fs * 1.15
+        if len(lines) == 1:
+            return (f'<g transform="translate({tx:.1f},{ty:.1f}) rotate(-75)">'
+                    f'<text class="f2-lbl" x="0" y="{0.34 * fs:.1f}" font-size="{fs:.2f}" '
+                    f'fill="#1f2937" text-anchor="end">{esc(lines[0])}</text></g>')
+        spans = []
+        for k, line in enumerate(lines):
+            yy = (k - 0.35 * (len(lines) - 1)) * lh + 0.34 * fs
+            spans.append(f'<tspan x="0" y="{yy:.1f}">{esc(line)}</tspan>')
+        return (f'<g transform="translate({tx:.1f},{ty:.1f}) rotate(-75)">'
+                f'<text class="f2-lbl" font-size="{fs:.2f}" fill="#1f2937" '
+                f'text-anchor="end">{"".join(spans)}</text></g>')
+
+    def draw_axes_chrome(ax, yticks, yticklabels, ylabel_str, title_str, title_fs=9.8, minor_yticks=None):
+        bb = ax.get_window_extent(renderer)
+        ax_x0, ax_x1 = SX(bb.x0), SX(bb.x1)
+        ax_y0, ax_y1 = SY(bb.y1), SY(bb.y0)  # ax_y0 is top, ax_y1 is bottom
+        c = [
+            f'<line x1="{ax_x0:.1f}" y1="{ax_y0:.1f}" x2="{ax_x0:.1f}" y2="{ax_y1:.1f}" '
+            f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>',
+            f'<line x1="{ax_x0:.1f}" y1="{ax_y1:.1f}" x2="{ax_x1:.1f}" y2="{ax_y1:.1f}" '
+            f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>',
+        ]
+        for yv, ylab in zip(yticks, yticklabels):
+            _, sy = d2svg(ax, 0, yv)
+            c.append(f'<line x1="{ax_x0 - 3.5:.1f}" y1="{sy:.1f}" x2="{ax_x0:.1f}" y2="{sy:.1f}" '
+                     f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
+            c.append(f'<text x="{ax_x0 - 6.0:.1f}" y="{sy:.1f}" font-size="{9.0 * PT:.2f}" '
+                     f'fill="#1f2937" text-anchor="end" dominant-baseline="central">{esc(ylab)}</text>')
+        if minor_yticks:
+            for yv in minor_yticks:
+                _, sy = d2svg(ax, 0, yv)
+                c.append(f'<line x1="{ax_x0 - 2.0:.1f}" y1="{sy:.1f}" x2="{ax_x0:.1f}" y2="{sy:.1f}" '
+                         f'stroke="#1f2937" stroke-width="{SW(0.6)}"/>')
+        yl_bb = ax.yaxis.label.get_window_extent(renderer)
+        yl_x = SX(0.5 * (yl_bb.x0 + yl_bb.x1))
+        yl_y = 0.5 * (ax_y0 + ax_y1)
+        c.append(f'<text x="{yl_x:.1f}" y="{yl_y:.1f}" font-size="{9.0 * PT:.2f}" fill="#1f2937" '
+                 f'text-anchor="middle" dominant-baseline="central" '
+                 f'transform="rotate(-90 {yl_x:.1f} {yl_y:.1f})">{esc(ylabel_str)}</text>')
+        t_lines = [ln for ln in title_str.split("\n") if ln != ""]
+        t_cx = 0.5 * (ax_x0 + ax_x1)
+        t_fs = title_fs * PT
+        t_lh = t_fs * 1.22
+        # Anchor top of title block consistently above ax_y0
+        t_top_y = ax_y0 - 24.5 if len(title_str.split("\n")) > 1 else ax_y0 - 11.5
+        for k, ln in enumerate(t_lines):
+            c.append(f'<text x="{t_cx:.1f}" y="{t_top_y + k * t_lh:.1f}" font-size="{t_fs:.2f}" '
+                     f'font-weight="bold" fill="#111827" text-anchor="middle">{esc(ln)}</text>')
+        return "\n".join(c), ax_x0, ax_x1, ax_y0, ax_y1
+
+    s = [f'<rect x="0" y="0" width="{vw}" height="{vh}" fill="#ffffff"/>']
+
+    # Top clickable data-availability legend (synced with `.lg-row` filter toggles)
+    leg_items = [
+        ("open", OPEN_C[2], "open data"),
+        ("partial", OPEN_C[1], "data on request"),
+        ("closed", OPEN_C[0], "closed data"),
+        ("unknown", OPEN_C["P"], "preprint"),
+        ("reanalysis", OPEN_C["R"], "reanalysis on open data"),
+    ]
+    leg_y = 18.0
+    leg_xs = [605.0, 740.0, 910.0, 1050.0, 1170.0]
+    for (val, col, lab), lx in zip(leg_items, leg_xs):
+        s.append(f'<g class="lg-row" data-dim="data_availability" data-val="{val}" style="cursor:pointer">')
+        s.append(f'<rect x="{lx:.1f}" y="{leg_y - 5.5:.1f}" width="17" height="10" '
+                 f'fill="{col}" fill-opacity="0.35" stroke="{col}" stroke-width="{SW(0.8)}"/>')
+        s.append(f'<text x="{lx + 23:.1f}" y="{leg_y:.1f}" font-size="{8.4 * PT:.2f}" '
+                 f'fill="#1f2937" dominant-baseline="central">{esc(lab)}</text>')
+        s.append("</g>")
+    # 6th legend item: our reproduction (matches Figure 2's lower-half bracket color)
+    rep_c = "#3C5488"
+    s.append('<a href="https://github.com/Physics-Lee/communication-neuroprostheses-reproduction" '
+             'target="_blank" rel="noopener" style="text-decoration:none">')
+    s.append(f'<rect x="1395.0" y="{leg_y - 5.5:.1f}" width="17" height="10" '
+             f'fill="{rep_c}" fill-opacity="0.35" stroke="{rep_c}" stroke-width="{SW(0.8)}"/>')
+    s.append(f'<text x="1418.0" y="{leg_y:.1f}" font-size="{8.4 * PT:.2f}" '
+             f'fill="#1f2937" dominant-baseline="central">our reproduction</text>')
+    s.append("</a>")
+
+    # ---- Panel (a) ----
+    minor_locs = [m * 10 ** k for k in range(0, 6) for m in range(2, 10) if m * 10 ** k >= 2.5]
+    ch_a, a_x0, a_x1, a_y0, a_y1 = draw_axes_chrome(
+        ax1,
+        [10 ** k for k in range(0, 7)],
+        ["1", "10", "100", "1,000", "10,000", "100,000", "1,000,000"],
+        "vocabulary size",
+        f"(a) Maximum vocabulary size used in the {len(rows_a)} language-BCI studies",
+        title_fs=10.0,
+        minor_yticks=minor_locs,
+    )
+    s.append(ch_a)
+
+    for anchor_v, anchor_lab, above in (
+            (11100, "11,100 word families", False),
+            (42000, "42,000 lemmas", False),
+            (71400, "71,400 word forms", True)):
+        _, sy_line = d2svg(ax1, 0, anchor_v)
+        s.append(f'<line x1="{a_x0:.1f}" y1="{sy_line:.1f}" x2="{a_x1:.1f}" y2="{sy_line:.1f}" '
+                 f'stroke="#7F7F7F" stroke-width="{SW(0.9)}" stroke-dasharray="5.5,2.8"/>')
+        lx, ly = d2svg(ax1, -0.55, anchor_v * (1.12 if above else 0.72))
+        s.append(multiline_svg(
+            lx, ly, anchor_lab + " (Brysbaert et al., 2016)",
+            7.0, "#555555", anchor="start", va="bottom" if above else "top"
+        ))
+
+    for x, r in enumerate(rows_a):
+        v = r["vocab_num"]
+        is_open = r["is_open_vocab"]
+        col = OPEN_C[r["openness_code"]]
+        bx0, by0 = d2svg(ax1, x - 0.38, v)
+        bx1, by1 = d2svg(ax1, x + 0.38, 2.5)
+        bw, bh = bx1 - bx0, by1 - by0
+        cx = 0.5 * (bx0 + bx1)
+        dash = ' stroke-dasharray="4.2,2.8"' if is_open else ""
+        fop = "0.18" if is_open else "0.35"
+        lbl_clean = r["label"].replace("\n", " ")
+        s.append(f'<g class="f2-slot" data-id="{r["id"]}">')
+        s.append(f'<title>{esc(lbl_clean)} \u2014 vocabulary: {esc(r["vocab_display"])} (click to inspect study)</title>')
+        s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{a_y0:.1f}" width="{bw + 6:.1f}" height="{a_y1 - a_y0 + 135:.1f}"/>')
+        s.append(f'<rect class="f2-bar" x="{bx0:.1f}" y="{by0:.1f}" width="{bw:.1f}" height="{bh:.1f}" '
+                 f'fill="{col}" fill-opacity="{fop}" stroke="{col}" stroke-width="{SW(0.8)}"{dash}/>')
+        _, vy = d2svg(ax1, x, v * 1.15)
+        s.append(multiline_svg(cx, vy, r["vocab_display"], 7.6, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+        how = open_how.get(r["study_key"]) if is_open else None
+        if how is not None:
+            _, hy = d2svg(ax1, x, v * 0.85)
+            s.append(multiline_svg(cx, hy, how, 4.6, "#555555", anchor="middle", va="top"))
+        s.append(f'<line x1="{cx:.1f}" y1="{a_y1:.1f}" x2="{cx:.1f}" y2="{a_y1 + 3.5:.1f}" '
+                 f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
+        s.append(rot_xtick_svg(cx, a_y1 + 6.0, r["label"], 6.7))
+        s.append("</g>")
+
+    # ---- Green Funnel (Panel a -> Panels b-d) ----
+    _, sy_bus = f2svg(0, y_bus)
+    _, sy_apex = f2svg(0, y_apex)
+    _, sy_arm = f2svg(0, y_arm)
+    _, sy_tip = f2svg(0, y_tip)
+    sx_b0, _ = f2svg(brace_x0, 0)
+    sx_b1, _ = f2svg(brace_x1, 0)
+    sx_bm, _ = f2svg(brace_xm, 0)
+
+    for sid, x_pt, y_top in drop_points:
+        sx_pt, sy_top = f2svg(x_pt, y_top)
+        s.append(f'<g class="f2-drop" data-id="{sid}">')
+        s.append(f'<line x1="{sx_pt:.1f}" y1="{sy_top:.1f}" x2="{sx_pt:.1f}" y2="{sy_bus:.1f}" '
+                 f'stroke="{guide_c}" stroke-width="{SW(1.15)}" stroke-linecap="round" opacity="0.85"/>')
+        s.append(f'<circle cx="{sx_pt:.1f}" cy="{sy_top:.1f}" r="2.4" fill="{guide_c}" opacity="0.9"/>')
+        s.append("</g>")
+
+    sx_first, _ = f2svg(drop_points[0][1], 0)
+    sx_last, _ = f2svg(drop_points[-1][1], 0)
+    s.append(f'<line x1="{sx_first:.1f}" y1="{sy_bus:.1f}" x2="{sx_last:.1f}" y2="{sy_bus:.1f}" '
+             f'stroke="{guide_c}" stroke-width="{SW(1.25)}" stroke-linecap="round" opacity="0.88"/>')
+    s.append(f'<line x1="{sx_bm:.1f}" y1="{sy_bus:.1f}" x2="{sx_bm:.1f}" y2="{sy_apex:.1f}" '
+             f'stroke="{guide_c}" stroke-width="{SW(1.4)}" stroke-linecap="round" opacity="0.92"/>')
+
+    dx_c = 0.016 * vw
+    brace_d = (
+        f"M {sx_b0:.1f} {sy_tip:.1f} "
+        f"C {sx_b0:.1f} {sy_arm:.1f}, {sx_b0 + 0.35 * dx_c:.1f} {sy_arm:.1f}, {sx_b0 + dx_c:.1f} {sy_arm:.1f} "
+        f"L {sx_bm - dx_c:.1f} {sy_arm:.1f} "
+        f"C {sx_bm - 0.35 * dx_c:.1f} {sy_arm:.1f}, {sx_bm:.1f} {sy_arm:.1f}, {sx_bm:.1f} {sy_apex:.1f} "
+        f"C {sx_bm:.1f} {sy_arm:.1f}, {sx_bm + 0.35 * dx_c:.1f} {sy_arm:.1f}, {sx_bm + dx_c:.1f} {sy_arm:.1f} "
+        f"L {sx_b1 - dx_c:.1f} {sy_arm:.1f} "
+        f"C {sx_b1 - 0.35 * dx_c:.1f} {sy_arm:.1f}, {sx_b1:.1f} {sy_arm:.1f}, {sx_b1:.1f} {sy_tip:.1f}"
+    )
+    s.append(f'<path d="{brace_d}" fill="none" stroke="{guide_c}" stroke-width="{SW(1.45)}" '
+             f'stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>')
+    sx_ftxt, sy_ftxt = f2svg(brace_xm - 0.008, 0.5 * (y_bus + y_arm) + 0.001)
+    s.append(multiline_svg(
+        sx_ftxt, sy_ftxt,
+        "Filtered to 8 open-data studies exceeding native-speaker vocabulary (>71,400 word forms)",
+        7.4, guide_c, anchor="end", va="center", weight="bold"
+    ))
+
+    # ---- Panel (b) ----
+    ch_b, b_x0, b_x1, b_y0, b_y1 = draw_axes_chrome(
+        ax_b,
+        list(range(0, 12001, 2000)),
+        [f"{v:,}" for v in range(0, 12001, 2000)],
+        "released sentences",
+        "(b) Open-sourced dataset size\n",
+        title_fs=9.8,
+    )
+    s.append(ch_b)
+    for x, r in enumerate(rows_b):
+        n_sent = r["released_sentences"]
+        col = OPEN_C[r["openness_code"]]
+        bx0, by0 = d2svg(ax_b, x - 0.38, n_sent)
+        bx1, by1 = d2svg(ax_b, x + 0.38, 0)
+        bw, bh = bx1 - bx0, by1 - by0
+        cx = 0.5 * (bx0 + bx1)
+        s.append(f'<g class="f2-slot" data-id="{r["id"]}">')
+        s.append(f'<title>{esc(r["label"])} \u2014 {esc(r["sentences_display"])} released sentences (click to inspect study)</title>')
+        s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{b_y0:.1f}" width="{bw + 6:.1f}" height="{b_y1 - b_y0 + 125:.1f}"/>')
+        s.append(f'<rect class="f2-bar" x="{bx0:.1f}" y="{by0:.1f}" width="{bw:.1f}" height="{bh:.1f}" '
+                 f'fill="{col}" fill-opacity="0.35" stroke="{col}" stroke-width="{SW(0.8)}"/>')
+        _, vy = d2svg(ax_b, x, n_sent + 220)
+        s.append(multiline_svg(cx, vy, r["sentences_display"], 7.3, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+        _, ny = d2svg(ax_b, x, n_sent + 1150)
+        s.append(multiline_svg(cx, ny, r["span_note"], 4.6, "#555555", anchor="middle", va="bottom"))
+        s.append(f'<line x1="{cx:.1f}" y1="{b_y1:.1f}" x2="{cx:.1f}" y2="{b_y1 + 3.5:.1f}" '
+                 f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
+        s.append(rot_xtick_svg(cx, b_y1 + 6.0, r["label"], 6.4))
+        s.append("</g>")
+
+    # ---- Panel (c) ----
+    ch_c, c_x0, c_x1, c_y0, c_y1 = draw_axes_chrome(
+        ax2,
+        list(range(0, 101, 25)),
+        [str(v) for v in range(0, 101, 25)],
+        "word error rate (%)",
+        "(c) Word error rate (online)\nno series printed: Wairagkar et al., 2025 (listener median)",
+        title_fs=9.8,
+    )
+    s.append(ch_c)
+    for asr_v in (2.5, 5.8, 12.8):
+        _, sy_l = d2svg(ax2, 0, asr_v)
+        s.append(f'<line x1="{c_x0:.1f}" y1="{sy_l:.1f}" x2="{c_x1:.1f}" y2="{sy_l:.1f}" '
+                 f'stroke="#7F7F7F" stroke-width="{SW(0.9)}" stroke-dasharray="5.5,2.8"/>')
+    for asr_v, asr_lab, ly, lx_lead, t_obj in c_badges:
+        sx_ld, sy_l0 = d2svg(ax2, lx_lead, asr_v)
+        _, sy_l1 = d2svg(ax2, lx_lead, ly - 0.2)
+        s.append(f'<line x1="{sx_ld:.1f}" y1="{sy_l0:.1f}" x2="{sx_ld:.1f}" y2="{sy_l1:.1f}" '
+                 f'stroke="#999999" stroke-width="{SW(0.55)}"/>')
+        bp = t_obj.get_bbox_patch().get_window_extent(renderer)
+        s.append(f'<rect x="{SX(bp.x0):.1f}" y="{SY(bp.y1):.1f}" width="{bp.width * 0.5:.1f}" '
+                 f'height="{bp.height * 0.5:.1f}" rx="2.5" fill="#ffffff" fill-opacity="0.88"/>')
+        tx, ty = d2svg(ax2, 5.50, ly)
+        s.append(multiline_svg(tx, ty, asr_lab, 5.6, "#666666", anchor="end", va="bottom"))
+    s.append(multiline_svg(
+        c_x0 + 0.98 * (c_x1 - c_x0), c_y0 + 0.015 * (c_y1 - c_y0),
+        dagger_note, 6.0, "#555555", anchor="end", va="top"
+    ))
+    for x, r in enumerate(rows_cd):
+        wmean = r["wer_mean"]
+        wsd = r["wer_sd"]
+        col = OPEN_C[r["openness_code"]]
+        bx0, by0 = d2svg(ax2, x - 0.38, wmean)
+        bx1, by1 = d2svg(ax2, x + 0.38, 0)
+        bw, bh = bx1 - bx0, by1 - by0
+        cx = 0.5 * (bx0 + bx1)
+        top = wmean + wsd if wsd is not None else wmean
+        note = f"{wmean:.1f}\u00b1{wsd:.1f}" if wsd is not None else f"{wmean:.1f}"
+        s.append(f'<g class="f2-slot" data-id="{r["id"]}">')
+        s.append(f'<title>{esc(r["label"])} \u2014 online WER: {esc(note)}% (click to inspect study)</title>')
+        s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{c_y0:.1f}" width="{bw + 6:.1f}" height="{c_y1 - c_y0 + 125:.1f}"/>')
+        s.append(f'<rect class="f2-bar" x="{bx0:.1f}" y="{by0:.1f}" width="{bw:.1f}" height="{bh:.1f}" '
+                 f'fill="{col}" fill-opacity="0.35" stroke="{col}" stroke-width="{SW(0.8)}"/>')
+        if wsd is not None:
+            _, ey_hi = d2svg(ax2, x, wmean + wsd)
+            _, ey_lo = d2svg(ax2, x, wmean - wsd)
+            s.append(f'<line x1="{cx:.1f}" y1="{ey_hi:.1f}" x2="{cx:.1f}" y2="{ey_lo:.1f}" '
+                     f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+            s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_hi:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_hi:.1f}" '
+                     f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+            s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_lo:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_lo:.1f}" '
+                     f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+        _, vy = d2svg(ax2, x, top + 1.6)
+        s.append(multiline_svg(cx, vy, note, 6.6, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+        _, ny = d2svg(ax2, x, top + 7.0)
+        s.append(multiline_svg(cx, ny, f"vocab {r['vocab_tag']}\n{r['wer_caliber']}", 4.6, "#555555", anchor="middle", va="bottom"))
+        s.append(f'<line x1="{cx:.1f}" y1="{c_y1:.1f}" x2="{cx:.1f}" y2="{c_y1 + 3.5:.1f}" '
+                 f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
+        s.append(rot_xtick_svg(cx, c_y1 + 6.0, r["label"], 6.4))
+        s.append("</g>")
+
+    # ---- Panel (d) ----
+    ch_d, d_x0, d_x1, d_y0, d_y1 = draw_axes_chrome(
+        ax3,
+        list(range(0, 201, 50)),
+        [str(v) for v in range(0, 201, 50)],
+        "words per minute",
+        "(d) Communication speed (online)\nn/r: speed not reported",
+        title_fs=9.8,
+    )
+    s.append(ch_d)
+    for spd_v in (160, 51.6, 36.2, 10, 8):
+        _, sy_l = d2svg(ax3, 0, spd_v)
+        s.append(f'<line x1="{d_x0:.1f}" y1="{sy_l:.1f}" x2="{d_x1:.1f}" y2="{sy_l:.1f}" '
+                 f'stroke="#7F7F7F" stroke-width="{SW(0.9)}" stroke-dasharray="5.5,2.8"/>')
+    sx_ld8, sy_8_0 = d2svg(ax3, 5.5, 8)
+    _, sy_8_1 = d2svg(ax3, 5.5, 19.8)
+    s.append(f'<line x1="{sx_ld8:.1f}" y1="{sy_8_0:.1f}" x2="{sx_ld8:.1f}" y2="{sy_8_1:.1f}" '
+             f'stroke="#999999" stroke-width="{SW(0.55)}"/>')
+    for ly_d, spd_lab, t_obj in d_badges:
+        bp = t_obj.get_bbox_patch().get_window_extent(renderer)
+        s.append(f'<rect x="{SX(bp.x0):.1f}" y="{SY(bp.y1):.1f}" width="{bp.width * 0.5:.1f}" '
+                 f'height="{bp.height * 0.5:.1f}" rx="2.5" fill="#ffffff" fill-opacity="0.88"/>')
+        tx, ty = d2svg(ax3, LX, ly_d)
+        s.append(multiline_svg(tx, ty, spd_lab, 5.6, "#666666", anchor="start", va="bottom"))
+    s.append(multiline_svg(
+        d_x0 + 0.98 * (d_x1 - d_x0), d_y0 + 0.015 * (d_y1 - d_y0),
+        dagger_note, 6.0, "#555555", anchor="end", va="top"
+    ))
+    for x, r in enumerate(rows_cd):
+        spd = r["speed_wpm_mean"]
+        spdsd = r["speed_wpm_sd"]
+        col = OPEN_C[r["openness_code"]]
+        bx0, _ = d2svg(ax3, x - 0.38, 0)
+        bx1, by1 = d2svg(ax3, x + 0.38, 0)
+        bw = bx1 - bx0
+        cx = 0.5 * (bx0 + bx1)
+        s.append(f'<g class="f2-slot" data-id="{r["id"]}">')
+        if spd is None:
+            s.append(f'<title>{esc(r["label"])} \u2014 speed not reported (click to inspect study)</title>')
+            s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{d_y0:.1f}" width="{bw + 6:.1f}" height="{d_y1 - d_y0 + 125:.1f}"/>')
+            _, nry = d2svg(ax3, x, 1.2)
+            s.append(multiline_svg(cx, nry, "n/r", 5.6, "#777777", anchor="middle", va="bottom", cls="f2-val"))
+        else:
+            _, by0 = d2svg(ax3, x - 0.38, spd)
+            bh = by1 - by0
+            top = spd + spdsd if spdsd is not None else spd
+            note = f"{spd:.1f}\u00b1{spdsd:.1f}" if spdsd is not None else f"{spd:.1f}"
+            s.append(f'<title>{esc(r["label"])} \u2014 online speed: {esc(note)} wpm (click to inspect study)</title>')
+            s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{d_y0:.1f}" width="{bw + 6:.1f}" height="{d_y1 - d_y0 + 125:.1f}"/>')
+            s.append(f'<rect class="f2-bar" x="{bx0:.1f}" y="{by0:.1f}" width="{bw:.1f}" height="{bh:.1f}" '
+                     f'fill="{col}" fill-opacity="0.35" stroke="{col}" stroke-width="{SW(0.8)}"/>')
+            if spdsd is not None:
+                _, ey_hi = d2svg(ax3, x, spd + spdsd)
+                _, ey_lo = d2svg(ax3, x, spd - spdsd)
+                s.append(f'<line x1="{cx:.1f}" y1="{ey_hi:.1f}" x2="{cx:.1f}" y2="{ey_lo:.1f}" '
+                         f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+                s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_hi:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_hi:.1f}" '
+                         f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+                s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_lo:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_lo:.1f}" '
+                         f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
+            _, vy = d2svg(ax3, x, top * 1.06 + 2.0)
+            s.append(multiline_svg(cx, vy, note, 6.8, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+            _, ny = d2svg(ax3, x, max(top * 1.31, top * 1.06 + 8.0) + 2.0)
+            s.append(multiline_svg(cx, ny, f"vocab {r['vocab_tag']}\n{r['speed_caliber']}", 4.6, "#555555", anchor="middle", va="bottom"))
+        s.append(f'<line x1="{cx:.1f}" y1="{d_y1:.1f}" x2="{cx:.1f}" y2="{d_y1 + 3.5:.1f}" '
+                 f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
+        s.append(rot_xtick_svg(cx, d_y1 + 6.0, r["label"], 6.4))
+        s.append("</g>")
+
+    # ---- Second Curly Bracket (gathering Panel c bars -> reproduction repository) ----
+    lbl_y0_rep = min(
+        inv_fig.transform_bbox(lbl.get_window_extent(renderer)).y0
+        for lbl in (*ax_b.get_xticklabels(), *ax2.get_xticklabels(), *ax3.get_xticklabels())
+    )
+    _, sy_lbl_bot = f2svg(0, lbl_y0_rep)
+    drop_pts_c = []
+    for i, lbl in enumerate(ax2.get_xticklabels()):
+        bb_c = inv_fig.transform_bbox(lbl.get_window_extent(renderer))
+        x_anchor_c = 0.5 * (bb_c.x0 + bb_c.x1)
+        bar_x_c = inv_fig.transform(ax2.transData.transform((i, 0)))[0]
+        x_pt_c = 0.65 * bar_x_c + 0.35 * x_anchor_c
+        sx_pt_c, sy_top_c = f2svg(x_pt_c, bb_c.y0 - 0.0038)
+        drop_pts_c.append((rows_cd[i]["id"], sx_pt_c, sy_top_c))
+
+    cor_rep_svg = 84.0
+    sy_bus_c = sy_lbl_bot + 0.28 * cor_rep_svg
+    sy_apex_r = sy_lbl_bot + 0.42 * cor_rep_svg
+    sy_arm_r = sy_lbl_bot + 0.70 * cor_rep_svg
+    sy_tip_r = sy_lbl_bot + 0.95 * cor_rep_svg
+
+    for sid_c, sx_pt_c, sy_top_c in drop_pts_c:
+        s.append(f'<g class="f2-drop" data-id="{sid_c}">')
+        s.append(f'<line x1="{sx_pt_c:.1f}" y1="{sy_top_c:.1f}" x2="{sx_pt_c:.1f}" y2="{sy_bus_c:.1f}" '
+                 f'stroke="{rep_c}" stroke-width="{SW(1.15)}" stroke-linecap="round" opacity="0.85"/>')
+        s.append(f'<circle cx="{sx_pt_c:.1f}" cy="{sy_top_c:.1f}" r="2.2" fill="{rep_c}" opacity="0.9"/>')
+        s.append("</g>")
+
+    s.append(f'<line x1="{drop_pts_c[0][1]:.1f}" y1="{sy_bus_c:.1f}" '
+             f'x2="{drop_pts_c[-1][1]:.1f}" y2="{sy_bus_c:.1f}" '
+             f'stroke="{rep_c}" stroke-width="{SW(1.25)}" stroke-linecap="round" opacity="0.88"/>')
+    s.append(f'<line x1="{sx_bm:.1f}" y1="{sy_bus_c:.1f}" x2="{sx_bm:.1f}" y2="{sy_apex_r:.1f}" '
+             f'stroke="{rep_c}" stroke-width="{SW(1.4)}" stroke-linecap="round" opacity="0.92"/>')
+
+    brace_r_d = (
+        f"M {sx_b0:.1f} {sy_tip_r:.1f} "
+        f"C {sx_b0:.1f} {sy_arm_r:.1f}, {sx_b0 + 0.35 * dx_c:.1f} {sy_arm_r:.1f}, {sx_b0 + dx_c:.1f} {sy_arm_r:.1f} "
+        f"L {sx_bm - dx_c:.1f} {sy_arm_r:.1f} "
+        f"C {sx_bm - 0.35 * dx_c:.1f} {sy_arm_r:.1f}, {sx_bm:.1f} {sy_arm_r:.1f}, {sx_bm:.1f} {sy_apex_r:.1f} "
+        f"C {sx_bm:.1f} {sy_arm_r:.1f}, {sx_bm + 0.35 * dx_c:.1f} {sy_arm_r:.1f}, {sx_bm + dx_c:.1f} {sy_arm_r:.1f} "
+        f"L {sx_b1 - dx_c:.1f} {sy_arm_r:.1f} "
+        f"C {sx_b1 - 0.35 * dx_c:.1f} {sy_arm_r:.1f}, {sx_b1:.1f} {sy_arm_r:.1f}, {sx_b1:.1f} {sy_tip_r:.1f}"
+    )
+    s.append(f'<path d="{brace_r_d}" fill="none" stroke="{rep_c}" stroke-width="{SW(1.45)}" '
+             f'stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>')
+    s.append(multiline_svg(
+        sx_bm - 0.012 * vw, 0.5 * (sy_bus_c + sy_arm_r),
+        "Our reproduction on a 64 GB RAM / RTX 5060 Ti (16 GB) home PC (8 open-data studies)",
+        7.4, rep_c, anchor="end", va="center", weight="bold"
+    ))
+
+    # Reproduction repository callout under the second bracket
+    repro_url = "https://github.com/Physics-Lee/communication-neuroprostheses-reproduction"
+    box_w, box_h = 1040.0, 42.0
+    box_x = sx_bm - 0.5 * box_w
+    box_y = sy_tip_r + 4.0
+    s.append(f'<a href="{repro_url}" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">')
+    s.append(f'<rect x="{box_x:.1f}" y="{box_y:.1f}" width="{box_w:.1f}" height="{box_h:.1f}" rx="9" '
+             f'fill="#f5f7fc" stroke="{rep_c}" stroke-opacity="0.38" stroke-width="1.1"/>')
+    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 16.0:.1f}" font-size="{8.2 * PT:.2f}" '
+             f'font-weight="bold" fill="{rep_c}" text-anchor="middle" dominant-baseline="central">'
+             f'Please refer to our reproduction repository (github.com/Physics-Lee/communication-neuroprostheses-reproduction) \u2197</text>')
+    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 31.5:.1f}" font-size="{7.5 * PT:.2f}" '
+             f'fill="#4b5563" text-anchor="middle" dominant-baseline="central">'
+             f'We promised to update the timeline and reproduction for future communication neuroprostheses studies.</text>')
+    s.append("</a>")
+
+    plt.close(fig)
+    return "\n".join(s), vw, vh
 
 
 def _poly_pts(cx: float, cy: float, r: float, n: int, rot_deg: float = 90.0) -> str:
@@ -1113,29 +1915,44 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   .hint { font-size: 12px; color: var(--faint); margin-left: auto; }
 
   /* ---------- figure ---------- */
-  #figbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-            padding: 10px 10px 4px; }
-  #figbox:fullscreen, #figbox:-webkit-full-screen, #figbox.is-fullscreen {
+  #figbox, #benchbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+                       padding: 10px 10px 4px; }
+  #figbox:fullscreen, #figbox:-webkit-full-screen, #figbox.is-fullscreen,
+  #benchbox:fullscreen, #benchbox:-webkit-full-screen, #benchbox.is-fullscreen {
     background: var(--card); border: none; border-radius: 0; padding: 14px 18px;
     display: flex; align-items: center; justify-content: center; overflow: auto;
     width: 100vw; height: 100vh;
   }
-  #figbox.is-fullscreen { position: fixed; inset: 0; z-index: 9999; }
-  #tl-svg { width: 100%; height: auto; display: block; border-radius: 8px; }
-  #figbox:fullscreen #tl-svg, #figbox:-webkit-full-screen #tl-svg, #figbox.is-fullscreen #tl-svg {
+  #figbox.is-fullscreen, #benchbox.is-fullscreen { position: fixed; inset: 0; z-index: 9999; }
+  #tl-svg, #f2-svg { width: 100%; height: auto; display: block; border-radius: 8px; }
+  #figbox:fullscreen #tl-svg, #figbox:-webkit-full-screen #tl-svg, #figbox.is-fullscreen #tl-svg,
+  #benchbox:fullscreen #f2-svg, #benchbox:-webkit-full-screen #f2-svg, #benchbox.is-fullscreen #f2-svg {
     width: 100%; height: 100%; max-width: 100%; max-height: 100%;
   }
-  #fs-btn { position: absolute; top: 14px; right: 16px; z-index: 10;
-            display: inline-flex; align-items: center; gap: 6px;
-            border: 1px solid var(--line); background: rgba(255, 255, 255, .92);
-            backdrop-filter: blur(4px); border-radius: 999px; padding: 5px 12px;
-            font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer;
-            box-shadow: 0 1px 4px rgba(15, 36, 64, .06); transition: all .12s ease; }
-  #fs-btn:hover { color: var(--ink); border-color: var(--faint);
-                  box-shadow: 0 2px 8px rgba(15, 36, 64, .10); }
-  #fs-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.8;
-                fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
-  #tl-svg text { font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
+  #fs-btn, #f2-fs-btn { position: absolute; top: 14px; right: 16px; z-index: 10;
+                        display: inline-flex; align-items: center; gap: 6px;
+                        border: 1px solid var(--line); background: rgba(255, 255, 255, .92);
+                        backdrop-filter: blur(4px); border-radius: 999px; padding: 5px 12px;
+                        font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer;
+                        box-shadow: 0 1px 4px rgba(15, 36, 64, .06); transition: all .12s ease; }
+  #fs-btn:hover, #f2-fs-btn:hover { color: var(--ink); border-color: var(--faint);
+                                    box-shadow: 0 2px 8px rgba(15, 36, 64, .10); }
+  #fs-btn svg, #f2-fs-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.8;
+                                fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  #tl-svg text, #f2-svg text { font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
+  .f2-slot { cursor: pointer; transition: opacity .15s ease; }
+  .f2-slot .f2-hit { fill: transparent; }
+  .f2-slot .f2-bar { transition: stroke-width .12s ease, fill-opacity .12s ease; }
+  .f2-slot:hover .f2-bar, .f2-slot.hovered .f2-bar, .f2-slot.selected .f2-bar {
+    stroke-width: 2.3px; fill-opacity: 0.56;
+  }
+  .f2-slot:hover .f2-lbl, .f2-slot.hovered .f2-lbl, .f2-slot.selected .f2-lbl,
+  .f2-slot:hover .f2-val, .f2-slot.hovered .f2-val, .f2-slot.selected .f2-val {
+    fill: var(--accent); font-weight: 700;
+  }
+  .f2-drop { transition: opacity .15s ease; }
+  .f2-repro-link rect { transition: stroke-opacity .12s ease, fill .12s ease; }
+  .f2-repro-link:hover rect { stroke-opacity: .85; fill: #eef2fb; }
   .card { cursor: pointer; }
   .card text { paint-order: stroke; stroke: rgba(255,255,255,.94); stroke-width: 3px;
                transition: fill .12s ease; }
@@ -1151,14 +1968,17 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   .lg-row.off circle, .lg-row.off rect, .lg-row.off polygon { opacity: .25; }
 
   /* ---------- section headers ---------- */
-  .sec { display: flex; align-items: baseline; gap: 12px; margin: 34px 2px 14px; }
+  .sec { display: flex; align-items: baseline; gap: 12px; margin: 34px 2px 14px; scroll-margin-top: 68px; }
   .sec h2 { font-size: 16px; font-weight: 650; margin: 0; letter-spacing: .01em; }
   .sec .count { color: var(--muted); font-size: 12.5px; }
   .sec .rule { flex: 1; border-top: 1px solid var(--line); transform: translateY(-4px); }
+  .sec-btn { border: 1px solid var(--line); background: var(--card); border-radius: 999px;
+             padding: 3px 12px; font-size: 12px; color: var(--muted); cursor: pointer; }
+  .sec-btn:hover { color: var(--ink); border-color: var(--faint); }
 
   /* ---------- spotlight ---------- */
   #spotlight { position: relative; border: 1.5px solid var(--accent); border-radius: 16px;
-               background: #fdfeff; padding: 22px 26px 16px; margin-bottom: 24px; }
+               background: #fdfeff; padding: 22px 26px 16px; margin: 26px 0 24px; scroll-margin-top: 68px; }
   #spotlight::before { content: "SELECTED STUDY"; position: absolute; top: -9px; left: 22px;
                        background: var(--accent); color: #fff; font-size: 9.5px; font-weight: 700;
                        letter-spacing: .12em; padding: 2px 10px; border-radius: 999px; }
@@ -1237,6 +2057,20 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
       <span id="fs-lbl">Full screen</span>
     </button>
     <svg id="tl-svg" viewBox="0 0 __VW__ __VH__" xmlns="http://www.w3.org/2000/svg">__CHROME__</svg>
+  </div>
+
+  <div class="sec" id="bench-sec">
+    <h2>Benchmark overview: vocabulary funnel &amp; open-data metrics</h2>
+    <span class="count" id="bench-count"></span>
+    <span class="rule"></span>
+    <button id="bench-toggle" class="sec-btn" type="button">Hide</button>
+  </div>
+  <div id="benchbox">
+    <button id="f2-fs-btn" type="button" title="Toggle full screen" aria-label="Toggle full screen">
+      <svg id="f2-fs-ico" viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>
+      <span id="f2-fs-lbl">Full screen</span>
+    </button>
+    <svg id="f2-svg" viewBox="0 0 __F2_VW__ __F2_VH__" xmlns="http://www.w3.org/2000/svg">__FIG2_UPPER__</svg>
   </div>
 
   <div id="spotlight" style="display:none">
@@ -1518,7 +2352,8 @@ function cardHtml(rec){
       <div class="sc-cell span2"><div class="k">Sentences / data volume</div><div class="v">${esc(m.sentences || 'n/r')}</div></div>
     </div>
     <div class="sc-parts"><span class="plabel">PARTICIPANTS (n=${rec.n_count})</span>&ensp;${rec.participants.map(esc).join(' · ')}</div>
-    <div class="sc-parts"><span class="plabel">TASK</span>&ensp;${TASK_LBL[rec.task_instruction]}&ensp;·&ensp;<span class="plabel">OUTPUT</span>&ensp;${OUT_LBL[rec.decoded_output]}${rec.speech_abilities.includes('intact') ? '&ensp;·&ensp;▲ can speak naturally' : ''}${rec.speech_abilities.includes('paralysis') ? '&ensp;·&ensp;△ vocal paralysis' : ''}</div>
+    <div class="sc-parts"><span class="plabel">TASK</span>&ensp;${TASK_LBL[rec.task_instruction]}</div>
+    <div class="sc-parts"><span class="plabel">OUTPUT</span>&ensp;${OUT_LBL[rec.decoded_output]}</div>
     <div class="sc-links">${links}</div>`;
 }
 
@@ -1544,7 +2379,7 @@ function navList(){ return visibleNodes().sort((a, b) => a.rec.xm - b.rec.xm); }
 function selectStudy(id, scrollPage){
   selectedId = id;
   for (const n of nodes) n.gCard.classList.toggle('selected', n.rec.id === id);
-  document.querySelectorAll('.study-card').forEach(c =>
+  document.querySelectorAll('.study-card, .f2-slot').forEach(c =>
     c.classList.toggle('selected', c.dataset.id === id));
   const sp = document.getElementById('spotlight');
   if (!id){ sp.style.display = 'none'; return; }
@@ -1631,6 +2466,30 @@ function apply(){
   drawAll(active, geomOf);
   updateTotals(visNodes);
   rebuildCards(visNodes);
+  let f2VisA = 0, f2TotA = 0;
+  const f2OpenIds = new Set(), f2OpenVis = new Set();
+  document.querySelectorAll('.f2-slot').forEach(slot => {
+    const on = visIds.has(slot.dataset.id);
+    slot.style.opacity = on ? '1' : '0.13';
+    slot.classList.toggle('selected', Boolean(selectedId && slot.dataset.id === selectedId));
+  });
+  document.querySelectorAll('.f2-drop').forEach(dr => {
+    const sid = dr.dataset.id;
+    const on = visIds.has(sid);
+    dr.style.opacity = on ? '1' : '0.13';
+    f2OpenIds.add(sid);
+    if (on) f2OpenVis.add(sid);
+  });
+  const f2SlotsAll = Array.from(document.querySelectorAll('#f2-svg .f2-slot'));
+  f2TotA = 32;
+  for (let i = 0; i < Math.min(32, f2SlotsAll.length); i++){
+    if (visIds.has(f2SlotsAll[i].dataset.id)) f2VisA++;
+  }
+  const benchCountEl = document.getElementById('bench-count');
+  if (benchCountEl){
+    benchCountEl.textContent =
+      f2VisA + ' of ' + f2TotA + ' communication-neuroprostheses studies';
+  }
   if (selectedId && !visIds.has(selectedId) && mode !== 'dim') updateSpotlightNav();
   if (selectedId){
     document.querySelectorAll('.study-card').forEach(c =>
@@ -1762,45 +2621,79 @@ const figbox = document.getElementById('figbox');
 const fsBtn = document.getElementById('fs-btn');
 const fsLbl = document.getElementById('fs-lbl');
 const fsIco = document.getElementById('fs-ico');
+const benchbox = document.getElementById('benchbox');
+const f2FsBtn = document.getElementById('f2-fs-btn');
+const f2FsLbl = document.getElementById('f2-fs-lbl');
+const f2FsIco = document.getElementById('f2-fs-ico');
+const benchToggle = document.getElementById('bench-toggle');
 const FS_ENTER_PATH = 'M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4';
 const FS_EXIT_PATH  = 'M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4';
-function isFs(){
-  return Boolean(document.fullscreenElement === figbox ||
-                 document.webkitFullscreenElement === figbox ||
-                 figbox.classList.contains('is-fullscreen'));
+function isBoxFs(box){
+  return Boolean(document.fullscreenElement === box ||
+                 document.webkitFullscreenElement === box ||
+                 box.classList.contains('is-fullscreen'));
 }
+function isFs(){ return isBoxFs(figbox) || isBoxFs(benchbox); }
 function syncFsUI(){
-  const on = isFs();
-  fsLbl.textContent = on ? 'Exit full screen' : 'Full screen';
-  fsIco.innerHTML = `<path d="${on ? FS_EXIT_PATH : FS_ENTER_PATH}"/>`;
-  document.body.style.overflow = figbox.classList.contains('is-fullscreen') ? 'hidden' : '';
+  const on1 = isBoxFs(figbox);
+  fsLbl.textContent = on1 ? 'Exit full screen' : 'Full screen';
+  fsIco.innerHTML = `<path d="${on1 ? FS_EXIT_PATH : FS_ENTER_PATH}"/>`;
+  const on2 = isBoxFs(benchbox);
+  f2FsLbl.textContent = on2 ? 'Exit full screen' : 'Full screen';
+  f2FsIco.innerHTML = `<path d="${on2 ? FS_EXIT_PATH : FS_ENTER_PATH}"/>`;
+  document.body.style.overflow =
+    (figbox.classList.contains('is-fullscreen') || benchbox.classList.contains('is-fullscreen')) ? 'hidden' : '';
 }
 function exitFs(){
-  if (document.fullscreenElement === figbox && document.exitFullscreen)
+  if ((document.fullscreenElement === figbox || document.fullscreenElement === benchbox) && document.exitFullscreen)
     document.exitFullscreen().catch(() => {});
-  else if (document.webkitFullscreenElement === figbox && document.webkitExitFullscreen)
+  else if ((document.webkitFullscreenElement === figbox || document.webkitFullscreenElement === benchbox) && document.webkitExitFullscreen)
     document.webkitExitFullscreen();
   figbox.classList.remove('is-fullscreen');
+  benchbox.classList.remove('is-fullscreen');
   syncFsUI();
 }
-function toggleFs(){
-  if (isFs()){ exitFs(); return; }
-  const req = figbox.requestFullscreen || figbox.webkitRequestFullscreen;
+function toggleBoxFs(box){
+  if (isBoxFs(box)){ exitFs(); return; }
+  if (isFs()) exitFs();
+  const req = box.requestFullscreen || box.webkitRequestFullscreen;
   if (req){
     try {
-      const p = req.call(figbox);
+      const p = req.call(box);
       if (p && typeof p.catch === 'function')
-        p.catch(() => { figbox.classList.add('is-fullscreen'); syncFsUI(); });
+        p.catch(() => { box.classList.add('is-fullscreen'); syncFsUI(); });
     } catch (_) {
-      figbox.classList.add('is-fullscreen'); syncFsUI();
+      box.classList.add('is-fullscreen'); syncFsUI();
     }
   } else {
-    figbox.classList.add('is-fullscreen'); syncFsUI();
+    box.classList.add('is-fullscreen'); syncFsUI();
   }
 }
-fsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleFs(); });
+function toggleFs(){ toggleBoxFs(figbox); }
+fsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleBoxFs(figbox); });
+f2FsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleBoxFs(benchbox); });
 document.addEventListener('fullscreenchange', syncFsUI);
 document.addEventListener('webkitfullscreenchange', syncFsUI);
+
+benchToggle.addEventListener('click', () => {
+  const hidden = benchbox.style.display === 'none';
+  benchbox.style.display = hidden ? '' : 'none';
+  benchToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+document.querySelectorAll('.f2-slot').forEach(slot => {
+  const sid = slot.dataset.id;
+  slot.addEventListener('click', ev => {
+    ev.stopPropagation();
+    selectStudy(sid, true);
+  });
+  slot.addEventListener('mouseenter', () => {
+    document.querySelectorAll(`.f2-slot[data-id="${sid}"]`).forEach(s => s.classList.add('hovered'));
+  });
+  slot.addEventListener('mouseleave', () => {
+    document.querySelectorAll(`.f2-slot[data-id="${sid}"]`).forEach(s => s.classList.remove('hovered'));
+  });
+});
 
 let debounce = null;
 document.getElementById('search').addEventListener('input', e => {
@@ -1820,14 +2713,15 @@ def export_interactive_html(
     studies: list[dict[str, Any]],
     geom: dict[str, Any],
     counts_summary: dict[str, Any],
+    verify_overlaps: bool = True,
 ) -> None:
     """Write the single-file interactive SVG + HTML edition of the timeline.
 
     Reuses the Pass-2 measured card geometries for a pixel-identical initial view,
     then re-runs the same packing solver in JavaScript whenever the reader toggles
-    the legend or sidebar filters, and renders one standalone study card per
-    publication (the six legend dimensions, participant roster, and the four
-    structured metrics) below the timeline.
+    the legend or sidebar filters, embeds the interactive SVG of Figure 2's upper
+    half (Panels a-d) between the selected-study spotlight and the study cards,
+    and renders one standalone study card per publication below.
 
     Parameters
     ----------
@@ -1842,6 +2736,9 @@ def export_interactive_html(
     counts_summary : dict of str to Any
         Cohort summary containing ``total_unique``, ``home_summary``, and
         ``metadata`` used for the live participant counters.
+    verify_overlaps : bool, default=True
+        Whether to run the pairwise text bounding-box overlap check on Figure 2's
+        upper half before emitting SVG.
 
     Returns
     -------
@@ -1855,9 +2752,13 @@ def export_interactive_html(
         "total_unique": counts_summary.get("total_unique", 0),
         "home_summary": str(counts_summary.get("home_summary", "")),
     }
+    f2_svg_inner, f2_vw, f2_vh = _build_fig2_upper_svg(studies, verify_overlaps=verify_overlaps)
     studies_json = json.dumps(studies, ensure_ascii=False).replace("</", "<\\/")
     doc = (_HTML_TEMPLATE
            .replace("__CHROME__", _build_chrome_svg(geom))
+           .replace("__FIG2_UPPER__", f2_svg_inner)
+           .replace("__F2_VW__", str(f2_vw))
+           .replace("__F2_VH__", str(f2_vh))
            .replace("__STUDIES__", studies_json)
            .replace("__GEOM__", json.dumps(geom, ensure_ascii=False).replace("</", "<\\/"))
            .replace("__META__", json.dumps(meta_out, ensure_ascii=False).replace("</", "<\\/"))
