@@ -23,7 +23,6 @@
            margin: 0 -28px; padding: 12px 28px; }
   .head-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; max-width: 1600px; margin: 0 auto; }
   h1 { font-size: 17px; font-weight: 650; margin: 0; letter-spacing: .01em; }
-  .head-sub { color: var(--muted); font-size: 12.5px; }
   .head-tools { margin-left: auto; display: flex; gap: 10px; align-items: center; }
   .stat { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
           padding: 3px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
@@ -77,7 +76,11 @@
                     color: var(--muted); cursor: pointer; }
   #modebar button + button { border-left: 1px solid var(--line); }
   #modebar button.on { background: var(--accent); color: #fff; font-weight: 600; }
-  .hint { font-size: 12px; color: var(--faint); margin-left: auto; }
+  #pinned-only-btn { border: 1px solid rgba(0, 107, 89, .38); background: rgba(0, 160, 135, .08);
+                     color: #005f4f; border-radius: 999px; padding: 4px 14px; font-size: 12px;
+                     font-weight: 600; cursor: pointer; transition: all .12s ease; }
+  #pinned-only-btn:hover { border-color: #006b59; background: rgba(0, 160, 135, .15); }
+  #pinned-only-btn.on { background: #006b59; border-color: #006b59; color: #fff; }
 
   /* ---------- figure ---------- */
   #figbox, #benchbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
@@ -141,6 +144,33 @@
              padding: 3px 12px; font-size: 12px; color: var(--muted); cursor: pointer; }
   .sec-btn:hover { color: var(--ink); border-color: var(--faint); }
 
+  /* ---------- Table 1 (participant cohort) ---------- */
+  #cohortbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+               padding: 14px 18px 12px; overflow-x: auto; }
+  .cohort-sub { font-size: 12px; color: var(--muted); margin: 0 0 10px; line-height: 1.45; }
+  .cohort-sub b { color: var(--ink); font-weight: 650; }
+  .cohort-tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.35; }
+  .cohort-tbl th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .05em;
+                   text-transform: uppercase; color: var(--muted); padding: 7px 10px;
+                   border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink);
+                   background: #fafbfc; white-space: nowrap; }
+  .cohort-tbl td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top;
+                   color: var(--ink); white-space: nowrap; }
+  .cohort-tbl tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+  .cohort-row { cursor: pointer; transition: background .12s ease, opacity .15s ease; }
+  .cohort-row:hover { background: #f4f7fb; }
+  .cohort-row.selected { background: var(--accent-soft); }
+  .cohort-row.selected td:first-child { color: var(--accent); font-weight: 700;
+                                        box-shadow: inset 3px 0 0 var(--accent); }
+  .cohort-row.off { opacity: .25; }
+  .cohort-pid { font-weight: 650; color: var(--ink); }
+  .cohort-sp { font-size: 11px; color: var(--muted); margin-left: 3px; }
+  .cohort-tbl a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .cohort-tbl a:hover { text-decoration: underline; }
+  .cohort-foot { font-size: 11.5px; color: var(--muted); margin: 9px 0 0; line-height: 1.45; }
+  .cohort-foot a { color: var(--accent); text-decoration: none; }
+  .cohort-foot a:hover { text-decoration: underline; }
+
   /* ---------- spotlight ---------- */
   #spotlight { position: relative; border: 1.5px solid var(--accent); border-radius: 16px;
                background: #fdfeff; padding: 22px 26px 16px; margin: 26px 0 24px; scroll-margin-top: 68px; }
@@ -160,12 +190,18 @@
 
   /* ---------- study cards ---------- */
   #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .cards-row-break { grid-column: 1 / -1; height: 0; border-top: 1px dashed var(--line); margin: 2px 0; }
   .study-card { --spine: #9aa3af; background: var(--card); border: 1px solid var(--line);
                 border-left: 4px solid var(--spine); border-radius: 12px; padding: 14px 16px 12px;
                 cursor: pointer; transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease; }
   .study-card:hover { box-shadow: 0 4px 18px rgba(15, 36, 64, .10); transform: translateY(-1px); }
   .study-card.selected { border-color: var(--accent); border-left-color: var(--accent);
                          box-shadow: 0 0 0 2px var(--accent-soft); }
+  .study-card.pinned { border-color: rgba(0, 107, 89, .38); border-left: 4px solid #006b59;
+                       background: linear-gradient(180deg, rgba(0, 160, 135, .045) 0%, #ffffff 42%); }
+  .sc-pin { display: inline-flex; align-items: center; gap: 3px; background: rgba(0, 160, 135, .13);
+            color: #005f4f; font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+            padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
   .sc-head { display: flex; align-items: center; gap: 8px; }
   .sc-dot { width: 10px; height: 10px; border-radius: 50%; flex: none;
             box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.10); }
@@ -193,7 +229,6 @@
   <header>
     <div class="head-row">
       <h1>Living Timeline of Communication Neuroprostheses for People with Paralysis</h1>
-      <span class="head-sub">Interactive edition · click any card for details, toggle filters to explore</span>
       <div class="head-tools">
         <span class="stat">Studies <b id="vis-count"></b></span>
         <span class="stat">Participants <b id="vis-people"></b></span>
@@ -212,138 +247,281 @@
         <button data-mode="reflow">Reflow</button>
         <button data-mode="hide">Hide in place</button>
       </div>
-      <span class="hint">Dim fades filtered studies to the background · Reflow re-packs the remaining cards around their time anchors · the in-figure legends are clickable too</span>
+      <button id="pinned-only-btn" type="button" title="Toggle showing only the 3 open-data studies with vocabulary &gt; 71.4k and online WER &lt; 12.8%: Fan et al. (2023), Card et al. (2024) &amp; Jude et al. (2026a)">★ Open Data, Vocab &gt; 71.4k, WER &lt; 12.8%</button>
     </div>
   </div>
 
+  <div class="sec" id="tl-sec" style="margin-top:20px">
+    <h2>Timeline</h2>
+    <span class="count" id="tl-count"></span>
+    <span class="rule"></span>
+    <button id="tl-toggle" class="sec-btn" type="button">Hide</button>
+  </div>
   <div id="figbox">
     <button id="fs-btn" type="button" title="Toggle full screen (F)" aria-label="Toggle full screen">
       <svg id="fs-ico" viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>
       <span id="fs-lbl">Full screen</span>
     </button>
     <svg id="tl-svg" viewBox="0 0 2694 1914" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="2694" height="1914" fill="#ffffff"/>
-<line x1="168.8" y1="1806.7" x2="1977.5" y2="1806.7" stroke="#9aa3af" stroke-width="1.67"/>
-<line x1="212.2" y1="1806.7" x2="212.2" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="212.2" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2021</text>
-<line x1="501.6" y1="1806.7" x2="501.6" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="501.6" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2022</text>
-<line x1="791.0" y1="1806.7" x2="791.0" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="791.0" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2023</text>
-<line x1="1080.4" y1="1806.7" x2="1080.4" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="1080.4" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2024</text>
-<line x1="1369.8" y1="1806.7" x2="1369.8" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="1369.8" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2025</text>
-<line x1="1659.2" y1="1806.7" x2="1659.2" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="1659.2" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2026</text>
-<line x1="1948.6" y1="1806.7" x2="1948.6" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
-<text x="1948.6" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2027</text>
-<line x1="168.8" y1="546.3" x2="2860.1" y2="546.3" stroke="#e2e6ec" stroke-width="2.22"/>
-<text x="116.7" y="546.3" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Speech</text>
-<line x1="168.8" y1="1098.7" x2="2860.1" y2="1098.7" stroke="#e2e6ec" stroke-width="2.22"/>
-<text x="116.7" y="1098.7" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Typing</text>
-<line x1="168.8" y1="1651.1" x2="2860.1" y2="1651.1" stroke="#e2e6ec" stroke-width="2.22"/>
-<text x="116.7" y="1651.1" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Handwriting</text>
+<line x1="168.2" y1="1806.7" x2="1950.7" y2="1806.7" stroke="#9aa3af" stroke-width="1.67"/>
+<line x1="210.9" y1="1806.7" x2="210.9" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="210.9" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2021</text>
+<line x1="496.1" y1="1806.7" x2="496.1" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="496.1" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2022</text>
+<line x1="781.3" y1="1806.7" x2="781.3" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="781.3" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2023</text>
+<line x1="1066.5" y1="1806.7" x2="1066.5" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1066.5" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2024</text>
+<line x1="1351.7" y1="1806.7" x2="1351.7" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1351.7" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2025</text>
+<line x1="1637.0" y1="1806.7" x2="1637.0" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1637.0" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2026</text>
+<line x1="1922.2" y1="1806.7" x2="1922.2" y2="1815.6" stroke="#9aa3af" stroke-width="1.67"/>
+<text x="1922.2" y="1844.1" font-size="13.9" fill="#6b7280" text-anchor="middle" dominant-baseline="central">2027</text>
+<line x1="168.2" y1="546.3" x2="2857.6" y2="546.3" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.8" y="546.3" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Speech</text>
+<line x1="168.2" y1="1098.7" x2="2857.6" y2="1098.7" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.8" y="1098.7" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Typing</text>
+<line x1="168.2" y1="1651.1" x2="2857.6" y2="1651.1" stroke="#e2e6ec" stroke-width="2.22"/>
+<text x="116.8" y="1651.1" font-size="16.0" font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">Handwriting</text>
 <g class="legend" data-dim="data_availability">
-<rect class="frame" x="184.7" y="18.9" width="176.3" height="106.4" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="196.7" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DATA AVAILABILITY</text>
+<rect class="frame" x="184.0" y="18.9" width="176.3" height="106.4" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="196.0" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DATA AVAILABILITY</text>
 <g class="lg-row" data-dim="data_availability" data-val="open">
-<circle cx="201.66" cy="50.92" r="5" fill="#00A087" stroke="white" stroke-width="1"/>
-<text x="214.7" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">open data</text>
+<circle cx="201.03" cy="50.92" r="5" fill="#00A087" stroke="white" stroke-width="1"/>
+<text x="214.0" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">open data</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="partial">
-<circle cx="201.66" cy="66.42" r="5" fill="#c07f00" stroke="white" stroke-width="1"/>
-<text x="214.7" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">data on request</text>
+<circle cx="201.03" cy="66.42" r="5" fill="#c07f00" stroke="white" stroke-width="1"/>
+<text x="214.0" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">data on request</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="closed">
-<circle cx="201.66" cy="81.92" r="5" fill="#cc3324" stroke="white" stroke-width="1"/>
-<text x="214.7" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">closed data</text>
+<circle cx="201.03" cy="81.92" r="5" fill="#cc3324" stroke="white" stroke-width="1"/>
+<text x="214.0" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">closed data</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="unknown">
-<circle cx="201.66" cy="97.42" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="214.7" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">preprint</text>
+<circle cx="201.03" cy="97.42" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="214.0" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">preprint</text>
 </g>
 <g class="lg-row" data-dim="data_availability" data-val="reanalysis">
-<circle cx="201.66" cy="112.92" r="5" fill="#7B3294" stroke="white" stroke-width="1"/>
-<text x="214.7" y="112.9" font-size="10.8" fill="#374151" dominant-baseline="central">reanalysis on open data</text>
+<circle cx="201.03" cy="112.92" r="5" fill="#7B3294" stroke="white" stroke-width="1"/>
+<text x="214.0" y="112.9" font-size="10.8" fill="#374151" dominant-baseline="central">reanalysis on open data</text>
 </g>
 </g>
 <g class="legend" data-dim="decoding_mode">
-<rect class="frame" x="421.2" y="18.9" width="104.7" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="433.2" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODING MODE</text>
+<rect class="frame" x="420.6" y="18.9" width="104.7" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="432.6" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODING MODE</text>
 <g class="lg-row" data-dim="decoding_mode" data-val="online">
-<circle cx="438.21" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="451.2" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">online</text>
+<circle cx="437.63" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="450.6" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">online</text>
 </g>
 <g class="lg-row" data-dim="decoding_mode" data-val="offline">
-<circle cx="438.21" cy="66.42" r="3.6" fill="white" stroke="#7F7F7F" stroke-width="1.8"/>
-<text x="451.2" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">offline</text>
+<circle cx="437.63" cy="66.42" r="3.6" fill="white" stroke="#7F7F7F" stroke-width="1.8"/>
+<text x="450.6" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">offline</text>
 </g>
 </g>
 <g class="legend" data-dim="electrode">
-<rect class="frame" x="586.2" y="18.9" width="136.8" height="90.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="598.2" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">ELECTRODE TYPE</text>
+<rect class="frame" x="585.6" y="18.9" width="136.8" height="90.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="597.6" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">ELECTRODE TYPE</text>
 <g class="lg-row" data-dim="electrode" data-val="ecog">
-<circle cx="603.16" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="616.2" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">ECoG</text>
+<circle cx="602.64" cy="50.92" r="5" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="615.6" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">ECoG</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="utah">
-<rect x="599.16" y="62.42" width="8" height="8" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="616.2" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">Utah array</text>
+<rect x="598.64" y="62.42" width="8" height="8" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="615.6" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">Utah array</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="thin_film">
-<polygon points="608.16,81.92 605.66,86.25 600.66,86.25 598.16,81.92 600.66,77.59 605.66,77.59" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="616.2" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">thin-film threads</text>
+<polygon points="602.64,76.92 598.31,79.42 598.31,84.42 602.64,86.92 606.97,84.42 606.97,79.42" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="615.6" y="81.9" font-size="10.8" fill="#374151" dominant-baseline="central">thin-film threads</text>
 </g>
 <g class="lg-row" data-dim="electrode" data-val="microwire">
-<polygon points="603.16,92.42 607.49,99.92 598.83,99.92" fill="#7F7F7F" stroke="white" stroke-width="1"/>
-<text x="616.2" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">microwire array</text>
+<polygon points="602.64,102.42 606.97,94.92 598.31,94.92" fill="#7F7F7F" stroke="white" stroke-width="1"/>
+<text x="615.6" y="97.4" font-size="10.8" fill="#374151" dominant-baseline="central">microwire array</text>
 </g>
 </g>
 <g class="legend" data-dim="speech_ability">
-<rect class="frame" x="783.2" y="18.9" width="250.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="795.2" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">SPEECH ABILITY</text>
+<rect class="frame" x="782.8" y="18.9" width="250.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="794.8" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">SPEECH ABILITY</text>
 <g class="lg-row" data-dim="speech_ability" data-val="intact">
-<polygon points="800.21,56.12 795.71,48.32 804.71,48.32" fill="#1a1a1a" stroke="white" stroke-width="1"/>
-<text x="813.2" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">participants who can speak naturally</text>
+<polygon points="799.75,45.72 795.25,53.52 804.25,53.52" fill="#1a1a1a" stroke="white" stroke-width="1"/>
+<text x="812.8" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">participants who can speak naturally</text>
 </g>
 <g class="lg-row" data-dim="speech_ability" data-val="paralysis">
-<polygon points="800.21,70.82 796.40,64.22 804.02,64.22" fill="white" stroke="#7F7F7F" stroke-width="1"/>
-<text x="813.2" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">participants who have vocal paralysis</text>
+<polygon points="799.75,62.02 795.94,68.62 803.56,68.62" fill="white" stroke="#7F7F7F" stroke-width="1"/>
+<text x="812.8" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">participants who have vocal paralysis</text>
 </g>
 </g>
 <g class="legend" data-dim="task_instruction">
-<rect class="frame" x="1094.0" y="18.9" width="183.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="1106.0" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">TASK INSTRUCTION</text>
+<rect class="frame" x="1093.6" y="18.9" width="183.5" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="1105.6" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">TASK INSTRUCTION</text>
 <g class="lg-row" data-dim="task_instruction" data-val="inner">
-<polygon points="1110.99,55.52 1106.39,50.92 1110.99,46.32 1115.59,50.92" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
-<text x="1124.0" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">inner speech</text>
+<polygon points="1110.59,46.32 1105.99,50.92 1110.59,55.52 1115.19,50.92" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="1123.6" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">inner speech</text>
 </g>
 <g class="lg-row" data-dim="task_instruction" data-val="intended">
-<polygon points="1110.99,71.02 1106.39,66.42 1110.99,61.82 1115.59,66.42" fill="white" stroke="#1a1a1a" stroke-width="1"/>
-<text x="1124.0" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">overt/mouthing/intended</text>
+<polygon points="1110.59,61.82 1105.99,66.42 1110.59,71.02 1115.19,66.42" fill="white" stroke="#1a1a1a" stroke-width="1"/>
+<text x="1123.6" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">overt/mouthing/intended</text>
 </g>
 </g>
 <g class="legend" data-dim="decoded_output">
-<rect class="frame" x="1337.8" y="18.9" width="121.4" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
-<text class="lg-title" x="1349.8" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODED OUTPUT</text>
+<rect class="frame" x="1337.4" y="18.9" width="121.4" height="58.5" rx="10" fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>
+<text class="lg-title" x="1349.4" y="33.9" font-size="10.3" font-weight="bold" letter-spacing="0.8" fill="#8a93a0">DECODED OUTPUT</text>
 <g class="lg-row" data-dim="decoded_output" data-val="voice">
-<polygon points="1354.77,55.92 1350.01,52.47 1351.83,46.87 1357.71,46.87 1359.53,52.47" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
-<text x="1367.8" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-voice</text>
+<polygon points="1354.43,45.92 1349.67,49.37 1351.49,54.97 1357.37,54.97 1359.19,49.37" fill="#1a1a1a" stroke="#1a1a1a" stroke-width="0.8"/>
+<text x="1367.4" y="50.9" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-voice</text>
 </g>
 <g class="lg-row" data-dim="decoded_output" data-val="text">
-<polygon points="1354.77,71.42 1350.01,67.97 1351.83,62.37 1357.71,62.37 1359.53,67.97" fill="white" stroke="#1a1a1a" stroke-width="1"/>
-<text x="1367.8" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-text</text>
+<polygon points="1354.43,61.42 1349.67,64.87 1351.49,70.47 1357.37,70.47 1359.19,64.87" fill="white" stroke="#1a1a1a" stroke-width="1"/>
+<text x="1367.4" y="66.4" font-size="10.8" fill="#374151" dominant-baseline="central">brain-to-text</text>
 </g>
 </g>
 <text id="total-note" x="2686.5" y="1882.1" font-size="11.4" font-style="italic" fill="#3C5488" text-anchor="end" dominant-baseline="central"></text>
-<text id="lt-speech" x="2677.8" y="557.0" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
-<text id="lt-typing" x="2677.8" y="1109.4" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
-<text id="lt-handwriting" x="2677.8" y="1661.8" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
-<g id="empty-msg" style="display:none"><text x="1428" y="960" font-size="16" fill="#8a93a0" text-anchor="middle">No studies match the current filters</text></g></svg>
+<text id="lt-speech" x="2677.9" y="557.0" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
+<text id="lt-typing" x="2677.9" y="1109.4" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
+<text id="lt-handwriting" x="2677.9" y="1661.8" font-size="13.9" font-weight="bold" fill="#3C5488" text-anchor="end"></text>
+<g id="empty-msg" style="display:none"><text x="1427" y="960" font-size="16" fill="#8a93a0" text-anchor="middle">No studies match the current filters</text></g></svg>
+  </div>
+
+  <div class="sec" id="cohort-sec">
+    <h2>Participant Cohort</h2>
+    <span class="count" id="cohort-count"></span>
+    <span class="rule"></span>
+    <button id="cohort-toggle" class="sec-btn" type="button">Show</button>
+  </div>
+  <div id="cohortbox" style="display:none">
+    <p class="cohort-sub">
+      <b>Ch. (impl.)</b> = total implanted channels · <b>Ch. (dec.)</b> = channels fed into the communication decoder ·
+      <b>Interval</b> = symptom onset or diagnosis to implantation · <b>Home use</b> = independent daily use
+    </p>
+    <table class="cohort-tbl" aria-label="Table 1: The twenty participants of the communication-neuroprosthesis literature and company reports">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Institute</th>
+          <th>Etiology</th>
+          <th>Electrode</th>
+          <th>Ch. (impl.)</th>
+          <th>Ch. (dec.)</th>
+          <th>Side</th>
+          <th>Modality</th>
+          <th>Interval</th>
+          <th>Implanted</th>
+          <th>Home use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cohort-row" data-pid="T5">
+          <td class="cohort-pid">T5<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>192</td><td>192</td><td>L</td>
+          <td>handwriting</td><td>9 y</td><td>2016-08</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T12">
+          <td class="cohort-pid">T12<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>128<br>128</td><td>L</td>
+          <td>speech<br>handwriting</td><td>9 y</td><td>2022-03</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T15">
+          <td class="cohort-pid">T15<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>256<br>256</td><td>L</td>
+          <td>speech<br>cursor</td><td>5 y</td><td>2023-07</td>
+          <td><a href="https://doi.org/10.1038/s41591-026-04414-6" target="_blank" rel="noopener" onclick="event.stopPropagation()">3,800 h, 444 d ↗</a></td>
+        </tr>
+        <tr class="cohort-row" data-pid="T16">
+          <td class="cohort-pid">T16<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>256</td><td>64</td><td>L</td>
+          <td>speech</td><td>19 y</td><td>2023-12</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T17">
+          <td class="cohort-pid">T17<span class="cohort-sp" title="Vocal paralysis (dysarthria / locked-in syndrome)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>256<br>256</td><td>L</td>
+          <td>speech<br>typing</td><td>3 y</td><td>2024-02</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T18">
+          <td class="cohort-pid">T18<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>384</td><td>384<br>384</td><td>bi</td>
+          <td>typing<br>handwriting</td><td>1.5 y</td><td>2024-10<sup>†</sup></td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T21">
+          <td class="cohort-pid">T21<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>384</td><td>bi</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T22">
+          <td class="cohort-pid">T22<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>384</td><td>256</td><td>L</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B1">
+          <td class="cohort-pid">B1<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>UCSF</td><td>stroke</td><td>ECoG</td><td>128<br>253</td><td>128<br>253</td><td>L</td>
+          <td>speech<br>speech</td><td>16 y<br>21 y</td><td>2019-02<br>2024-04</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B3">
+          <td class="cohort-pid">B3<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>UCSF</td><td>stroke</td><td>ECoG</td><td>253</td><td>253</td><td>L</td>
+          <td>speech</td><td>17 y</td><td>2022-09</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B6">
+          <td class="cohort-pid">B6<span class="cohort-sp" title="Vocal paralysis (severe vocal-tract paralysis)">△</span></td>
+          <td>UCSF</td><td>ALS</td><td>ECoG</td><td>253</td><td>253<br>253</td><td>L</td>
+          <td>speech<br>gesture</td><td>4 y</td><td>2025-03</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="CC01">
+          <td class="cohort-pid">CC01<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>JHU</td><td>ALS</td><td>ECoG</td><td>128</td><td>64</td><td>L</td>
+          <td>speech</td><td>8 y</td><td>2022-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P1">
+          <td class="cohort-pid">P1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Caltech</td><td>SCI</td><td>Utah</td><td>288</td><td>96</td><td>L</td>
+          <td>speech</td><td>1.5 y</td><td>2016-11</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P2">
+          <td class="cohort-pid">P2<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Caltech</td><td>SCI</td><td>Utah</td><td>320</td><td>64</td><td>L</td>
+          <td>speech</td><td>3 y</td><td>2022-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="Z1">
+          <td class="cohort-pid">Z1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>ZJU</td><td>SCI</td><td>Utah</td><td>192</td><td>96</td><td>L</td>
+          <td>handwriting</td><td>~3 y</td><td>2019-08</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V1">
+          <td class="cohort-pid">V1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V2">
+          <td class="cohort-pid">V2<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V3">
+          <td class="cohort-pid">V3<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>3,072</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P7">
+          <td class="cohort-pid">P7<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>—</td><td>—</td><td>—</td>
+          <td>typing</td><td>—</td><td>2025-06<sup>‡</sup></td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="C1">
+          <td class="cohort-pid">C1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Paradromics</td><td>MND</td><td>Connexus</td><td>—</td><td>—</td><td>—</td>
+          <td>speech</td><td>—</td><td>2026-06<sup>‡</sup></td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="cohort-foot">
+      <b>▲</b> can speak naturally (6/20) · <b>△</b> vocal paralysis (14/20) · <b>Z1, V1–V3, C1</b> coined IDs ·
+      <b>&lt;yyyy-mm</b> implanted before given month · <sup>†</sup>derived from post-implant day · <sup>‡</sup>company report
+    </p>
   </div>
 
   <div class="sec" id="bench-sec">
-    <h2>Benchmark overview: vocabulary funnel &amp; open-data metrics</h2>
+    <h2>Vocabulary, Dataset Size, Word Error Rate &amp; Speed</h2>
     <span class="count" id="bench-count"></span>
     <span class="rule"></span>
     <button id="bench-toggle" class="sec-btn" type="button">Hide</button>
@@ -442,7 +620,7 @@
 <line x1="98.8" y1="106.3" x2="100.8" y2="106.3" stroke="#1f2937" stroke-width="0.83"/>
 <line x1="98.8" y1="103.7" x2="100.8" y2="103.7" stroke="#1f2937" stroke-width="0.83"/>
 <text x="15.3" y="254.2" font-size="12.50" fill="#1f2937" text-anchor="middle" dominant-baseline="central" transform="rotate(-90 15.3 254.2)">vocabulary size</text>
-<text x="1153.6" y="80.5" font-size="13.89" font-weight="bold" fill="#111827" text-anchor="middle">(a) Maximum vocabulary size used in the 32 language-BCI studies</text>
+<text x="1153.6" y="80.5" font-size="13.89" font-weight="bold" fill="#111827" text-anchor="middle">(a) Maximum vocabulary size used in the 32 English communication-neuroprostheses studies</text>
 <line x1="100.8" y1="203.9" x2="2206.4" y2="203.9" stroke="#7F7F7F" stroke-width="1.25" stroke-dasharray="5.5,2.8"/>
 <text x="110.5" y="219.4" font-size="9.72" fill="#555555" text-anchor="start" dominant-baseline="alphabetic">11,100 word families (Brysbaert et al., 2016)</text>
 <line x1="100.8" y1="173.6" x2="2206.4" y2="173.6" stroke="#7F7F7F" stroke-width="1.25" stroke-dasharray="5.5,2.8"/>
@@ -788,7 +966,7 @@
 <text class="f2-val" x="257.9" y="1076.5" font-size="10.14" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">1,315</text>
 <text x="257.9" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="257.9" y="1041.9">21 d/sess</tspan><tspan x="257.9" y="1049.5">105 blks</tspan><tspan x="257.9" y="1057.2">span 287 d</tspan></text>
 <line x1="257.9" y1="1110.0" x2="257.9" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(257.9,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Fan et al., 2023 (T5)</text></g>
+<g transform="translate(257.9,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Fan et al., 2023 (T5)</text></g>
 </g>
 <g class="f2-slot" data-id="card2024">
 <title>Card et al., 2024 (T15) — 9,498 released sentences (click to inspect study)</title>
@@ -797,7 +975,7 @@
 <text class="f2-val" x="315.1" y="904.1" font-size="10.14" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">9,498</text>
 <text x="315.1" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="315.1" y="869.5">45 d/sess</tspan><tspan x="315.1" y="877.2">265 blks</tspan><tspan x="315.1" y="884.9">span 612 d</tspan></text>
 <line x1="315.1" y1="1110.0" x2="315.1" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(315.1,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Card et al., 2024 (T15)</text></g>
+<g transform="translate(315.1,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Card et al., 2024 (T15)</text></g>
 </g>
 <g class="f2-slot" data-id="wairagkar2025">
 <title>Wairagkar et al., 2025 (T15) — 8,489 released sentences (click to inspect study)</title>
@@ -842,7 +1020,7 @@
 <text class="f2-val" x="600.8" y="1090.1" font-size="10.14" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">668</text>
 <text x="600.8" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="600.8" y="1055.5">8 d/sess</tspan><tspan x="600.8" y="1063.2">46 blks</tspan><tspan x="600.8" y="1070.8">span 89 d</tspan></text>
 <line x1="600.8" y1="1110.0" x2="600.8" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(600.8,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T17)</text></g>
+<g transform="translate(600.8,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T17)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026a">
 <title>Jude et al., 2026a (T18) — 1,033 released sentences (click to inspect study)</title>
@@ -851,7 +1029,7 @@
 <text class="f2-val" x="658.0" y="1082.4" font-size="10.14" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">1,033</text>
 <text x="658.0" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="658.0" y="1047.8">9 d/sess</tspan><tspan x="658.0" y="1055.5">98 blks</tspan><tspan x="658.0" y="1063.1">span 119 d</tspan></text>
 <line x1="658.0" y1="1110.0" x2="658.0" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(658.0,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T18)</text></g>
+<g transform="translate(658.0,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T18)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026b">
 <title>Jude et al., 2026b (T17) — 3,674 released sentences (click to inspect study)</title>
@@ -876,7 +1054,7 @@
 <text x="819.0" y="865.7" font-size="12.50" fill="#1f2937" text-anchor="end" dominant-baseline="central">100</text>
 <text x="779.5" y="957.3" font-size="12.50" fill="#1f2937" text-anchor="middle" dominant-baseline="central" transform="rotate(-90 779.5 957.3)">word error rate (%)</text>
 <text x="1153.6" y="780.1" font-size="13.61" font-weight="bold" fill="#111827" text-anchor="middle">(c) Word error rate (online)</text>
-<text x="1153.6" y="796.8" font-size="13.61" font-weight="bold" fill="#111827" text-anchor="middle">no series printed: Wairagkar et al., 2025 (listener median)</text>
+<text x="1153.6" y="796.8" font-size="13.61" font-weight="bold" fill="#111827" text-anchor="middle">★ 3 studies satisfy: Open Data, Vocab &gt; 71.4k, WER &lt; 12.8%</text>
 <line x1="825.0" y1="1103.9" x2="1482.2" y2="1103.9" stroke="#7F7F7F" stroke-width="1.25" stroke-dasharray="5.5,2.8"/>
 <line x1="825.0" y1="1095.8" x2="1482.2" y2="1095.8" stroke="#7F7F7F" stroke-width="1.25" stroke-dasharray="5.5,2.8"/>
 <line x1="825.0" y1="1078.7" x2="1482.2" y2="1078.7" stroke="#7F7F7F" stroke-width="1.25" stroke-dasharray="5.5,2.8"/>
@@ -923,8 +1101,9 @@
 <line x1="979.4" y1="1103.2" x2="985.0" y2="1103.2" stroke="#333333" stroke-width="1.39"/>
 <text class="f2-val" x="982.2" y="1092.3" font-size="9.17" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">4.0±1.2</text>
 <text x="982.2" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="982.2" y="1064.0">vocab 130k</tspan><tspan x="982.2" y="1071.6">mean±SD†</tspan><tspan x="982.2" y="1079.3">10 of 21 d</tspan></text>
+<text x="982.2" y="1050.1" font-size="10.83" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">★</text>
 <line x1="982.2" y1="1110.0" x2="982.2" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(982.2,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Fan et al., 2023 (T5)</text></g>
+<g transform="translate(982.2,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Fan et al., 2023 (T5)</text></g>
 </g>
 <g class="f2-slot" data-id="card2024">
 <title>Card et al., 2024 (T15) — online WER: 4.9±3.3% (click to inspect study)</title>
@@ -935,8 +1114,9 @@
 <line x1="1036.5" y1="1106.1" x2="1042.1" y2="1106.1" stroke="#333333" stroke-width="1.39"/>
 <text class="f2-val" x="1039.3" y="1085.0" font-size="9.17" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">4.9±3.3</text>
 <text x="1039.3" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="1039.3" y="1056.6">vocab 125k</tspan><tspan x="1039.3" y="1064.3">mean±SD</tspan><tspan x="1039.3" y="1072.0">14 of 45 d</tspan></text>
+<text x="1039.3" y="1042.7" font-size="10.83" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">★</text>
 <line x1="1039.3" y1="1110.0" x2="1039.3" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(1039.3,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Card et al., 2024 (T15)</text></g>
+<g transform="translate(1039.3,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Card et al., 2024 (T15)</text></g>
 </g>
 <g class="f2-slot" data-id="wairagkar2025">
 <title>Wairagkar et al., 2025 (T15) — online WER: 43.8% (click to inspect study)</title>
@@ -992,8 +1172,9 @@
 <line x1="1322.2" y1="1085.6" x2="1327.8" y2="1085.6" stroke="#333333" stroke-width="1.39"/>
 <text class="f2-val" x="1325.0" y="1068.3" font-size="9.17" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">12.5±2.5</text>
 <text x="1325.0" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="1325.0" y="1040.0">vocab 125k</tspan><tspan x="1325.0" y="1047.7">mean±SD†</tspan><tspan x="1325.0" y="1055.4">6 of 8 d</tspan></text>
+<text x="1325.0" y="1026.1" font-size="10.83" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">★</text>
 <line x1="1325.0" y1="1110.0" x2="1325.0" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(1325.0,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T17)</text></g>
+<g transform="translate(1325.0,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T17)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026a">
 <title>Jude et al., 2026a (T18) — online WER: 3.4±0.8% (click to inspect study)</title>
@@ -1004,8 +1185,9 @@
 <line x1="1379.4" y1="1103.6" x2="1385.0" y2="1103.6" stroke="#333333" stroke-width="1.39"/>
 <text class="f2-val" x="1382.2" y="1094.7" font-size="9.17" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">3.4±0.8</text>
 <text x="1382.2" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="1382.2" y="1066.4">vocab 125k</tspan><tspan x="1382.2" y="1074.1">mean±SD†</tspan><tspan x="1382.2" y="1081.7">7 of 9 d</tspan></text>
+<text x="1382.2" y="1052.5" font-size="10.83" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">★</text>
 <line x1="1382.2" y1="1110.0" x2="1382.2" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(1382.2,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T18)</text></g>
+<g transform="translate(1382.2,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T18)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026b">
 <title>Jude et al., 2026b (T17) — online WER: 66.5±18.1% (click to inspect study)</title>
@@ -1085,7 +1267,7 @@
 <text class="f2-val" x="1706.4" y="1078.6" font-size="9.44" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">14.6±2.2</text>
 <text x="1706.4" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="1706.4" y="1043.6">vocab 130k</tspan><tspan x="1706.4" y="1051.3">mean±SD</tspan><tspan x="1706.4" y="1059.0">15 eval d</tspan><tspan x="1706.4" y="1066.6">(10 released)</tspan></text>
 <line x1="1706.4" y1="1110.0" x2="1706.4" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(1706.4,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Fan et al., 2023 (T5)</text></g>
+<g transform="translate(1706.4,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Fan et al., 2023 (T5)</text></g>
 </g>
 <g class="f2-slot" data-id="card2024">
 <title>Card et al., 2024 (T15) — online speed: 32.5±2.7 wpm (click to inspect study)</title>
@@ -1097,7 +1279,7 @@
 <text class="f2-val" x="1763.5" y="1048.8" font-size="9.44" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">32.5±2.7</text>
 <text x="1763.5" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="1763.5" y="1020.3">vocab 125k</tspan><tspan x="1763.5" y="1028.0">mean±SD</tspan><tspan x="1763.5" y="1035.6">14 of 45 d</tspan></text>
 <line x1="1763.5" y1="1110.0" x2="1763.5" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(1763.5,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Card et al., 2024 (T15)</text></g>
+<g transform="translate(1763.5,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Card et al., 2024 (T15)</text></g>
 </g>
 <g class="f2-slot" data-id="wairagkar2025">
 <title>Wairagkar et al., 2025 (T15) — speed not reported (click to inspect study)</title>
@@ -1137,7 +1319,7 @@
 <text class="f2-val" x="2049.3" y="1091.9" font-size="9.44" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">6.8±1.8</text>
 <text x="2049.3" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="2049.3" y="1064.6">vocab 125k</tspan><tspan x="2049.3" y="1072.3">mean±SD†</tspan><tspan x="2049.3" y="1079.9">6 of 8 d</tspan></text>
 <line x1="2049.3" y1="1110.0" x2="2049.3" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(2049.3,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T17)</text></g>
+<g transform="translate(2049.3,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T17)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026a">
 <title>Jude et al., 2026a (T18) — online speed: 14.0±4.5 wpm (click to inspect study)</title>
@@ -1149,7 +1331,7 @@
 <text class="f2-val" x="2106.4" y="1075.9" font-size="9.44" fill="#1f2937" text-anchor="middle" dominant-baseline="alphabetic">14.0±4.5</text>
 <text x="2106.4" font-size="6.39" fill="#555555" text-anchor="middle"><tspan x="2106.4" y="1048.6">vocab 125k</tspan><tspan x="2106.4" y="1056.2">mean±SD†</tspan><tspan x="2106.4" y="1063.9">7 of 9 d</tspan></text>
 <line x1="2106.4" y1="1110.0" x2="2106.4" y2="1113.5" stroke="#1f2937" stroke-width="1.11"/>
-<g transform="translate(2106.4,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026a (T18)</text></g>
+<g transform="translate(2106.4,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">★ Jude et al., 2026a (T18)</text></g>
 </g>
 <g class="f2-slot" data-id="jude2026b">
 <title>Jude et al., 2026b (T17) — online speed: 34.1±7.7 wpm (click to inspect study)</title>
@@ -1164,56 +1346,60 @@
 <g transform="translate(2163.5,1116.0) rotate(-75)"><text class="f2-lbl" x="0" y="3.0" font-size="8.89" fill="#1f2937" text-anchor="end">Jude et al., 2026b (T17)</text></g>
 </g>
 <g class="f2-drop" data-id="willett2021">
-<line x1="864.7" y1="1227.7" x2="864.7" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="864.7" cy="1227.7" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="864.7" y1="1228.3" x2="864.7" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="864.7" cy="1228.3" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="willett2023">
-<line x1="921.6" y1="1233.0" x2="921.6" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="921.6" cy="1233.0" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="921.6" y1="1233.6" x2="921.6" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="921.6" cy="1233.6" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="fan2023">
-<line x1="979.6" y1="1214.5" x2="979.6" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="979.6" cy="1214.5" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="979.1" y1="1225.7" x2="979.1" y2="1266.6" stroke="#3C5488" stroke-width="2.57" stroke-linecap="round" opacity="0.98"/>
+<circle cx="979.1" cy="1225.7" r="3.2" fill="#3C5488" opacity="0.98"/>
+<circle cx="979.1" cy="1225.7" r="1.2" fill="#ffffff"/>
 </g>
 <g class="f2-drop" data-id="card2024">
-<line x1="1036.3" y1="1225.3" x2="1036.3" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1036.3" cy="1225.3" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1035.8" y1="1236.5" x2="1035.8" y2="1266.6" stroke="#3C5488" stroke-width="2.57" stroke-linecap="round" opacity="0.98"/>
+<circle cx="1035.8" cy="1236.5" r="3.2" fill="#3C5488" opacity="0.98"/>
+<circle cx="1035.8" cy="1236.5" r="1.2" fill="#ffffff"/>
 </g>
 <g class="f2-drop" data-id="wairagkar2025">
-<line x1="1092.3" y1="1248.4" x2="1092.3" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1092.3" cy="1248.4" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1092.3" y1="1249.0" x2="1092.3" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="1092.3" cy="1249.0" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="kunz2025">
-<line x1="1150.5" y1="1225.5" x2="1150.5" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1150.5" cy="1225.5" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1150.5" y1="1226.1" x2="1150.5" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="1150.5" cy="1226.1" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="kunz2025">
-<line x1="1207.7" y1="1225.5" x2="1207.7" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1207.7" cy="1225.5" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1207.7" y1="1226.1" x2="1207.7" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="1207.7" cy="1226.1" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="kunz2025">
-<line x1="1264.8" y1="1225.5" x2="1264.8" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1264.8" cy="1225.5" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1264.8" y1="1226.1" x2="1264.8" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="1264.8" cy="1226.1" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <g class="f2-drop" data-id="jude2026a">
-<line x1="1321.8" y1="1228.8" x2="1321.8" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1321.8" cy="1228.8" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1321.3" y1="1240.0" x2="1321.3" y2="1266.6" stroke="#3C5488" stroke-width="2.57" stroke-linecap="round" opacity="0.98"/>
+<circle cx="1321.3" cy="1240.0" r="3.2" fill="#3C5488" opacity="0.98"/>
+<circle cx="1321.3" cy="1240.0" r="1.2" fill="#ffffff"/>
 </g>
 <g class="f2-drop" data-id="jude2026a">
-<line x1="1379.0" y1="1228.8" x2="1379.0" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1379.0" cy="1228.8" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1378.5" y1="1240.0" x2="1378.5" y2="1266.6" stroke="#3C5488" stroke-width="2.57" stroke-linecap="round" opacity="0.98"/>
+<circle cx="1378.5" cy="1240.0" r="3.2" fill="#3C5488" opacity="0.98"/>
+<circle cx="1378.5" cy="1240.0" r="1.2" fill="#ffffff"/>
 </g>
 <g class="f2-drop" data-id="jude2026b">
-<line x1="1436.1" y1="1228.8" x2="1436.1" y2="1266.6" stroke="#3C5488" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
-<circle cx="1436.1" cy="1228.8" r="2.2" fill="#3C5488" opacity="0.9"/>
+<line x1="1436.1" y1="1229.4" x2="1436.1" y2="1266.6" stroke="#3C5488" stroke-width="1.32" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>
+<circle cx="1436.1" cy="1229.4" r="1.8" fill="#3C5488" opacity="0.48"/>
 </g>
 <line x1="864.7" y1="1266.6" x2="1436.1" y2="1266.6" stroke="#3C5488" stroke-width="1.74" stroke-linecap="round" opacity="0.88"/>
 <line x1="1153.6" y1="1266.6" x2="1153.6" y2="1278.4" stroke="#3C5488" stroke-width="1.94" stroke-linecap="round" opacity="0.92"/>
 <path d="M 100.8 1322.9 C 100.8 1301.9, 113.3 1301.9, 136.6 1301.9 L 1117.8 1301.9 C 1141.1 1301.9, 1153.6 1301.9, 1153.6 1278.4 C 1153.6 1301.9, 1166.1 1301.9, 1189.4 1301.9 L 2170.6 1301.9 C 2193.9 1301.9, 2206.4 1301.9, 2206.4 1322.9" fill="none" stroke="#3C5488" stroke-width="2.01" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
-<text x="1126.7" y="1284.3" font-size="10.28" fill="#3C5488" font-weight="bold" text-anchor="end" dominant-baseline="central">Our reproduction on a 64 GB RAM / RTX 5060 Ti (16 GB) home PC (8 open-data studies)</text>
+<text x="1126.7" y="1284.3" font-size="10.28" fill="#3C5488" font-weight="bold" text-anchor="end" dominant-baseline="central">Our reproduction on a 64 GB RAM / RTX 5060 Ti (16 GB) home PC</text>
 <a href="https://github.com/Physics-Lee/communication-neuroprostheses-reproduction" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">
-<rect x="633.6" y="1326.9" width="1040.0" height="42.0" rx="9" fill="#f5f7fc" stroke="#3C5488" stroke-opacity="0.38" stroke-width="1.1"/>
-<text x="1153.6" y="1342.9" font-size="11.39" font-weight="bold" fill="#3C5488" text-anchor="middle" dominant-baseline="central">Please refer to our reproduction repository (github.com/Physics-Lee/communication-neuroprostheses-reproduction) ↗</text>
+<rect x="713.6" y="1326.9" width="880.0" height="42.0" rx="9" fill="#f5f7fc" stroke="#3C5488" stroke-opacity="0.38" stroke-width="1.1"/>
+<text x="1153.6" y="1342.9" font-size="11.39" font-weight="bold" fill="#3C5488" text-anchor="middle" dominant-baseline="central">Please refer to our reproduction repositories (<tspan text-decoration="underline">link ↗</tspan>).</text>
 <text x="1153.6" y="1358.4" font-size="10.42" fill="#4b5563" text-anchor="middle" dominant-baseline="central">We promised to update the timeline and reproduction for future communication neuroprostheses studies.</text>
 </a></svg>
   </div>
@@ -1228,19 +1414,22 @@
     </div>
   </div>
 
-  <div class="sec">
-    <h2>Study cards</h2>
+  <div class="sec" id="cards-sec">
+    <h2>Study Cards</h2>
     <span class="count" id="cards-count"></span>
     <span class="rule"></span>
+    <button id="cards-toggle" class="sec-btn" type="button">Show</button>
   </div>
-  <div id="cards"></div>
-  <div id="cards-empty">No studies match the current filters.</div>
+  <div id="cardsbox" style="display:none">
+    <div id="cards"></div>
+    <div id="cards-empty">No studies match the current filters.</div>
+  </div>
 </div>
 
 <script>
 'use strict';
-const STUDIES = [{"idx": 0, "id": "willett2021", "citation": "Willett et al., 2021", "date": "2021-05-12", "xm": 2021.36, "name_line": "Willett et al., 2021 ◇", "metric_line": "brain-to-text ⬠, 90 cpm, WER 25.1%, open vocab (n=1, T5▲)", "descriptor": "brain-to-text", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "1,000 sentences (10 sentence sessions, 95 blocks, 8,198 words)", "wer": "WER 25.1%", "speed": "90 cpm"}, "doi": "10.1038/s41586-021-03506-2", "data_doi": "10.5061/dryad.wh70rxwmv", "data_url": "", "url": "", "hw": 0.66392, "static_cx": 2021.66392, "static_y": -1.46, "static_side": "below", "static_mark_x": 2021.36, "static_mark_y": -0.32}, {"idx": 1, "id": "moses2021", "citation": "Moses et al., 2021", "date": "2021-07-15", "xm": 2021.53, "name_line": "Moses et al., 2021 ◇", "metric_line": "real-time sentence decoding ⬠, 15.2 wpm, WER 25.6%, vocab 50 (n=1, B1△)", "descriptor": "real-time sentence decoding", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 50", "sentences": "9,800 isolated-word trials (22.5 h) + 250 sentence trials (2.1 h)", "wer": "WER 25.6%", "speed": "15.2 wpm"}, "doi": "10.1056/NEJMoa2027540", "data_doi": "", "data_url": "", "url": "", "hw": 0.82458, "static_cx": 2021.82458, "static_y": 16.87, "static_side": "below", "static_mark_x": 2021.53, "static_mark_y": 17.76}, {"idx": 2, "id": "metzger2022", "citation": "Metzger et al., 2022", "date": "2022-11-23", "xm": 2022.89, "name_line": "Metzger et al., 2022 ◇", "metric_line": "NATO code-word spelling ⬠, WER 10.5%, vocab 1,152 (n=1, B1△)", "descriptor": "NATO code-word spelling", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,152", "sentences": "150 sentence copy trials (75 unique AAC sentences) + isolated NATO code-word trials", "wer": "WER 10.5%", "speed": "29.4 cpm"}, "doi": "10.1038/s41467-022-33611-3", "data_doi": "", "data_url": "", "url": "", "hw": 0.70875, "static_cx": 2022.89, "static_y": 19.83, "static_side": "above", "static_mark_x": 2022.89, "static_mark_y": 18.8}, {"idx": 3, "id": "metzger2023", "citation": "Metzger et al., 2023", "date": "2023-08-31", "xm": 2023.66, "name_line": "Metzger et al., 2023 ◇", "metric_line": "78 wpm + avatar ⬟/⬠, WER 25.5%, vocab 1,024 (n=1, B3△)", "descriptor": "78 wpm + avatar", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "both", "speech_abilities": ["paralysis"], "participants": ["B3△"], "unique_pids": ["B3"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,024", "sentences": "9,506 training sentence trials (~22.4 h across 14 days) + 249 held-out evaluation trials", "wer": "WER 25.5%", "speed": "78 wpm"}, "doi": "10.1038/s41586-023-06443-4", "data_doi": "", "data_url": "", "url": "", "hw": 0.65871, "static_cx": 2023.66, "static_y": 16.87, "static_side": "below", "static_mark_x": 2023.66, "static_mark_y": 17.76}, {"idx": 4, "id": "willett2023", "citation": "Willett et al., 2023", "date": "2023-08-31", "xm": 2023.66, "name_line": "Willett et al., 2023 ◇", "metric_line": "large-vocab decoding ⬠, 62 wpm, WER 23.9%, vocab 125k (n=1, T12△)", "descriptor": "large-vocab decoding", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "10,880 sentences (24 sessions: 9,680 labeled train/val + 1,200 competition test)", "wer": "WER 23.9%", "speed": "62 wpm"}, "doi": "10.1038/s41586-023-06377-x", "data_doi": "10.5061/dryad.x69p8czpq", "data_url": "", "url": "", "hw": 0.77111, "static_cx": 2023.66, "static_y": 21.44, "static_side": "above", "static_mark_x": 2023.66, "static_mark_y": 18.28}, {"idx": 5, "id": "angrick2024", "citation": "Angrick et al., 2024", "date": "2024-04-26", "xm": 2024.32, "name_line": "Angrick et al., 2024 ◇", "metric_line": "speech synthesis ⬟, listener WER 20%, vocab 6 (n=1, CC01△)", "descriptor": "speech synthesis", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["CC01△"], "unique_pids": ["CC01"], "n_count": 1, "metrics": {"vocab_size": "vocab 6", "sentences": "6 isolated command words across chronic online sessions", "wer": "listener WER 20%", "speed": "n/r"}, "doi": "10.1038/s41598-024-60277-2", "data_doi": "", "data_url": "https://osf.io/49rt7/", "url": "", "hw": 0.6743, "static_cx": 2024.32, "static_y": 15.32, "static_side": "below", "static_mark_x": 2024.32, "static_mark_y": 18.28}, {"idx": 6, "id": "fan2023", "citation": "Fan et al., 2023", "date": "2023-12-01", "xm": 2023.92, "name_line": "Fan et al., 2023 ◇", "metric_line": "403-day plug-and-play ⬠, WER 4.0%, vocab 130k (n=1, T5▲)", "descriptor": "403-day plug-and-play", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "vocab 130k", "sentences": "1,315 released sentences (21 sessions, 105 blocks, 9,926 words; 11 seed + 15 eval sessions in paper)", "wer": "WER 4.0%", "speed": "73.2 cpm"}, "doi": "10.1038/s41467-023-42555-1", "data_doi": "10.5061/dryad.hqbzkh1p6", "data_url": "", "url": "", "hw": 0.66391, "static_cx": 2023.92, "static_y": -1.46, "static_side": "below", "static_mark_x": 2023.92, "static_mark_y": -0.32}, {"idx": 7, "id": "wandelt2024", "citation": "Wandelt et al., 2024", "date": "2024-05-13", "xm": 2024.37, "name_line": "Wandelt et al., 2024 ◆/◇", "metric_line": "internal speech ⬠, WER 21%/77%, vocab 8 (n=2, P1▲/P2▲)", "descriptor": "internal speech", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["P1▲", "P2▲"], "unique_pids": ["P1", "P2"], "n_count": 2, "metrics": {"vocab_size": "vocab 8", "sentences": "8 isolated words (6 English words + 2 pseudowords; 64–160 trials/session)", "wer": "WER 21%/77%", "speed": "n/r"}, "doi": "10.1038/s41562-024-01867-y", "data_doi": "10.5281/zenodo.10697024", "data_url": "", "url": "", "hw": 0.64484, "static_cx": 2024.37359, "static_y": 19.83, "static_side": "above", "static_mark_x": 2024.37, "static_mark_y": 18.28}, {"idx": 8, "id": "silva2024b", "citation": "Silva et al., 2024b", "date": "2024-05-20", "xm": 2024.38, "name_line": "Silva et al., 2024b ◇", "metric_line": "bilingual ⬠, WER 25.0%, vocab 178 (n=1, B1△)", "descriptor": "bilingual", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 178", "sentences": "Bilingual English + Spanish phrase trials from 111-word core / 178-word extended lexicon", "wer": "WER 25.0%", "speed": "n/r"}, "doi": "10.1038/s41551-024-01207-5", "data_doi": "", "data_url": "", "url": "", "hw": 0.52566, "static_cx": 2024.38, "static_y": 13.79, "static_side": "below", "static_mark_x": 2024.38, "static_mark_y": 17.76}, {"idx": 9, "id": "card2024", "citation": "Card et al., 2024", "date": "2024-08-15", "xm": 2024.62, "name_line": "Card et al., 2024 ◇", "metric_line": "rapid calibration ⬠, WER 4.9%, vocab 125k (n=1, T15△)", "descriptor": "rapid calibration", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "10,948 released sentences (45 sessions: 9,498 labeled + 1,450 test; 10,481 copy sentences / 67.4 h in paper)", "wer": "WER 4.9%", "speed": "31.6 wpm"}, "doi": "10.1056/NEJMoa2314132", "data_doi": "10.5061/dryad.dncjsxm85", "data_url": "", "url": "", "hw": 0.61401, "static_cx": 2024.62, "static_y": 23.05, "static_side": "above", "static_mark_x": 2024.62, "static_mark_y": 18.28}, {"idx": 10, "id": "feng2024", "citation": "Feng et al., 2024", "date": "2024-09-01", "xm": 2024.67, "name_line": "Feng et al., 2024 ◇", "metric_line": "E2E RNN-LLM ⬠, WER 26.3% (B2T 24.69%), vocab 125k (n=1, T12△)", "descriptor": "E2E RNN-LLM", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)", "wer": "WER 26.3% (B2T 24.69%)", "speed": "n/r"}, "doi": "10.21437/Interspeech.2024-382", "data_doi": "", "data_url": "", "url": "", "hw": 0.73875, "static_cx": 2024.67, "static_y": 12.24, "static_side": "below", "static_mark_x": 2024.67, "static_mark_y": 17.76}, {"idx": 11, "id": "karpowicz2024", "citation": "Karpowicz et al., 2024", "date": "2024-12-10", "xm": 2024.94, "name_line": "Karpowicz et al., 2024 ◇", "metric_line": "FALCON H2 benchmark ⬠, WER 11.0% (held-in 2.0%), vocab 130k (n=1, T5▲)", "descriptor": "FALCON H2 benchmark", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "vocab 130k", "sentences": "1,315 sentences (reanalysis of Fan et al., 2023 H2 handwriting dataset)", "wer": "WER 11.0% (held-in 2.0%)", "speed": "n/r"}, "doi": "10.52202/079017-2439", "data_doi": "", "data_url": "", "url": "", "hw": 0.82732, "static_cx": 2024.94, "static_y": 0.82, "static_side": "above", "static_mark_x": 2024.94, "static_mark_y": 0.2}, {"idx": 12, "id": "littlejohn2025", "citation": "Littlejohn et al., 2025", "date": "2025-03-31", "xm": 2025.25, "name_line": "Littlejohn et al., 2025 ◇", "metric_line": "streaming voice ⬟, listener WER 58.8%, vocab 1,024 (n=1, B3△)", "descriptor": "streaming voice", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["B3△"], "unique_pids": ["B3"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,024", "sentences": "9,655 training sentences (1024-word-General + AAC phrases) + 249 held-out evaluation trials", "wer": "listener WER 58.8%", "speed": "47.5 wpm"}, "doi": "10.1038/s41593-025-01905-6", "data_doi": "", "data_url": "", "url": "", "hw": 0.69985, "static_cx": 2025.26096, "static_y": 21.44, "static_side": "above", "static_mark_x": 2025.25, "static_mark_y": 18.8}, {"idx": 13, "id": "wairagkar2025", "citation": "Wairagkar et al., 2025", "date": "2025-06-12", "xm": 2025.44, "name_line": "Wairagkar et al., 2025 ◇", "metric_line": "voice synthesis ⬟, listener WER 43.8%, open vocab (n=1, T15△)", "descriptor": "voice synthesis", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "8,489 cued sentences (37 sessions, 53,278 words; 956 vocalized + 58 mimed held-out)", "wer": "listener WER 43.8%", "speed": "n/r"}, "doi": "10.1038/s41586-025-09127-3", "data_doi": "10.5061/dryad.dncjsxm85", "data_url": "", "url": "", "hw": 0.69717, "static_cx": 2025.44, "static_y": 16.87, "static_side": "below", "static_mark_x": 2025.44, "static_mark_y": 18.28}, {"idx": 14, "id": "xu2025", "citation": "Xu et al., 2025", "date": "2025-07-28", "xm": 2025.57, "name_line": "Xu et al., 2025 ◇", "metric_line": "video-cued trajectory decoding ⬠, CER 8.9% (WER n/r), vocab 1,000 (n=1, Z1▲)", "descriptor": "video-cued trajectory decoding", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "on_request", "opn": "partial", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["Z1▲"], "unique_pids": ["Z1"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,000", "sentences": "30 basic strokes + video-guided Chinese character trials across multi-day sessions", "wer": "CER 8.9% (WER n/r)", "speed": "n/r"}, "doi": "10.1002/advs.202505492", "data_doi": "", "data_url": "", "url": "", "hw": 0.85034, "static_cx": 2025.57, "static_y": -1.46, "static_side": "below", "static_mark_x": 2025.57, "static_mark_y": -0.84}, {"idx": 15, "id": "kunz2025", "citation": "Kunz et al., 2025", "date": "2025-08-21", "xm": 2025.64, "name_line": "Kunz et al., 2025 ◆/◇", "metric_line": "inner speech ⬠, WER 23.7%/51.3%/46.6%, vocab 125k (n=3, T12△/T15△/T16△)", "descriptor": "inner speech", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△"], "unique_pids": ["T12", "T15", "T16"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "1,670 released inner/attempted sentences (6 days, 44 blocks: T12 500, T15 720, T16 450)", "wer": "WER 23.7%/51.3%/46.6%", "speed": "n/r"}, "doi": "10.1016/j.cell.2025.06.015", "data_doi": "10.5061/dryad.gf1vhhn1j", "data_url": "", "url": "", "hw": 0.84892, "static_cx": 2025.99735, "static_y": 19.83, "static_side": "above", "static_mark_x": 2025.64, "static_mark_y": 18.28}, {"idx": 16, "id": "li2025", "citation": "Li et al., 2025", "date": "2025-10-15", "xm": 2025.79, "name_line": "Li et al., 2025 ◇", "metric_line": "DConD-LIFT ⬠, WER 5.77% (1-model 8.06%), vocab 125k (n=1, T12△)", "descriptor": "DConD-LIFT", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)", "wer": "WER 5.77% (1-model 8.06%)", "speed": "n/r"}, "doi": "10.1088/1741-2552/adfab1", "data_doi": "", "data_url": "", "url": "", "hw": 0.75502, "static_cx": 2025.87932, "static_y": 15.32, "static_side": "below", "static_mark_x": 2025.79, "static_mark_y": 17.76}, {"idx": 17, "id": "feghhi2025", "citation": "Feghhi et al., 2025", "date": "2025-12-01", "xm": 2025.92, "name_line": "Feghhi et al., 2025 ◇", "metric_line": "time-masked Transformer ⬠, WER 7.98% (ens. 5.68%), vocab 125k (n=1, T12△)", "descriptor": "time-masked Transformer", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)", "wer": "WER 7.98% (ens. 5.68%)", "speed": "n/r"}, "doi": "10.48550/arXiv.2507.02800", "data_doi": "", "data_url": "", "url": "", "hw": 0.85424, "static_cx": 2025.92, "static_y": 13.79, "static_side": "below", "static_mark_x": 2025.92, "static_mark_y": 17.76}, {"idx": 18, "id": "levin2026_speech", "citation": "Levin et al., 2026", "date": "2026-01-15", "xm": 2026.04, "name_line": "Levin et al., 2026 ◇", "metric_line": "cross-brain transfer ⬠, PER 23-40% (WER n/r), vocab 125k (n=3, T12△/T15△/T16△)", "descriptor": "cross-brain transfer", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△"], "unique_pids": ["T12", "T15", "T16"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "40 speech sessions across T12/T15/T16 (24 public + 16 new T16 sessions)", "wer": "PER 23-40% (WER n/r)", "speed": "n/r"}, "doi": "10.64898/2026.01.12.699110", "data_doi": "", "data_url": "", "url": "", "hw": 0.88383, "static_cx": 2026.24784, "static_y": 23.05, "static_side": "above", "static_mark_x": 2026.04, "static_mark_y": 18.8}, {"idx": 19, "id": "levin2026_handwriting", "citation": "Levin et al., 2026", "date": "2026-01-15", "xm": 2026.04, "name_line": "Levin et al., 2026 ◇", "metric_line": "cross-brain transfer ⬠; CER 2% (WER n/r), open vocab (n=3, T5▲/T12△/T18▲)", "descriptor": "cross-brain transfer", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact", "paralysis"], "participants": ["T5▲", "T12△", "T18▲"], "unique_pids": ["T5", "T12", "T18"], "n_count": 3, "metrics": {"vocab_size": "open vocab", "sentences": "25 handwriting sessions across T5/T12/T18 (21 public T5 + 3 T12 + 1 T18 session)", "wer": "CER 2% (WER n/r)", "speed": "n/r"}, "doi": "10.64898/2026.01.12.699110", "data_doi": "", "data_url": "", "url": "", "hw": 0.82978, "static_cx": 2026.7271, "static_y": 0.82, "static_side": "above", "static_mark_x": 2026.04, "static_mark_y": 0.2}, {"idx": 20, "id": "yzhang2026_bit", "citation": "Y. Zhang et al., 2025", "date": "2025-11-21", "xm": 2025.89, "name_line": "Y. Zhang et al., 2025 ◆/◇", "metric_line": "BraIn-to-Text (BIT) ⬠, WER 5.10%/1.76% (E2E 10.22%/7.76%), vocab 125k (n=2, T12△/T15△)", "descriptor": "BraIn-to-Text (BIT)", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "21,828 sentences across T12 (10,880) + T15 (10,948) open benchmarks + multi-species pretraining", "wer": "WER 5.10%/1.76% (E2E 10.22%/7.76%)", "speed": "n/r"}, "doi": "10.48550/arXiv.2511.21740", "data_doi": "", "data_url": "", "url": "", "hw": 0.97983, "static_cx": 2025.89, "static_y": 24.66, "static_side": "above", "static_mark_x": 2025.89, "static_mark_y": 18.8}, {"idx": 21, "id": "nason2026", "citation": "Nason-Tomaszewski et al., 2026", "date": "2026-02-20", "xm": 2026.14, "name_line": "Nason-Tomaszewski et al., 2026 ◇", "metric_line": "Q&A 27.7 wpm ⬠, WER 35.2%, vocab 125k (n=1, T16△)", "descriptor": "Q&A 27.7 wpm", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T16△"], "unique_pids": ["T16"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "11,274 copy-task sentences (93 days) + spontaneous ChatGPT Q&A blocks", "wer": "WER 35.2%", "speed": "27.7 wpm"}, "doi": "10.64898/2026.02.19.26346583", "data_doi": "", "data_url": "", "url": "", "hw": 0.61505, "static_cx": 2026.1538, "static_y": 12.24, "static_side": "below", "static_mark_x": 2026.14, "static_mark_y": 17.76}, {"idx": 22, "id": "boccato2026", "citation": "Boccato et al., 2026", "date": "2026-03-03", "xm": 2026.17, "name_line": "Boccato et al., 2026 ◆/◇", "metric_line": "cross-subject CTC ⬠, WER 10.3%/5.9%, vocab 125k (n=4, T12△/T15△/T16△/T17△)", "descriptor": "cross-subject CTC", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△", "T17△"], "unique_pids": ["T12", "T15", "T16", "T17"], "n_count": 4, "metrics": {"vocab_size": "vocab 125k", "sentences": "27,172 sentences across T12/T15/T16/T17 public Dryad releases", "wer": "WER 10.3%/5.9%", "speed": "n/r"}, "doi": "10.1088/1741-2552/ae8576", "data_doi": "", "data_url": "", "url": "", "hw": 0.87329, "static_cx": 2026.59529, "static_y": 26.27, "static_side": "above", "static_mark_x": 2026.17, "static_mark_y": 18.8}, {"idx": 23, "id": "jude2026a", "citation": "Jude et al., 2026a", "date": "2026-03-16", "xm": 2026.2, "name_line": "Jude et al., 2026a ◇", "metric_line": "touch typing neuroprosthesis ⬠, 110 cpm, WER 12.5%/3.4%, vocab 125k (n=2, T17△/T18▲)", "descriptor": "touch typing neuroprosthesis", "lane": "typing", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact", "paralysis"], "participants": ["T17△", "T18▲"], "unique_pids": ["T17", "T18"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "1,701 released sentences (17 sentence sessions, 144 blocks: T17 668, T18 1,033)", "wer": "WER 12.5%/3.4%", "speed": "110 cpm"}, "doi": "10.1038/s41593-026-02218-y", "data_doi": "10.5061/dryad.cz8w9gjjk", "data_url": "", "url": "", "hw": 0.96758, "static_cx": 2026.2, "static_y": 7.31, "static_side": "below", "static_mark_x": 2026.2, "static_mark_y": 8.98}, {"idx": 24, "id": "jude2026b", "citation": "Jude et al., 2026b", "date": "2026-04-28", "xm": 2026.32, "name_line": "Jude et al., 2026b ◆/◇", "metric_line": "intended speech in LIS ⬠, WER 66.5%, vocab 125k (n=1, T17△)", "descriptor": "intended speech in LIS", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T17△"], "unique_pids": ["T17"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "3,674 released sentences (13 sentence sessions, 96 blocks; 3,763 copy trials in Fogg et al., 2026)", "wer": "WER 66.5%", "speed": "45-60 wpm"}, "doi": "10.1016/j.celrep.2026.117162", "data_doi": "10.5061/dryad.vq83bk481", "data_url": "", "url": "", "hw": 0.68989, "static_cx": 2027.66617, "static_y": 19.83, "static_side": "above", "static_mark_x": 2026.32, "static_mark_y": 18.28}, {"idx": 25, "id": "yoon2026", "citation": "Yoon et al., 2026", "date": "2026-06-02", "xm": 2026.42, "name_line": "Yoon et al., 2026 ◇", "metric_line": "real-time ensembles ⬠, WER 33.7→26.0%, vocab 125k (n=1, T12△)", "descriptor": "real-time ensembles", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "Bilateral 6-array T12 online blocks + offline T12/T15/T16 Switchboard corpora", "wer": "WER 33.7→26.0%", "speed": "65.4 wpm"}, "doi": "10.64898/2026.06.02.729705", "data_doi": "", "data_url": "", "url": "", "hw": 0.72999, "static_cx": 2026.99716, "static_y": 16.87, "static_side": "below", "static_mark_x": 2026.42, "static_mark_y": 17.76}, {"idx": 26, "id": "card2026", "citation": "Card et al., 2026", "date": "2026-06-14", "xm": 2026.45, "name_line": "Card et al., 2026 ◇", "metric_line": "3,800 h home ⬠, WER 0.8-3.5%, vocab 125k (n=1, T15△)", "descriptor": "3,800 h home", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "260,424 self-generated home sentences (183,060 personal-use + copy benchmarks across 748 d)", "wer": "WER 0.8-3.5%", "speed": "56 wpm"}, "doi": "10.1038/s41591-026-04414-6", "data_doi": "", "data_url": "", "url": "", "hw": 0.62961, "static_cx": 2026.72042, "static_y": 21.44, "static_side": "above", "static_mark_x": 2026.45, "static_mark_y": 18.8}, {"idx": 27, "id": "wairagkar2026", "citation": "Wairagkar et al., 2026", "date": "2026-06-28", "xm": 2026.49, "name_line": "Wairagkar et al., 2026 ◇", "metric_line": "Brain2voice 2.0 ⬟, listener WER 5.24%, open vocab (n=1, T15△)", "descriptor": "Brain2voice 2.0", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "8,489 cued sentences (reanalysis of Wairagkar et al., 2025 37-session Dryad corpus)", "wer": "listener WER 5.24%", "speed": "n/r"}, "doi": "10.64898/2026.06.30.735633", "data_doi": "", "data_url": "", "url": "", "hw": 0.70029, "static_cx": 2027.46463, "static_y": 15.32, "static_side": "below", "static_mark_x": 2026.49, "static_mark_y": 17.76}, {"idx": 28, "id": "fogg2026", "citation": "Fogg et al., 2026", "date": "2026-07-24", "xm": 2026.56, "name_line": "Fogg et al., 2026 ◇", "metric_line": "multi-user ⬠, WER 3.9-8.0%, vocab 125k (n=6, T12△/T15△/T16△/T17△/T21△/T22△)", "descriptor": "multi-user", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△", "T17△", "T21△", "T22△"], "unique_pids": ["T12", "T15", "T16", "T17", "T21", "T22"], "n_count": 6, "metrics": {"vocab_size": "vocab 125k", "sentences": "311,602 total training sentences across 6 participants (51,178 copy + 260,424 T15 home)", "wer": "WER 3.9-8.0%", "speed": "n/r"}, "doi": "10.64898/2026.07.23.739430", "data_doi": "", "data_url": "", "url": "", "hw": 0.88842, "static_cx": 2028.36844, "static_y": 21.44, "static_side": "above", "static_mark_x": 2026.56, "static_mark_y": 18.8}, {"idx": 29, "id": "zzhang2026_align", "citation": "Z. Zhang et al., 2026", "date": "2026-03-18", "xm": 2026.21, "name_line": "Z. Zhang et al., 2026 ◇", "metric_line": "ALIGN cross-day ⬠, unseen-day WER 32.2%/45.5%, vocab 125k (n=2, T12△/T15△)", "descriptor": "ALIGN cross-day", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "20,378 sentences across T12 (9,680) + T15 (10,698) multi-day benchmarks", "wer": "unseen-day WER 32.2%/45.5%", "speed": "n/r"}, "doi": "10.48550/arXiv.2603.18299", "data_doi": "", "data_url": "", "url": "", "hw": 0.87863, "static_cx": 2027.78287, "static_y": 13.79, "static_side": "below", "static_mark_x": 2026.21, "static_mark_y": 17.76}, {"idx": 30, "id": "brosler2026", "citation": "Brosler et al., 2026", "date": "2026-09-14", "xm": 2026.7, "name_line": "Brosler et al., 2026 ◇", "metric_line": "speech+gesture avatar ⬠, WER 30.0%, vocab 5-10 (n=3, B1r△/B3△/B6△)", "descriptor": "speech+gesture avatar", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1r△", "B3△", "B6△"], "unique_pids": ["B1", "B3", "B6"], "n_count": 3, "metrics": {"vocab_size": "vocab 5-10", "sentences": "Closed sets of 5 phrases × 4 gestures (B1r) and 10 phrases × 10 gestures (B6) + conversational blocks", "wer": "WER 30.0%", "speed": "n/r"}, "doi": "10.1038/s41593-026-02446-2", "data_doi": "", "data_url": "", "url": "", "hw": 0.78716, "static_cx": 2027.68601, "static_y": 12.24, "static_side": "below", "static_mark_x": 2026.7, "static_mark_y": 17.76}, {"idx": 31, "id": "paradromics2026", "citation": "Paradromics, 2026.09.14", "date": "2026-09-14", "xm": 2026.7, "name_line": "Paradromics, 2026.09.14 ◇", "metric_line": "real-time speech ⬠, WER n/r, vocab n/r (n=1, C1△)", "descriptor": "real-time speech", "lane": "speech", "electrode": "microwire", "shape": "v", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["C1△"], "unique_pids": ["C1"], "n_count": 1, "metrics": {"vocab_size": "vocab n/r", "sentences": "n/r", "wer": "WER n/r", "speed": "n/r"}, "doi": "", "data_doi": "", "data_url": "", "url": "https://www.paradromics.com/news/paradromics-achieves-real-time-speech-connexus-brain-computer-interface", "hw": 0.56368, "static_cx": 2027.82535, "static_y": 23.05, "static_side": "above", "static_mark_x": 2026.7, "static_mark_y": 18.8}, {"idx": 32, "id": "feghhi2026", "citation": "Feghhi et al., 2026", "date": "2026-10-01", "xm": 2026.75, "name_line": "Feghhi et al., 2026 ◇", "metric_line": "LightBeam ⬠, WER 5.01%/2.36%, vocab 100k (n=2, T12△/T15△)", "descriptor": "LightBeam", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 100k", "sentences": "20,378 sentences across T12 (Brain-to-Text '24) + T15 (Brain-to-Text '25)", "wer": "WER 5.01%/2.36%", "speed": "n/r"}, "doi": "10.21437/Interspeech.2026-2947", "data_doi": "", "data_url": "", "url": "", "hw": 0.70029, "static_cx": 2028.55744, "static_y": 16.87, "static_side": "below", "static_mark_x": 2026.75, "static_mark_y": 17.76}, {"idx": 33, "id": "pouratian2026", "citation": "Pouratian et al., 2026", "date": "2026-10-23", "xm": 2026.81, "name_line": "Pouratian et al., 2026 ◇", "metric_line": "fully implanted speech BCI ⬠, 75 wpm, WER 5.8%, vocab 125k (n=3, V1△/V2△/V3△)", "descriptor": "fully implanted speech BCI", "lane": "speech", "electrode": "thin_film", "shape": "h", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["V1△", "V2△", "V3△"], "unique_pids": ["V1", "V2", "V3"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "n/r (125k-word structured evaluation in V2/V3; 220-word set in V1)", "wer": "WER 5.8%", "speed": "75 wpm"}, "doi": "10.1002/mus.70436", "data_doi": "", "data_url": "", "url": "", "hw": 0.89326, "static_cx": 2027.89309, "static_y": 24.66, "static_side": "above", "static_mark_x": 2026.81, "static_mark_y": 18.8}, {"idx": 34, "id": "neuralink2026_p7", "citation": "Neuralink, 2026.01.28", "date": "2026-01-28", "xm": 2026.08, "name_line": "Neuralink, 2026.01.28 ◇", "metric_line": "ten-finger typing ⬠, 40 wpm, WER n/r, vocab n/r (n=1, P7▲)", "descriptor": "ten-finger typing", "lane": "typing", "electrode": "thin_film", "shape": "h", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["P7▲"], "unique_pids": ["P7"], "n_count": 1, "metrics": {"vocab_size": "vocab n/r", "sentences": "n/r", "wer": "WER n/r", "speed": "40 wpm"}, "doi": "", "data_doi": "", "data_url": "", "url": "https://neuralink.com/updates/two-years-of-telepathy/", "hw": 0.65247, "static_cx": 2026.08, "static_y": 10.12, "static_side": "above", "static_mark_x": 2026.08, "static_mark_y": 9.5}];
-const GEOM = {"fig_w": 2700.0, "fig_h": 1920.0, "sx0": 168.793, "sy1": 1906.5, "sx1": 2686.5, "sy0": 13.5, "x0": 2020.85, "x1": 2029.55, "y0": -4.62, "y1": 27.25, "yax": -2.94, "vis_end": 2027.1, "max_yr_tick": 2028, "tracks": {"speech": 18.28, "typing": 8.98, "handwriting": -0.32}, "rows": {"speech": {"above": [19.83, 21.44, 23.05, 24.66, 26.27], "below": [16.87, 15.32, 13.79, 12.24]}, "typing": {"above": [10.12], "below": [7.31]}, "handwriting": {"above": [0.82], "below": [-1.46]}}, "gap": 0.13, "padx_l": 2021.0, "padx_r": 2029.43, "maxshift": 2.05, "leg_x_end": 2025.722, "legend_boxes": [{"x": 184.66, "y": 18.92, "w": 176.27, "h": 106.44}, {"x": 421.21, "y": 18.92, "w": 104.67, "h": 58.51}, {"x": 586.16, "y": 18.92, "w": 136.77, "h": 90.47}, {"x": 783.21, "y": 18.92, "w": 250.5, "h": 58.51}, {"x": 1093.99, "y": 18.92, "w": 183.5, "h": 58.51}, {"x": 1337.77, "y": 18.92, "w": 121.41, "h": 58.51}]};
+const STUDIES = [{"idx": 0, "id": "willett2021", "citation": "Willett et al., 2021", "date": "2021-05-12", "xm": 2021.36, "name_line": "Willett et al., 2021 ◇", "metric_line": "brain-to-text ⬠, 90 cpm, WER 25.1%, open vocab (n=1, T5▲)", "descriptor": "brain-to-text", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "1,000 sentences", "wer": "WER 25.1%", "speed": "90 cpm"}, "doi": "10.1038/s41586-021-03506-2", "data_doi": "10.5061/dryad.wh70rxwmv", "data_url": "", "url": "", "hw": 0.67295, "static_cx": 2021.67295, "static_y": -1.46, "static_side": "below", "static_mark_x": 2021.36, "static_mark_y": -0.32}, {"idx": 1, "id": "moses2021", "citation": "Moses et al., 2021", "date": "2021-07-15", "xm": 2021.53, "name_line": "Moses et al., 2021 ◇", "metric_line": "real-time sentence decoding ⬠, 15.2 wpm, WER 25.6%, vocab 50 (n=1, B1△)", "descriptor": "real-time sentence decoding", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 50", "sentences": "250 sentences + 9,800 word trials", "wer": "WER 25.6%", "speed": "15.2 wpm"}, "doi": "10.1056/NEJMoa2027540", "data_doi": "", "data_url": "", "url": "", "hw": 0.836, "static_cx": 2021.836, "static_y": 16.87, "static_side": "below", "static_mark_x": 2021.53, "static_mark_y": 17.76}, {"idx": 2, "id": "metzger2022", "citation": "Metzger et al., 2022", "date": "2022-11-23", "xm": 2022.89, "name_line": "Metzger et al., 2022 ◇", "metric_line": "NATO code-word spelling ⬠, WER 10.5%, vocab 1,152 (n=1, B1△)", "descriptor": "NATO code-word spelling", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,152", "sentences": "150 sentences + code-word trials", "wer": "WER 10.5%", "speed": "29.4 cpm"}, "doi": "10.1038/s41467-022-33611-3", "data_doi": "", "data_url": "", "url": "", "hw": 0.71844, "static_cx": 2022.89, "static_y": 19.83, "static_side": "above", "static_mark_x": 2022.89, "static_mark_y": 18.8}, {"idx": 3, "id": "metzger2023", "citation": "Metzger et al., 2023", "date": "2023-08-31", "xm": 2023.66, "name_line": "Metzger et al., 2023 ◇", "metric_line": "78 wpm + avatar ⬟/⬠, WER 25.5%, vocab 1,024 (n=1, B3△)", "descriptor": "78 wpm + avatar", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "both", "speech_abilities": ["paralysis"], "participants": ["B3△"], "unique_pids": ["B3"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,024", "sentences": "9,755 sentences", "wer": "WER 25.5%", "speed": "78 wpm"}, "doi": "10.1038/s41586-023-06443-4", "data_doi": "", "data_url": "", "url": "", "hw": 0.66766, "static_cx": 2023.66, "static_y": 16.87, "static_side": "below", "static_mark_x": 2023.66, "static_mark_y": 17.76}, {"idx": 4, "id": "willett2023", "citation": "Willett et al., 2023", "date": "2023-08-31", "xm": 2023.66, "name_line": "Willett et al., 2023 ◇", "metric_line": "large-vocab decoding ⬠, 62 wpm, WER 23.9%, vocab 125k (n=1, T12△)", "descriptor": "large-vocab decoding", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "9,680 sentences", "wer": "WER 23.9%", "speed": "62 wpm"}, "doi": "10.1038/s41586-023-06377-x", "data_doi": "10.5061/dryad.x69p8czpq", "data_url": "", "url": "", "hw": 0.78174, "static_cx": 2023.66, "static_y": 21.44, "static_side": "above", "static_mark_x": 2023.66, "static_mark_y": 18.28}, {"idx": 5, "id": "angrick2024", "citation": "Angrick et al., 2024", "date": "2024-04-26", "xm": 2024.32, "name_line": "Angrick et al., 2024 ◇", "metric_line": "speech synthesis ⬟, listener WER 20%, vocab 6 (n=1, CC01△)", "descriptor": "speech synthesis", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["CC01△"], "unique_pids": ["CC01"], "n_count": 1, "metrics": {"vocab_size": "vocab 6", "sentences": "6 isolated command words", "wer": "listener WER 20%", "speed": "n/r"}, "doi": "10.1038/s41598-024-60277-2", "data_doi": "", "data_url": "https://osf.io/49rt7/", "url": "", "hw": 0.68348, "static_cx": 2024.32, "static_y": 15.32, "static_side": "below", "static_mark_x": 2024.32, "static_mark_y": 18.28}, {"idx": 6, "id": "fan2023", "citation": "Fan et al., 2023", "date": "2023-12-01", "xm": 2023.92, "name_line": "Fan et al., 2023 ◇", "metric_line": "403-day plug-and-play ⬠, WER 4.0%, vocab 130k (n=1, T5▲)", "descriptor": "403-day plug-and-play", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "vocab 130k", "sentences": "1,315 sentences", "wer": "WER 4.0%", "speed": "73.2 cpm"}, "doi": "10.52202/075280-1831", "data_doi": "10.5061/dryad.hqbzkh1p6", "data_url": "", "url": "", "hw": 0.67293, "static_cx": 2023.92, "static_y": -1.46, "static_side": "below", "static_mark_x": 2023.92, "static_mark_y": -0.32}, {"idx": 7, "id": "wandelt2024", "citation": "Wandelt et al., 2024", "date": "2024-05-13", "xm": 2024.37, "name_line": "Wandelt et al., 2024 ◆/◇", "metric_line": "internal speech ⬠, WER 21%/77%, vocab 8 (n=2, P1▲/P2▲)", "descriptor": "internal speech", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["P1▲", "P2▲"], "unique_pids": ["P1", "P2"], "n_count": 2, "metrics": {"vocab_size": "vocab 8", "sentences": "8 isolated words (64–160 trials/session)", "wer": "WER 21%/77%", "speed": "n/r"}, "doi": "10.1038/s41562-024-01867-y", "data_doi": "10.5281/zenodo.10697024", "data_url": "", "url": "", "hw": 0.65358, "static_cx": 2024.39202, "static_y": 19.83, "static_side": "above", "static_mark_x": 2024.37, "static_mark_y": 18.28}, {"idx": 8, "id": "silva2024b", "citation": "Silva et al., 2024b", "date": "2024-05-20", "xm": 2024.38, "name_line": "Silva et al., 2024b ◇", "metric_line": "bilingual ⬠, WER 25.0%, vocab 178 (n=1, B1△)", "descriptor": "bilingual", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1△"], "unique_pids": ["B1"], "n_count": 1, "metrics": {"vocab_size": "vocab 178", "sentences": "Bilingual phrase trials (178-word lexicon)", "wer": "WER 25.0%", "speed": "n/r"}, "doi": "10.1038/s41551-024-01207-5", "data_doi": "", "data_url": "", "url": "", "hw": 0.53262, "static_cx": 2024.38, "static_y": 13.79, "static_side": "below", "static_mark_x": 2024.38, "static_mark_y": 17.76}, {"idx": 9, "id": "card2024", "citation": "Card et al., 2024", "date": "2024-08-15", "xm": 2024.62, "name_line": "Card et al., 2024 ◇", "metric_line": "rapid calibration ⬠, WER 4.9%, vocab 125k (n=1, T15△)", "descriptor": "rapid calibration", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "9,498 sentences", "wer": "WER 4.9%", "speed": "31.6 wpm"}, "doi": "10.1056/NEJMoa2314132", "data_doi": "10.5061/dryad.dncjsxm85", "data_url": "", "url": "", "hw": 0.62229, "static_cx": 2024.62, "static_y": 23.05, "static_side": "above", "static_mark_x": 2024.62, "static_mark_y": 18.28}, {"idx": 10, "id": "feng2024", "citation": "Feng et al., 2024", "date": "2024-09-01", "xm": 2024.67, "name_line": "Feng et al., 2024 ◇", "metric_line": "E2E RNN-LLM ⬠, WER 26.3% (B2T 24.69%), vocab 125k (n=1, T12△)", "descriptor": "E2E RNN-LLM", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "9,680 sentences (Willett et al., 2023)", "wer": "WER 26.3% (B2T 24.69%)", "speed": "n/r"}, "doi": "10.21437/Interspeech.2024-382", "data_doi": "", "data_url": "", "url": "", "hw": 0.74889, "static_cx": 2024.67, "static_y": 12.24, "static_side": "below", "static_mark_x": 2024.67, "static_mark_y": 17.76}, {"idx": 11, "id": "karpowicz2024", "citation": "Karpowicz et al., 2024", "date": "2024-12-10", "xm": 2024.94, "name_line": "Karpowicz et al., 2024 ◇", "metric_line": "FALCON H2 benchmark ⬠, WER 11.0% (held-in 2.0%), vocab 130k (n=1, T5▲)", "descriptor": "FALCON H2 benchmark", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["T5▲"], "unique_pids": ["T5"], "n_count": 1, "metrics": {"vocab_size": "vocab 130k", "sentences": "1,315 sentences (Fan et al., 2023)", "wer": "WER 11.0% (held-in 2.0%)", "speed": "n/r"}, "doi": "10.52202/079017-2439", "data_doi": "", "data_url": "", "url": "", "hw": 0.83879, "static_cx": 2024.94, "static_y": 0.82, "static_side": "above", "static_mark_x": 2024.94, "static_mark_y": 0.2}, {"idx": 12, "id": "littlejohn2025", "citation": "Littlejohn et al., 2025", "date": "2025-03-31", "xm": 2025.25, "name_line": "Littlejohn et al., 2025 ◇", "metric_line": "streaming voice ⬟, listener WER 58.8%, vocab 1,024 (n=1, B3△)", "descriptor": "streaming voice", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["B3△"], "unique_pids": ["B3"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,024", "sentences": "9,904 sentences", "wer": "listener WER 58.8%", "speed": "47.5 wpm"}, "doi": "10.1038/s41593-025-01905-6", "data_doi": "", "data_url": "", "url": "", "hw": 0.70941, "static_cx": 2025.28115, "static_y": 21.44, "static_side": "above", "static_mark_x": 2025.25, "static_mark_y": 18.8}, {"idx": 13, "id": "wairagkar2025", "citation": "Wairagkar et al., 2025", "date": "2025-06-12", "xm": 2025.44, "name_line": "Wairagkar et al., 2025 ◇", "metric_line": "voice synthesis ⬟, listener WER 43.8%, open vocab (n=1, T15△)", "descriptor": "voice synthesis", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "8,489 sentences", "wer": "listener WER 43.8%", "speed": "n/r"}, "doi": "10.1038/s41586-025-09127-3", "data_doi": "10.5061/dryad.2280gb64f", "data_url": "", "url": "", "hw": 0.70669, "static_cx": 2025.44, "static_y": 16.87, "static_side": "below", "static_mark_x": 2025.44, "static_mark_y": 18.28}, {"idx": 14, "id": "xu2025", "citation": "Xu et al., 2025", "date": "2025-07-28", "xm": 2025.57, "name_line": "Xu et al., 2025 ◇", "metric_line": "video-cued trajectory decoding ⬠, CER 8.9% (WER n/r), vocab 1,000 (n=1, Z1▲)", "descriptor": "video-cued trajectory decoding", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "on_request", "opn": "partial", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["Z1▲"], "unique_pids": ["Z1"], "n_count": 1, "metrics": {"vocab_size": "vocab 1,000", "sentences": "30 strokes + character trials", "wer": "CER 8.9% (WER n/r)", "speed": "n/r"}, "doi": "10.1002/advs.202505492", "data_doi": "", "data_url": "", "url": "", "hw": 0.86215, "static_cx": 2025.58508, "static_y": -1.46, "static_side": "below", "static_mark_x": 2025.57, "static_mark_y": -0.84}, {"idx": 15, "id": "kunz2025", "citation": "Kunz et al., 2025", "date": "2025-08-21", "xm": 2025.64, "name_line": "Kunz et al., 2025 ◆/◇", "metric_line": "inner speech ⬠, WER 23.7%/51.3%/46.6%, vocab 125k (n=3, T12△/T15△/T16△)", "descriptor": "inner speech", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△"], "unique_pids": ["T12", "T15", "T16"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "1,670 sentences (T12: 500, T15: 720, T16: 450)", "wer": "WER 23.7%/51.3%/46.6%", "speed": "n/r"}, "doi": "10.1016/j.cell.2025.06.015", "data_doi": "10.5061/dryad.gf1vhhn1j", "data_url": "", "url": "", "hw": 0.86071, "static_cx": 2026.03631, "static_y": 19.83, "static_side": "above", "static_mark_x": 2025.64, "static_mark_y": 18.28}, {"idx": 16, "id": "li2025", "citation": "Li et al., 2025", "date": "2025-10-15", "xm": 2025.79, "name_line": "Li et al., 2025 ◇", "metric_line": "DConD-LIFT ⬠, WER 5.77% (1-model 8.06%), vocab 125k (n=1, T12△)", "descriptor": "DConD-LIFT", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "9,680 sentences (Willett et al., 2023)", "wer": "WER 5.77% (1-model 8.06%)", "speed": "n/r"}, "doi": "10.1088/1741-2552/adfab1", "data_doi": "", "data_url": "", "url": "", "hw": 0.7654, "static_cx": 2025.89888, "static_y": 15.32, "static_side": "below", "static_mark_x": 2025.79, "static_mark_y": 17.76}, {"idx": 17, "id": "feghhi2025", "citation": "Feghhi et al., 2025", "date": "2025-12-01", "xm": 2025.92, "name_line": "Feghhi et al., 2025 ◇", "metric_line": "time-masked Transformer ⬠, WER 7.98% (ens. 5.68%), vocab 125k (n=1, T12△)", "descriptor": "time-masked Transformer", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "9,680 sentences (Willett et al., 2023)", "wer": "WER 7.98% (ens. 5.68%)", "speed": "n/r"}, "doi": "10.48550/arXiv.2507.02800", "data_doi": "", "data_url": "", "url": "", "hw": 0.8661, "static_cx": 2025.92, "static_y": 13.79, "static_side": "below", "static_mark_x": 2025.92, "static_mark_y": 17.76}, {"idx": 18, "id": "levin2026_speech", "citation": "Levin et al., 2026", "date": "2026-01-15", "xm": 2026.04, "name_line": "Levin et al., 2026 ◇", "metric_line": "cross-brain transfer ⬠, PER 23-40% (WER n/r), vocab 125k (n=3, T12△/T15△/T16△)", "descriptor": "cross-brain transfer", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△"], "unique_pids": ["T12", "T15", "T16"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "40 speech sessions", "wer": "PER 23-40% (WER n/r)", "speed": "n/r"}, "doi": "10.64898/2026.01.12.699110", "data_doi": "", "data_url": "", "url": "", "hw": 0.89614, "static_cx": 2026.26843, "static_y": 23.05, "static_side": "above", "static_mark_x": 2026.04, "static_mark_y": 18.8}, {"idx": 19, "id": "levin2026_handwriting", "citation": "Levin et al., 2026", "date": "2026-01-15", "xm": 2026.04, "name_line": "Levin et al., 2026 ◇", "metric_line": "cross-brain transfer ⬠; CER 2% (WER n/r), open vocab (n=3, T5▲/T12△/T18▲)", "descriptor": "cross-brain transfer", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact", "paralysis"], "participants": ["T5▲", "T12△", "T18▲"], "unique_pids": ["T5", "T12", "T18"], "n_count": 3, "metrics": {"vocab_size": "open vocab", "sentences": "25 handwriting sessions", "wer": "CER 2% (WER n/r)", "speed": "n/r"}, "doi": "10.64898/2026.01.12.699110", "data_doi": "", "data_url": "", "url": "", "hw": 0.84128, "static_cx": 2026.75007, "static_y": 0.82, "static_side": "above", "static_mark_x": 2026.04, "static_mark_y": 0.2}, {"idx": 20, "id": "yzhang2026_bit", "citation": "Y. Zhang et al., 2025", "date": "2025-11-21", "xm": 2025.89, "name_line": "Y. Zhang et al., 2025 ◆/◇", "metric_line": "BraIn-to-Text (BIT) ⬠, WER 5.10%/1.76% (E2E 10.22%/7.76%), vocab 125k (n=2, T12△/T15△)", "descriptor": "BraIn-to-Text (BIT)", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)", "wer": "WER 5.10%/1.76% (E2E 10.22%/7.76%)", "speed": "n/r"}, "doi": "10.48550/arXiv.2511.21740", "data_doi": "", "data_url": "", "url": "", "hw": 0.99357, "static_cx": 2025.89, "static_y": 24.66, "static_side": "above", "static_mark_x": 2025.89, "static_mark_y": 18.8}, {"idx": 21, "id": "nason2026", "citation": "Nason-Tomaszewski et al., 2026", "date": "2026-02-20", "xm": 2026.14, "name_line": "Nason-Tomaszewski et al., 2026 ◇", "metric_line": "Q&A 27.7 wpm ⬠, WER 35.2%, vocab 125k (n=1, T16△)", "descriptor": "Q&A 27.7 wpm", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T16△"], "unique_pids": ["T16"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "11,274 sentences + Q&A blocks", "wer": "WER 35.2%", "speed": "27.7 wpm"}, "doi": "10.64898/2026.02.19.26346583", "data_doi": "", "data_url": "", "url": "", "hw": 0.62335, "static_cx": 2026.17224, "static_y": 12.24, "static_side": "below", "static_mark_x": 2026.14, "static_mark_y": 17.76}, {"idx": 22, "id": "boccato2026", "citation": "Boccato et al., 2026", "date": "2026-03-03", "xm": 2026.17, "name_line": "Boccato et al., 2026 ◆/◇", "metric_line": "cross-subject CTC ⬠, WER 10.3%/5.9%, vocab 125k (n=4, T12△/T15△/T16△/T17△)", "descriptor": "cross-subject CTC", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△", "T17△"], "unique_pids": ["T12", "T15", "T16", "T17"], "n_count": 4, "metrics": {"vocab_size": "vocab 125k", "sentences": "27,172 sentences (T12/T15/T16/T17)", "wer": "WER 10.3%/5.9%", "speed": "n/r"}, "doi": "10.1088/1741-2552/ae8576", "data_doi": "", "data_url": "", "url": "", "hw": 0.88544, "static_cx": 2027.91247, "static_y": 19.83, "static_side": "above", "static_mark_x": 2026.17, "static_mark_y": 18.8}, {"idx": 23, "id": "jude2026a", "citation": "Jude et al., 2026a", "date": "2026-03-16", "xm": 2026.2, "name_line": "Jude et al., 2026a ◇", "metric_line": "touch typing neuroprosthesis ⬠, 110 cpm, WER 12.5%/3.4%, vocab 125k (n=2, T17△/T18▲)", "descriptor": "touch typing neuroprosthesis", "lane": "typing", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact", "paralysis"], "participants": ["T17△", "T18▲"], "unique_pids": ["T17", "T18"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "1,701 sentences (T17: 668, T18: 1,033)", "wer": "WER 12.5%/3.4%", "speed": "110 cpm"}, "doi": "10.1038/s41593-026-02218-y", "data_doi": "10.5061/dryad.cz8w9gjjk", "data_url": "", "url": "", "hw": 0.98114, "static_cx": 2026.2, "static_y": 7.31, "static_side": "below", "static_mark_x": 2026.2, "static_mark_y": 8.98}, {"idx": 24, "id": "jude2026b", "citation": "Jude et al., 2026b", "date": "2026-04-28", "xm": 2026.32, "name_line": "Jude et al., 2026b ◆/◇", "metric_line": "intended speech in LIS ⬠, WER 66.5%, vocab 125k (n=1, T17△)", "descriptor": "intended speech in LIS", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "open", "opn": "open", "decoding_mode": "online", "task_instruction": "both", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T17△"], "unique_pids": ["T17"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "3,674 sentences", "wer": "WER 66.5%", "speed": "45-60 wpm"}, "doi": "10.1016/j.celrep.2026.117162", "data_doi": "10.5061/dryad.vq83bk481", "data_url": "", "url": "", "hw": 0.6993, "static_cx": 2026.4941, "static_y": 26.27, "static_side": "above", "static_mark_x": 2026.32, "static_mark_y": 18.28}, {"idx": 25, "id": "yoon2026", "citation": "Yoon et al., 2026", "date": "2026-06-02", "xm": 2026.42, "name_line": "Yoon et al., 2026 ◇", "metric_line": "real-time ensembles ⬠, WER 33.7→26.0%, vocab 125k (n=1, T12△)", "descriptor": "real-time ensembles", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△"], "unique_pids": ["T12"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "T12 online blocks + T12/T15/T16 corpora", "wer": "WER 33.7→26.0%", "speed": "65.4 wpm"}, "doi": "10.64898/2026.06.02.729705", "data_doi": "", "data_url": "", "url": "", "hw": 0.74, "static_cx": 2027.01669, "static_y": 16.87, "static_side": "below", "static_mark_x": 2026.42, "static_mark_y": 17.76}, {"idx": 26, "id": "card2026", "citation": "Card et al., 2026", "date": "2026-06-14", "xm": 2026.45, "name_line": "Card et al., 2026 ◇", "metric_line": "3,800 h home ⬠, WER 0.8-3.5%, vocab 125k (n=1, T15△)", "descriptor": "3,800 h home", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "vocab 125k", "sentences": "260,424 sentences", "wer": "WER 0.8-3.5%", "speed": "56 wpm"}, "doi": "10.1038/s41591-026-04414-6", "data_doi": "", "data_url": "", "url": "", "hw": 0.63812, "static_cx": 2026.75868, "static_y": 21.44, "static_side": "above", "static_mark_x": 2026.45, "static_mark_y": 18.8}, {"idx": 27, "id": "wairagkar2026", "citation": "Wairagkar et al., 2026", "date": "2026-12-08", "xm": 2026.94, "name_line": "Wairagkar et al., 2026 ◇", "metric_line": "Brain2voice 2.0 ⬟, listener WER 5.24%, open vocab (n=1, T15△)", "descriptor": "Brain2voice 2.0", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "voice", "speech_abilities": ["paralysis"], "participants": ["T15△"], "unique_pids": ["T15"], "n_count": 1, "metrics": {"vocab_size": "open vocab", "sentences": "8,489 sentences (Wairagkar et al., 2025)", "wer": "listener WER 5.24%", "speed": "n/r"}, "doi": "10.64898/2026.06.30.735633", "data_doi": "", "data_url": "", "url": "", "hw": 0.70985, "static_cx": 2028.23665, "static_y": 21.44, "static_side": "above", "static_mark_x": 2026.94, "static_mark_y": 18.8}, {"idx": 28, "id": "fogg2026", "citation": "Fogg et al., 2026", "date": "2026-07-24", "xm": 2026.56, "name_line": "Fogg et al., 2026 ◇", "metric_line": "multi-user ⬠, WER 3.9-8.0%, vocab 125k (n=6, T12△/T15△/T16△/T17△/T21△/T22△)", "descriptor": "multi-user", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "preprint", "opn": "unknown", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△", "T16△", "T17△", "T21△", "T22△"], "unique_pids": ["T12", "T15", "T16", "T17", "T21", "T22"], "n_count": 6, "metrics": {"vocab_size": "vocab 125k", "sentences": "311,602 sentences", "wer": "WER 3.9-8.0%", "speed": "n/r"}, "doi": "10.64898/2026.07.23.739430", "data_doi": "", "data_url": "", "url": "", "hw": 0.9008, "static_cx": 2027.69509, "static_y": 15.32, "static_side": "below", "static_mark_x": 2026.56, "static_mark_y": 17.76}, {"idx": 29, "id": "zzhang2026_align", "citation": "Z. Zhang et al., 2026", "date": "2026-03-18", "xm": 2026.21, "name_line": "Z. Zhang et al., 2026 ◇", "metric_line": "ALIGN cross-day ⬠, unseen-day WER 32.2%/45.5%, vocab 125k (n=2, T12△/T15△)", "descriptor": "ALIGN cross-day", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 125k", "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)", "wer": "unseen-day WER 32.2%/45.5%", "speed": "n/r"}, "doi": "10.48550/arXiv.2603.18299", "data_doi": "", "data_url": "", "url": "", "hw": 0.89086, "static_cx": 2027.80697, "static_y": 13.79, "static_side": "below", "static_mark_x": 2026.21, "static_mark_y": 17.76}, {"idx": 30, "id": "brosler2026", "citation": "Brosler et al., 2026", "date": "2026-09-14", "xm": 2026.7, "name_line": "Brosler et al., 2026 ◇", "metric_line": "speech+gesture avatar ⬠, WER 30.0%, vocab 5-10 (n=3, B1r△/B3△/B6△)", "descriptor": "speech+gesture avatar", "lane": "speech", "electrode": "ecog", "shape": "o", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["B1r△", "B3△", "B6△"], "unique_pids": ["B1", "B3", "B6"], "n_count": 3, "metrics": {"vocab_size": "vocab 5-10", "sentences": "5–10 phrase sets + conversational blocks", "wer": "WER 30.0%", "speed": "n/r"}, "doi": "10.1038/s41593-026-02446-2", "data_doi": "", "data_url": "", "url": "", "hw": 0.79803, "static_cx": 2028.09259, "static_y": 23.05, "static_side": "above", "static_mark_x": 2026.7, "static_mark_y": 18.8}, {"idx": 31, "id": "paradromics2026", "citation": "Paradromics, 2026.09.14", "date": "2026-09-14", "xm": 2026.7, "name_line": "Paradromics, 2026.09.14 ◇", "metric_line": "real-time speech ⬠, WER n/r, vocab n/r (n=1, C1△)", "descriptor": "real-time speech", "lane": "speech", "electrode": "microwire", "shape": "v", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["C1△"], "unique_pids": ["C1"], "n_count": 1, "metrics": {"vocab_size": "vocab n/r", "sentences": "n/r", "wer": "WER n/r", "speed": "n/r"}, "doi": "", "data_doi": "", "data_url": "", "url": "https://www.paradromics.com/news/paradromics-achieves-real-time-speech-connexus-brain-computer-interface", "hw": 0.57121, "static_cx": 2028.4579, "static_y": 16.87, "static_side": "below", "static_mark_x": 2026.7, "static_mark_y": 17.76}, {"idx": 32, "id": "feghhi2026", "citation": "Feghhi et al., 2026", "date": "2026-10-01", "xm": 2026.75, "name_line": "Feghhi et al., 2026 ◇", "metric_line": "LightBeam ⬠, WER 5.01%/2.36%, vocab 100k (n=2, T12△/T15△)", "descriptor": "LightBeam", "lane": "speech", "electrode": "utah", "shape": "s", "data_availability": "reanalysis", "opn": "reanalysis", "decoding_mode": "offline", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["T12△", "T15△"], "unique_pids": ["T12", "T15"], "n_count": 2, "metrics": {"vocab_size": "vocab 100k", "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)", "wer": "WER 5.01%/2.36%", "speed": "n/r"}, "doi": "10.21437/Interspeech.2026-2947", "data_doi": "", "data_url": "", "url": "", "hw": 0.70985, "static_cx": 2027.72343, "static_y": 24.66, "static_side": "above", "static_mark_x": 2026.75, "static_mark_y": 18.8}, {"idx": 33, "id": "pouratian2026", "citation": "Pouratian et al., 2026", "date": "2026-10-23", "xm": 2026.81, "name_line": "Pouratian et al., 2026 ◇", "metric_line": "fully implanted speech BCI ⬠, 75 wpm, WER 5.8%, vocab 125k (n=3, V1△/V2△/V3△)", "descriptor": "fully implanted speech BCI", "lane": "speech", "electrode": "thin_film", "shape": "h", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["paralysis"], "participants": ["V1△", "V2△", "V3△"], "unique_pids": ["V1", "V2", "V3"], "n_count": 3, "metrics": {"vocab_size": "vocab 125k", "sentences": "n/r", "wer": "WER 5.8%", "speed": "75 wpm"}, "doi": "10.1002/mus.70436", "data_doi": "", "data_url": "", "url": "", "hw": 0.90571, "static_cx": 2027.8313, "static_y": 12.24, "static_side": "below", "static_mark_x": 2026.81, "static_mark_y": 17.76}, {"idx": 34, "id": "yang2026", "citation": "Yang et al., 2026", "date": "2026-11-05", "xm": 2026.85, "name_line": "Yang et al., 2026 ◇", "metric_line": "online Chinese character decoding ⬠, 8.55 cpm, CER 5.6%, vocab 295 (n=1, Z1▲)", "descriptor": "online Chinese character decoding", "lane": "handwriting", "electrode": "utah", "shape": "s", "data_availability": "on_request", "opn": "partial", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["Z1▲"], "unique_pids": ["Z1"], "n_count": 1, "metrics": {"vocab_size": "vocab 295", "sentences": "216 online trials (4 sessions)", "wer": "CER 5.6%", "speed": "8.55 cpm"}, "doi": "10.1038/s42003-026-11194-9", "data_doi": "", "data_url": "", "url": "", "hw": 0.88392, "static_cx": 2027.46115, "static_y": -1.46, "static_side": "below", "static_mark_x": 2026.85, "static_mark_y": -0.84}, {"idx": 35, "id": "neuralink2026_p7", "citation": "Neuralink, 2026.01.28", "date": "2026-01-28", "xm": 2026.08, "name_line": "Neuralink, 2026.01.28 ◇", "metric_line": "ten-finger typing ⬠, 40 wpm, WER n/r, vocab n/r (n=1, P7▲)", "descriptor": "ten-finger typing", "lane": "typing", "electrode": "thin_film", "shape": "h", "data_availability": "closed", "opn": "closed", "decoding_mode": "online", "task_instruction": "intended", "decoded_output": "text", "speech_abilities": ["intact"], "participants": ["P7▲"], "unique_pids": ["P7"], "n_count": 1, "metrics": {"vocab_size": "vocab n/r", "sentences": "n/r", "wer": "WER n/r", "speed": "40 wpm"}, "doi": "", "data_doi": "", "data_url": "", "url": "https://neuralink.com/updates/two-years-of-telepathy/", "hw": 0.66133, "static_cx": 2026.08, "static_y": 10.12, "static_side": "above", "static_mark_x": 2026.08, "static_mark_y": 9.5}];
+const GEOM = {"fig_w": 2700.0, "fig_h": 1920.0, "sx0": 168.156, "sy1": 1906.5, "sx1": 2686.5, "sy0": 13.5, "x0": 2020.85, "x1": 2029.68, "y0": -4.62, "y1": 27.25, "yax": -2.94, "vis_end": 2027.1, "max_yr_tick": 2028, "tracks": {"speech": 18.28, "typing": 8.98, "handwriting": -0.32}, "rows": {"speech": {"above": [19.83, 21.44, 23.05, 24.66, 26.27], "below": [16.87, 15.32, 13.79, 12.24]}, "typing": {"above": [10.12], "below": [7.31]}, "handwriting": {"above": [0.82], "below": [-1.46]}}, "gap": 0.13, "padx_l": 2021.0, "padx_r": 2029.5600000000002, "maxshift": 2.05, "leg_x_end": 2025.7948, "legend_boxes": [{"x": 184.03, "y": 18.92, "w": 176.27, "h": 106.44}, {"x": 420.63, "y": 18.92, "w": 104.67, "h": 58.51}, {"x": 585.64, "y": 18.92, "w": 136.77, "h": 90.47}, {"x": 782.75, "y": 18.92, "w": 250.5, "h": 58.51}, {"x": 1093.59, "y": 18.92, "w": 183.5, "h": 58.51}, {"x": 1337.43, "y": 18.92, "w": 121.41, "h": 58.51}]};
 const META = {"title": "Living Timeline of Communication Neuroprostheses for People with Paralysis", "total_unique": 20, "home_summary": "1 used a system at home (T15)"};
 const N = STUDIES.length;
 
@@ -1276,8 +1465,8 @@ function markerPath(shape, r){
     return `M ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 Z`;
   let p;
   if (shape === 's'){ const k = r * 0.92; p = [[k,k],[-k,k],[-k,-k],[k,-k]]; }
-  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = i*Math.PI/3; p.push([r*1.06*Math.cos(a), r*1.06*Math.sin(a)]); } }
-  else { p = [[0,-r*1.12],[r*1.05, r*0.78],[-r*1.05, r*0.78]]; }
+  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = Math.PI/2 + i*Math.PI/3; p.push([r*1.06*Math.cos(a), -r*1.06*Math.sin(a)]); } }
+  else { p = [[0, r*1.12],[r*1.05, -r*0.78],[-r*1.05, -r*0.78]]; }
   return 'M ' + p.map(q => q[0].toFixed(2) + ' ' + q[1].toFixed(2)).join(' L ') + ' Z';
 }
 
@@ -1294,13 +1483,15 @@ const DIMS = {
   task_instruction: ['inner','intended'],
   lane: ['speech','typing','handwriting'],
 };
+const STAR_STUDY_IDS = new Set(['fan2023', 'card2024', 'jude2026a']);
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
 const ALL_DATES = STUDIES.map(r => r.date).sort();
 const MIN_DATE = ALL_DATES[0] || '2021-01-01';
 const MAX_DATE = ALL_DATES[ALL_DATES.length - 1] || '2026-12-31';
-let searchStr = '', dateFrom = MIN_DATE, dateTo = MAX_DATE, mode = 'dim', selectedId = null;
+let searchStr = '', dateFrom = MIN_DATE, dateTo = MAX_DATE, mode = 'dim', selectedId = null, selectedPid = null, pinnedOnly = false;
 
 function matches(rec){
+  if (pinnedOnly && !STAR_STUDY_IDS.has(rec.id)) return false;
   if (!sel.data_availability.has(rec.opn)) return false;
   if (!sel.decoding_mode.has(rec.decoding_mode)) return false;
   if (!sel.electrode.has(rec.electrode)) return false;
@@ -1311,6 +1502,7 @@ function matches(rec){
   if (rec.task_instruction === 'both' ? tsel.size === 0 : !tsel.has(rec.task_instruction)) return false;
   if (rec.speech_abilities.length &&
       !rec.speech_abilities.some(a => sel.speech_ability.has(a))) return false;
+  if (selectedPid && !rec.unique_pids.includes(selectedPid)) return false;
   const lo = dateFrom && dateTo && dateFrom > dateTo ? dateTo : dateFrom;
   const hi = dateFrom && dateTo && dateFrom > dateTo ? dateFrom : dateTo;
   if (lo && rec.date < lo) return false;
@@ -1478,6 +1670,8 @@ function drawAll(active, geomOf){
 /* ---------- standalone study cards ---------- */
 function cardHtml(rec){
   const m = rec.metrics;
+  const isStar = STAR_STUDY_IDS.has(rec.id);
+  const pinBadge = isStar ? `<span class="sc-pin" title="Pinned: low online WER (&lt;13%)">★ Pinned</span>` : '';
   const dataHref = rec.data_url || (rec.data_doi ? 'https://doi.org/' + encodeURIComponent(rec.data_doi) : '');
   const links = [
     rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper ↗</a>` : '',
@@ -1486,7 +1680,7 @@ function cardHtml(rec){
   ].join('');
   return `
     <div class="sc-head"><span class="sc-dot" style="background:${COLORS[rec.opn]}"></span>
-      <span class="sc-title">${esc(rec.citation)}</span>
+      <span class="sc-title">${esc(rec.citation)}</span>${pinBadge}
       <span class="sc-glyph">${SHAPE_GLYPH[rec.shape]} ${ELEC_LBL[rec.electrode]}</span></div>
     <div class="sc-date">${esc(rec.date)} · ${LANE_LBL[rec.lane]} lane · ${AVAIL_LBL[rec.opn]} · ${MODE_LBL[rec.decoding_mode]}</div>
     <div class="sc-desc">${esc(rec.descriptor)}</div>
@@ -1505,14 +1699,24 @@ function cardHtml(rec){
 const cardsBox = document.getElementById('cards');
 function rebuildCards(visNodes){
   cardsBox.innerHTML = '';
-  for (const n of visNodes.slice().sort((a, b) => a.rec.xm - b.rec.xm)){
+  const pinnedNodes = visNodes.filter(n => STAR_STUDY_IDS.has(n.rec.id)).sort((a, b) => a.rec.xm - b.rec.xm);
+  const restNodes = visNodes.filter(n => !STAR_STUDY_IDS.has(n.rec.id)).sort((a, b) => a.rec.xm - b.rec.xm);
+  const appendCard = (n, isPinned) => {
     const d = document.createElement('div');
-    d.className = 'study-card'; d.dataset.id = n.rec.id;
+    d.className = 'study-card' + (isPinned ? ' pinned' : '');
+    d.dataset.id = n.rec.id;
     d.style.setProperty('--spine', COLORS[n.rec.opn]);
     d.innerHTML = cardHtml(n.rec);
     d.addEventListener('click', () => selectStudy(n.rec.id, false));
     cardsBox.appendChild(d);
+  };
+  for (const n of pinnedNodes) appendCard(n, true);
+  if (pinnedNodes.length && restNodes.length){
+    const br = document.createElement('div');
+    br.className = 'cards-row-break';
+    cardsBox.appendChild(br);
   }
+  for (const n of restNodes) appendCard(n, false);
   document.getElementById('cards-empty').style.display = visNodes.length ? 'none' : '';
   document.getElementById('cards-count').textContent =
     visNodes.length + ' of ' + N + ' studies';
@@ -1526,6 +1730,13 @@ function selectStudy(id, scrollPage){
   for (const n of nodes) n.gCard.classList.toggle('selected', n.rec.id === id);
   document.querySelectorAll('.study-card, .f2-slot').forEach(c =>
     c.classList.toggle('selected', c.dataset.id === id));
+  const selRec = id ? STUDIES.find(r => r.id === id) : null;
+  const selStudyPids = new Set(selRec ? selRec.unique_pids : []);
+  document.querySelectorAll('.cohort-row').forEach(row => {
+    const pid = row.dataset.pid;
+    const on = !row.classList.contains('off');
+    row.classList.toggle('selected', on && (pid === selectedPid || selStudyPids.has(pid)));
+  });
   const sp = document.getElementById('spotlight');
   if (!id){ sp.style.display = 'none'; return; }
   const rec = STUDIES.find(r => r.id === id);
@@ -1570,12 +1781,34 @@ document.addEventListener('keydown', e => {
 });
 
 /* ---------- totals ---------- */
+function pidMatchesSearch(pid, rawTok, q){
+  return pid.toLowerCase().includes(q) || Boolean(rawTok && rawTok.toLowerCase().includes(q));
+}
+function pidActiveInStudy(pid, rec){
+  if (selectedPid && pid !== selectedPid) return false;
+  const idx = rec.unique_pids.indexOf(pid);
+  if (idx < 0) return false;
+  const rawTok = rec.participants[idx] || '';
+  const ability = rawTok.endsWith('▲') ? 'intact' : 'paralysis';
+  if (!sel.speech_ability.has(ability)) return false;
+  if (searchStr){
+    const anyPidMatch = rec.unique_pids.some((p, i) => pidMatchesSearch(p, rec.participants[i], searchStr));
+    const studyMetaHay = (rec.citation + ' ' + rec.id + ' ' + rec.descriptor).toLowerCase();
+    if (anyPidMatch && !studyMetaHay.includes(searchStr)){
+      if (!pidMatchesSearch(pid, rawTok, searchStr)) return false;
+    }
+  }
+  return true;
+}
 function updateTotals(visNodes){
   const all = new Set(), perLane = {speech:new Set(), typing:new Set(), handwriting:new Set()};
   for (const n of visNodes) for (const pid of n.rec.unique_pids){
+    if (!pidActiveInStudy(pid, n.rec)) continue;
     all.add(pid); perLane[n.rec.lane].add(pid);
   }
   document.getElementById('vis-count').textContent = visNodes.length + ' / ' + N;
+  const tlCountEl = document.getElementById('tl-count');
+  if (tlCountEl) tlCountEl.textContent = visNodes.length + ' of ' + N + ' studies';
   document.getElementById('vis-people').textContent = all.size + ' / ' + META.total_unique;
   document.getElementById('total-note').textContent = visNodes.length
     ? all.size + ' unique participants in total; ' + META.home_summary
@@ -1583,6 +1816,20 @@ function updateTotals(visNodes){
   for (const lane of LANES)
     document.getElementById('lt-' + lane).textContent =
       'n = ' + perLane[lane].size + ' unique participants';
+  const cohortCountEl = document.getElementById('cohort-count');
+  if (cohortCountEl){
+    cohortCountEl.textContent =
+      all.size + ' of ' + META.total_unique + ' participants' +
+      (selectedPid ? ' · filtered by ' + selectedPid : '');
+  }
+  const selRec = selectedId ? STUDIES.find(r => r.id === selectedId) : null;
+  const selStudyPids = new Set(selRec ? selRec.unique_pids : []);
+  document.querySelectorAll('.cohort-row').forEach(row => {
+    const pid = row.dataset.pid;
+    const on = all.has(pid);
+    row.classList.toggle('off', !on);
+    row.classList.toggle('selected', on && (pid === selectedPid || selStudyPids.has(pid)));
+  });
   emptyMsg.style.display = visNodes.length ? 'none' : '';
 }
 
@@ -1633,7 +1880,7 @@ function apply(){
   const benchCountEl = document.getElementById('bench-count');
   if (benchCountEl){
     benchCountEl.textContent =
-      f2VisA + ' of ' + f2TotA + ' communication-neuroprostheses studies';
+      f2VisA + ' of ' + f2TotA + ' English communication-neuroprostheses studies';
   }
   if (selectedId && !visIds.has(selectedId) && mode !== 'dim') updateSpotlightNav();
   if (selectedId){
@@ -1733,7 +1980,13 @@ function syncUI(){
   });
   const isDateFiltered = Boolean((dateFrom && dateFrom > MIN_DATE) || (dateTo && dateTo < MAX_DATE));
   dateWrap.classList.toggle('filtered', isDateFiltered);
+  const pinBtn = document.getElementById('pinned-only-btn');
+  if (pinBtn) pinBtn.classList.toggle('on', pinnedOnly);
 }
+document.getElementById('pinned-only-btn').addEventListener('click', () => {
+  pinnedOnly = !pinnedOnly;
+  syncUI(); apply();
+});
 function toggleVal(dim, val, on){
   if (on) sel[dim].add(val); else sel[dim].delete(val);
   syncUI(); apply();
@@ -1754,6 +2007,8 @@ document.querySelectorAll('#modebar button').forEach(b =>
 document.getElementById('reset').addEventListener('click', () => {
   for (const d in DIMS) sel[d] = new Set(DIMS[d]);
   searchStr = ''; document.getElementById('search').value = '';
+  selectedPid = null;
+  pinnedOnly = false;
   dateFrom = MIN_DATE; dateTo = MAX_DATE;
   dateFromEl.value = MIN_DATE; dateToEl.value = MAX_DATE;
   mode = 'dim';
@@ -1763,14 +2018,19 @@ document.getElementById('reset').addEventListener('click', () => {
 });
 /* ---------- full screen ---------- */
 const figbox = document.getElementById('figbox');
+const tlToggle = document.getElementById('tl-toggle');
 const fsBtn = document.getElementById('fs-btn');
 const fsLbl = document.getElementById('fs-lbl');
 const fsIco = document.getElementById('fs-ico');
+const cohortbox = document.getElementById('cohortbox');
+const cohortToggle = document.getElementById('cohort-toggle');
 const benchbox = document.getElementById('benchbox');
 const f2FsBtn = document.getElementById('f2-fs-btn');
 const f2FsLbl = document.getElementById('f2-fs-lbl');
 const f2FsIco = document.getElementById('f2-fs-ico');
 const benchToggle = document.getElementById('bench-toggle');
+const cardsbox = document.getElementById('cardsbox');
+const cardsToggle = document.getElementById('cards-toggle');
 const FS_ENTER_PATH = 'M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4';
 const FS_EXIT_PATH  = 'M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4';
 function isBoxFs(box){
@@ -1820,10 +2080,36 @@ f2FsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleBoxFs(benc
 document.addEventListener('fullscreenchange', syncFsUI);
 document.addEventListener('webkitfullscreenchange', syncFsUI);
 
+tlToggle.addEventListener('click', () => {
+  const hidden = figbox.style.display === 'none';
+  figbox.style.display = hidden ? '' : 'none';
+  tlToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+cohortToggle.addEventListener('click', () => {
+  const hidden = cohortbox.style.display === 'none';
+  cohortbox.style.display = hidden ? '' : 'none';
+  cohortToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+document.querySelectorAll('.cohort-row').forEach(row => {
+  const pid = row.dataset.pid;
+  row.addEventListener('click', () => {
+    selectedPid = (selectedPid === pid) ? null : pid;
+    apply();
+  });
+});
+
 benchToggle.addEventListener('click', () => {
   const hidden = benchbox.style.display === 'none';
   benchbox.style.display = hidden ? '' : 'none';
   benchToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+cardsToggle.addEventListener('click', () => {
+  const hidden = cardsbox.style.display === 'none';
+  cardsbox.style.display = hidden ? '' : 'none';
+  cardsToggle.textContent = hidden ? 'Hide' : 'Show';
 });
 
 document.querySelectorAll('.f2-slot').forEach(slot => {

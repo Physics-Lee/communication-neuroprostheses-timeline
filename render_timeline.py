@@ -1012,9 +1012,12 @@ def _build_fig2_upper_svg(
                         ha="right", rotation_mode="anchor")
     ax1.set_xlim(-0.7, len(rows_a) - 0.3)
     ax1.set_ylabel("vocabulary size")
-    ax1.set_title(f"(a) Maximum vocabulary size used in the {len(rows_a)} language-BCI studies",
-                  fontsize=10, fontweight="bold")
+    ax1.set_title(
+        f"(a) Maximum vocabulary size used in the {len(rows_a)} English communication-neuroprostheses studies",
+        fontsize=10, fontweight="bold"
+    )
 
+    STAR_IDS = {"fan2023", "card2024", "jude2026a"}
     gs_r2 = outer[2].subgridspec(1, 5, width_ratios=(1.176, 0.12, 1.176, 0.12, 1.176), wspace=0.0)
     ax_b = fig.add_subplot(gs_r2[0, 0])
     ax2 = fig.add_subplot(gs_r2[0, 2])
@@ -1032,8 +1035,8 @@ def _build_fig2_upper_svg(
     ax_b.set_yticks(range(0, 12001, 2000))
     ax_b.set_yticklabels([f"{v:,}" for v in range(0, 12001, 2000)])
     ax_b.set_xticks(range(len(rows_b)))
-    ax_b.set_xticklabels([r["label"] for r in rows_b], fontsize=6.4, rotation=75,
-                         ha="right", rotation_mode="anchor")
+    ax_b.set_xticklabels([("\u2605 " + r["label"]) if r["id"] in STAR_IDS else r["label"] for r in rows_b],
+                         fontsize=6.4, rotation=75, ha="right", rotation_mode="anchor")
     ax_b.set_xlim(-0.75, len(rows_b) - 0.25)
     ax_b.set_ylabel("released sentences")
     ax_b.set_title("(b) Open-sourced dataset size\n", fontsize=9.8, fontweight="bold")
@@ -1053,6 +1056,8 @@ def _build_fig2_upper_svg(
         ax2.text(x, top + 1.6, note, ha="center", va="bottom", fontsize=6.6)
         ax2.text(x, top + 7.0, f"vocab {r['vocab_tag']}\n{r['wer_caliber']}",
                  ha="center", va="bottom", fontsize=4.6, color="#555555", linespacing="normal")
+        if r["id"] in STAR_IDS:
+            ax2.text(x, top + 18.8, "\u2605", ha="center", va="bottom", fontsize=7.8, fontweight="bold")
     for asr_v in (2.5, 5.8, 12.8):
         ax2.axhline(asr_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
     for asr_v, asr_lab, ly, lx_lead in (
@@ -1067,12 +1072,15 @@ def _build_fig2_upper_svg(
     ax2.set_ylim(0, 125)
     ax2.set_yticks(range(0, 101, 25))
     ax2.set_xticks(range(len(rows_cd)))
-    ax2.set_xticklabels([r["label"] for r in rows_cd], fontsize=6.4, rotation=75,
-                        ha="right", rotation_mode="anchor")
+    ax2.set_xticklabels([("\u2605 " + r["label"]) if r["id"] in STAR_IDS else r["label"] for r in rows_cd],
+                        fontsize=6.4, rotation=75, ha="right", rotation_mode="anchor")
     ax2.set_xlim(-0.75, len(rows_cd) - 0.25)
     ax2.set_ylabel("word error rate (%)")
-    ax2.set_title("(c) Word error rate (online)\nno series printed: Wairagkar et al., 2025 (listener median)",
-                  fontsize=9.8, fontweight="bold")
+    ax2.set_title(
+        "(c) Word error rate (online)\n"
+        "\u2605 3 studies satisfy: Open Data, Vocab > 71.4k, WER < 12.8%",
+        fontsize=9.8, fontweight="bold"
+    )
     dagger_note = (
         "\u2020 recomputed from released data (decode outputs / trial timing / Source Data files)\n"
         "\u2021 digitized from the paper's figure markers\n"
@@ -1120,8 +1128,8 @@ def _build_fig2_upper_svg(
     ax3.set_ylim(0, 200)
     ax3.set_yticks(range(0, 201, 50))
     ax3.set_xticks(range(len(rows_cd)))
-    ax3.set_xticklabels([r["label"] for r in rows_cd], fontsize=6.4, rotation=75,
-                        ha="right", rotation_mode="anchor")
+    ax3.set_xticklabels([("\u2605 " + r["label"]) if r["id"] in STAR_IDS else r["label"] for r in rows_cd],
+                        fontsize=6.4, rotation=75, ha="right", rotation_mode="anchor")
     ax3.set_xlim(-0.75, len(rows_cd) - 0.25)
     ax3.set_ylabel("words per minute")
     ax3.set_title("(d) Communication speed (online)\nn/r: speed not reported",
@@ -1245,23 +1253,28 @@ def _build_fig2_upper_svg(
         out_t.append("</text>")
         return "".join(out_t)
 
-    def rot_xtick_svg(tx: float, ty: float, label: str, fs_pt: float) -> str:
+    STAR_IDS = {"fan2023", "card2024", "jude2026a"}
+
+    def rot_xtick_svg(tx: float, ty: float, label: str, fs_pt: float,
+                      bold: bool = False, color: str = "#1f2937") -> str:
         lines = label.split("\n")
         fs = fs_pt * PT
         lh = fs * 1.15
+        w_attr = ' font-weight="bold"' if bold else ""
         if len(lines) == 1:
             return (f'<g transform="translate({tx:.1f},{ty:.1f}) rotate(-75)">'
                     f'<text class="f2-lbl" x="0" y="{0.34 * fs:.1f}" font-size="{fs:.2f}" '
-                    f'fill="#1f2937" text-anchor="end">{esc(lines[0])}</text></g>')
+                    f'fill="{color}"{w_attr} text-anchor="end">{esc(lines[0])}</text></g>')
         spans = []
         for k, line in enumerate(lines):
             yy = (k - 0.35 * (len(lines) - 1)) * lh + 0.34 * fs
             spans.append(f'<tspan x="0" y="{yy:.1f}">{esc(line)}</tspan>')
         return (f'<g transform="translate({tx:.1f},{ty:.1f}) rotate(-75)">'
-                f'<text class="f2-lbl" font-size="{fs:.2f}" fill="#1f2937" '
+                f'<text class="f2-lbl" font-size="{fs:.2f}" fill="{color}"{w_attr} '
                 f'text-anchor="end">{"".join(spans)}</text></g>')
 
-    def draw_axes_chrome(ax, yticks, yticklabels, ylabel_str, title_str, title_fs=9.8, minor_yticks=None):
+    def draw_axes_chrome(ax, yticks, yticklabels, ylabel_str, title_str,
+                         title_fs=9.8, minor_yticks=None, sub_fs=None, sub_color="#111827"):
         bb = ax.get_window_extent(renderer)
         ax_x0, ax_x1 = SX(bb.x0), SX(bb.x1)
         ax_y0, ax_y1 = SY(bb.y1), SY(bb.y0)  # ax_y0 is top, ax_y1 is bottom
@@ -1295,8 +1308,10 @@ def _build_fig2_upper_svg(
         # Anchor top of title block consistently above ax_y0
         t_top_y = ax_y0 - 24.5 if len(title_str.split("\n")) > 1 else ax_y0 - 11.5
         for k, ln in enumerate(t_lines):
-            c.append(f'<text x="{t_cx:.1f}" y="{t_top_y + k * t_lh:.1f}" font-size="{t_fs:.2f}" '
-                     f'font-weight="bold" fill="#111827" text-anchor="middle">{esc(ln)}</text>')
+            cur_fs = (sub_fs * PT) if (k > 0 and sub_fs is not None) else t_fs
+            cur_col = sub_color if k > 0 else "#111827"
+            c.append(f'<text x="{t_cx:.1f}" y="{t_top_y + k * t_lh:.1f}" font-size="{cur_fs:.2f}" '
+                     f'font-weight="bold" fill="{cur_col}" text-anchor="middle">{esc(ln)}</text>')
         return "\n".join(c), ax_x0, ax_x1, ax_y0, ax_y1
 
     s = [f'<rect x="0" y="0" width="{vw}" height="{vh}" fill="#ffffff"/>']
@@ -1320,8 +1335,8 @@ def _build_fig2_upper_svg(
         s.append("</g>")
     # 6th legend item: our reproduction (matches Figure 2's lower-half bracket color)
     rep_c = "#3C5488"
-    s.append('<a href="https://github.com/Physics-Lee/communication-neuroprostheses-reproduction" '
-             'target="_blank" rel="noopener" style="text-decoration:none">')
+    repro_url = "https://github.com/Physics-Lee/communication-neuroprostheses-reproduction"
+    s.append(f'<a href="{repro_url}" target="_blank" rel="noopener" style="text-decoration:none">')
     s.append(f'<rect x="1395.0" y="{leg_y - 5.5:.1f}" width="17" height="10" '
              f'fill="{rep_c}" fill-opacity="0.35" stroke="{rep_c}" stroke-width="{SW(0.8)}"/>')
     s.append(f'<text x="1418.0" y="{leg_y:.1f}" font-size="{8.4 * PT:.2f}" '
@@ -1335,7 +1350,7 @@ def _build_fig2_upper_svg(
         [10 ** k for k in range(0, 7)],
         ["1", "10", "100", "1,000", "10,000", "100,000", "1,000,000"],
         "vocabulary size",
-        f"(a) Maximum vocabulary size used in the {len(rows_a)} language-BCI studies",
+        f"(a) Maximum vocabulary size used in the {len(rows_a)} English communication-neuroprostheses studies",
         title_fs=10.0,
         minor_yticks=minor_locs,
     )
@@ -1437,6 +1452,8 @@ def _build_fig2_upper_svg(
     for x, r in enumerate(rows_b):
         n_sent = r["released_sentences"]
         col = OPEN_C[r["openness_code"]]
+        is_star = r["id"] in STAR_IDS
+        lbl_txt = ("\u2605 " + r["label"]) if is_star else r["label"]
         bx0, by0 = d2svg(ax_b, x - 0.38, n_sent)
         bx1, by1 = d2svg(ax_b, x + 0.38, 0)
         bw, bh = bx1 - bx0, by1 - by0
@@ -1447,12 +1464,13 @@ def _build_fig2_upper_svg(
         s.append(f'<rect class="f2-bar" x="{bx0:.1f}" y="{by0:.1f}" width="{bw:.1f}" height="{bh:.1f}" '
                  f'fill="{col}" fill-opacity="0.35" stroke="{col}" stroke-width="{SW(0.8)}"/>')
         _, vy = d2svg(ax_b, x, n_sent + 220)
-        s.append(multiline_svg(cx, vy, r["sentences_display"], 7.3, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+        s.append(multiline_svg(cx, vy, r["sentences_display"], 7.3, "#1f2937",
+                               anchor="middle", va="bottom", cls="f2-val"))
         _, ny = d2svg(ax_b, x, n_sent + 1150)
         s.append(multiline_svg(cx, ny, r["span_note"], 4.6, "#555555", anchor="middle", va="bottom"))
         s.append(f'<line x1="{cx:.1f}" y1="{b_y1:.1f}" x2="{cx:.1f}" y2="{b_y1 + 3.5:.1f}" '
                  f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
-        s.append(rot_xtick_svg(cx, b_y1 + 6.0, r["label"], 6.4))
+        s.append(rot_xtick_svg(cx, b_y1 + 6.0, lbl_txt, 6.4))
         s.append("</g>")
 
     # ---- Panel (c) ----
@@ -1461,7 +1479,8 @@ def _build_fig2_upper_svg(
         list(range(0, 101, 25)),
         [str(v) for v in range(0, 101, 25)],
         "word error rate (%)",
-        "(c) Word error rate (online)\nno series printed: Wairagkar et al., 2025 (listener median)",
+        "(c) Word error rate (online)\n"
+        "\u2605 3 studies satisfy: Open Data, Vocab > 71.4k, WER < 12.8%",
         title_fs=9.8,
     )
     s.append(ch_c)
@@ -1487,6 +1506,8 @@ def _build_fig2_upper_svg(
         wmean = r["wer_mean"]
         wsd = r["wer_sd"]
         col = OPEN_C[r["openness_code"]]
+        is_star = r["id"] in STAR_IDS
+        lbl_txt = ("\u2605 " + r["label"]) if is_star else r["label"]
         bx0, by0 = d2svg(ax2, x - 0.38, wmean)
         bx1, by1 = d2svg(ax2, x + 0.38, 0)
         bw, bh = bx1 - bx0, by1 - by0
@@ -1508,12 +1529,16 @@ def _build_fig2_upper_svg(
             s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_lo:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_lo:.1f}" '
                      f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
         _, vy = d2svg(ax2, x, top + 1.6)
-        s.append(multiline_svg(cx, vy, note, 6.6, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+        s.append(multiline_svg(cx, vy, note, 6.6, "#1f2937",
+                               anchor="middle", va="bottom", cls="f2-val"))
         _, ny = d2svg(ax2, x, top + 7.0)
         s.append(multiline_svg(cx, ny, f"vocab {r['vocab_tag']}\n{r['wer_caliber']}", 4.6, "#555555", anchor="middle", va="bottom"))
+        if is_star:
+            _, sy_st = d2svg(ax2, x, top + 18.8)
+            s.append(multiline_svg(cx, sy_st, "\u2605", 7.8, "#1f2937", anchor="middle", va="bottom"))
         s.append(f'<line x1="{cx:.1f}" y1="{c_y1:.1f}" x2="{cx:.1f}" y2="{c_y1 + 3.5:.1f}" '
                  f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
-        s.append(rot_xtick_svg(cx, c_y1 + 6.0, r["label"], 6.4))
+        s.append(rot_xtick_svg(cx, c_y1 + 6.0, lbl_txt, 6.4))
         s.append("</g>")
 
     # ---- Panel (d) ----
@@ -1548,6 +1573,8 @@ def _build_fig2_upper_svg(
         spd = r["speed_wpm_mean"]
         spdsd = r["speed_wpm_sd"]
         col = OPEN_C[r["openness_code"]]
+        is_star = r["id"] in STAR_IDS
+        lbl_txt = ("\u2605 " + r["label"]) if is_star else r["label"]
         bx0, _ = d2svg(ax3, x - 0.38, 0)
         bx1, by1 = d2svg(ax3, x + 0.38, 0)
         bw = bx1 - bx0
@@ -1577,12 +1604,13 @@ def _build_fig2_upper_svg(
                 s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_lo:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_lo:.1f}" '
                          f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
             _, vy = d2svg(ax3, x, top * 1.06 + 2.0)
-            s.append(multiline_svg(cx, vy, note, 6.8, "#1f2937", anchor="middle", va="bottom", cls="f2-val"))
+            s.append(multiline_svg(cx, vy, note, 6.8, "#1f2937",
+                                   anchor="middle", va="bottom", cls="f2-val"))
             _, ny = d2svg(ax3, x, max(top * 1.31, top * 1.06 + 8.0) + 2.0)
             s.append(multiline_svg(cx, ny, f"vocab {r['vocab_tag']}\n{r['speed_caliber']}", 4.6, "#555555", anchor="middle", va="bottom"))
         s.append(f'<line x1="{cx:.1f}" y1="{d_y1:.1f}" x2="{cx:.1f}" y2="{d_y1 + 3.5:.1f}" '
                  f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
-        s.append(rot_xtick_svg(cx, d_y1 + 6.0, r["label"], 6.4))
+        s.append(rot_xtick_svg(cx, d_y1 + 6.0, lbl_txt, 6.4))
         s.append("</g>")
 
     # ---- Second Curly Bracket (gathering Panel c bars -> reproduction repository) ----
@@ -1597,7 +1625,7 @@ def _build_fig2_upper_svg(
         x_anchor_c = 0.5 * (bb_c.x0 + bb_c.x1)
         bar_x_c = inv_fig.transform(ax2.transData.transform((i, 0)))[0]
         x_pt_c = 0.65 * bar_x_c + 0.35 * x_anchor_c
-        sx_pt_c, sy_top_c = f2svg(x_pt_c, bb_c.y0 - 0.0038)
+        sx_pt_c, sy_top_c = f2svg(x_pt_c, bb_c.y0 - 0.0042)
         drop_pts_c.append((rows_cd[i]["id"], sx_pt_c, sy_top_c))
 
     cor_rep_svg = 84.0
@@ -1607,10 +1635,17 @@ def _build_fig2_upper_svg(
     sy_tip_r = sy_lbl_bot + 0.95 * cor_rep_svg
 
     for sid_c, sx_pt_c, sy_top_c in drop_pts_c:
+        is_star = sid_c in STAR_IDS
         s.append(f'<g class="f2-drop" data-id="{sid_c}">')
-        s.append(f'<line x1="{sx_pt_c:.1f}" y1="{sy_top_c:.1f}" x2="{sx_pt_c:.1f}" y2="{sy_bus_c:.1f}" '
-                 f'stroke="{rep_c}" stroke-width="{SW(1.15)}" stroke-linecap="round" opacity="0.85"/>')
-        s.append(f'<circle cx="{sx_pt_c:.1f}" cy="{sy_top_c:.1f}" r="2.2" fill="{rep_c}" opacity="0.9"/>')
+        if is_star:
+            s.append(f'<line x1="{sx_pt_c:.1f}" y1="{sy_top_c:.1f}" x2="{sx_pt_c:.1f}" y2="{sy_bus_c:.1f}" '
+                     f'stroke="{rep_c}" stroke-width="{SW(1.85)}" stroke-linecap="round" opacity="0.98"/>')
+            s.append(f'<circle cx="{sx_pt_c:.1f}" cy="{sy_top_c:.1f}" r="3.2" fill="{rep_c}" opacity="0.98"/>')
+            s.append(f'<circle cx="{sx_pt_c:.1f}" cy="{sy_top_c:.1f}" r="1.2" fill="#ffffff"/>')
+        else:
+            s.append(f'<line x1="{sx_pt_c:.1f}" y1="{sy_top_c:.1f}" x2="{sx_pt_c:.1f}" y2="{sy_bus_c:.1f}" '
+                     f'stroke="{rep_c}" stroke-width="{SW(0.95)}" stroke-dasharray="3.2,2.4" stroke-linecap="round" opacity="0.45"/>')
+            s.append(f'<circle cx="{sx_pt_c:.1f}" cy="{sy_top_c:.1f}" r="1.8" fill="{rep_c}" opacity="0.48"/>')
         s.append("</g>")
 
     s.append(f'<line x1="{drop_pts_c[0][1]:.1f}" y1="{sy_bus_c:.1f}" '
@@ -1632,13 +1667,12 @@ def _build_fig2_upper_svg(
              f'stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>')
     s.append(multiline_svg(
         sx_bm - 0.012 * vw, 0.5 * (sy_bus_c + sy_arm_r),
-        "Our reproduction on a 64 GB RAM / RTX 5060 Ti (16 GB) home PC (8 open-data studies)",
+        "Our reproduction on a 64 GB RAM / RTX 5060 Ti (16 GB) home PC",
         7.4, rep_c, anchor="end", va="center", weight="bold"
     ))
 
-    # Reproduction repository callout under the second bracket
-    repro_url = "https://github.com/Physics-Lee/communication-neuroprostheses-reproduction"
-    box_w, box_h = 1040.0, 42.0
+    # Reproduction callout under the second bracket
+    box_w, box_h = 880.0, 42.0
     box_x = sx_bm - 0.5 * box_w
     box_y = sy_tip_r + 4.0
     s.append(f'<a href="{repro_url}" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">')
@@ -1646,7 +1680,7 @@ def _build_fig2_upper_svg(
              f'fill="#f5f7fc" stroke="{rep_c}" stroke-opacity="0.38" stroke-width="1.1"/>')
     s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 16.0:.1f}" font-size="{8.2 * PT:.2f}" '
              f'font-weight="bold" fill="{rep_c}" text-anchor="middle" dominant-baseline="central">'
-             f'Please refer to our reproduction repository (github.com/Physics-Lee/communication-neuroprostheses-reproduction) \u2197</text>')
+             f'Please refer to our reproduction repositories (<tspan text-decoration="underline">link \u2197</tspan>).</text>')
     s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 31.5:.1f}" font-size="{7.5 * PT:.2f}" '
              f'fill="#4b5563" text-anchor="middle" dominant-baseline="central">'
              f'We promised to update the timeline and reproduction for future communication neuroprostheses studies.</text>')
@@ -1679,7 +1713,7 @@ def _poly_pts(cx: float, cy: float, r: float, n: int, rot_deg: float = 90.0) -> 
     pts = []
     for i in range(n):
         a = math.radians(rot_deg + i * 360.0 / n)
-        pts.append(f"{cx + r * math.cos(a):.2f},{cy + r * math.sin(a):.2f}")
+        pts.append(f"{cx + r * math.cos(a):.2f},{cy - r * math.sin(a):.2f}")
     return " ".join(pts)
 
 
@@ -1746,7 +1780,7 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
             return (f'<rect x="{cx - 4}" y="{cy - 4}" width="8" height="8" fill="{color}" '
                     f'stroke="white" stroke-width="1"/>')
         if kind == "solid-hex":
-            return f'<polygon points="{_poly_pts(cx, cy, 5, 6, 0)}" fill="{color}" stroke="white" stroke-width="1"/>'
+            return f'<polygon points="{_poly_pts(cx, cy, 5, 6, 90)}" fill="{color}" stroke="white" stroke-width="1"/>'
         if kind == "solid-tri-v":
             return f'<polygon points="{_poly_pts(cx, cy, 5, 3, -90)}" fill="{color}" stroke="white" stroke-width="1"/>'
         if kind == "solid-tri-up":
@@ -1858,7 +1892,6 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
            margin: 0 -28px; padding: 12px 28px; }
   .head-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; max-width: 1600px; margin: 0 auto; }
   h1 { font-size: 17px; font-weight: 650; margin: 0; letter-spacing: .01em; }
-  .head-sub { color: var(--muted); font-size: 12.5px; }
   .head-tools { margin-left: auto; display: flex; gap: 10px; align-items: center; }
   .stat { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
           padding: 3px 12px; font-size: 12px; color: var(--muted); white-space: nowrap; }
@@ -1912,7 +1945,11 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
                     color: var(--muted); cursor: pointer; }
   #modebar button + button { border-left: 1px solid var(--line); }
   #modebar button.on { background: var(--accent); color: #fff; font-weight: 600; }
-  .hint { font-size: 12px; color: var(--faint); margin-left: auto; }
+  #pinned-only-btn { border: 1px solid rgba(0, 107, 89, .38); background: rgba(0, 160, 135, .08);
+                     color: #005f4f; border-radius: 999px; padding: 4px 14px; font-size: 12px;
+                     font-weight: 600; cursor: pointer; transition: all .12s ease; }
+  #pinned-only-btn:hover { border-color: #006b59; background: rgba(0, 160, 135, .15); }
+  #pinned-only-btn.on { background: #006b59; border-color: #006b59; color: #fff; }
 
   /* ---------- figure ---------- */
   #figbox, #benchbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
@@ -1976,6 +2013,33 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
              padding: 3px 12px; font-size: 12px; color: var(--muted); cursor: pointer; }
   .sec-btn:hover { color: var(--ink); border-color: var(--faint); }
 
+  /* ---------- Table 1 (participant cohort) ---------- */
+  #cohortbox { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+               padding: 14px 18px 12px; overflow-x: auto; }
+  .cohort-sub { font-size: 12px; color: var(--muted); margin: 0 0 10px; line-height: 1.45; }
+  .cohort-sub b { color: var(--ink); font-weight: 650; }
+  .cohort-tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.35; }
+  .cohort-tbl th { text-align: left; font-size: 11px; font-weight: 700; letter-spacing: .05em;
+                   text-transform: uppercase; color: var(--muted); padding: 7px 10px;
+                   border-top: 1.5px solid var(--ink); border-bottom: 1px solid var(--ink);
+                   background: #fafbfc; white-space: nowrap; }
+  .cohort-tbl td { padding: 6px 10px; border-bottom: 1px solid var(--line); vertical-align: top;
+                   color: var(--ink); white-space: nowrap; }
+  .cohort-tbl tbody tr:last-child td { border-bottom: 1.5px solid var(--ink); }
+  .cohort-row { cursor: pointer; transition: background .12s ease, opacity .15s ease; }
+  .cohort-row:hover { background: #f4f7fb; }
+  .cohort-row.selected { background: var(--accent-soft); }
+  .cohort-row.selected td:first-child { color: var(--accent); font-weight: 700;
+                                        box-shadow: inset 3px 0 0 var(--accent); }
+  .cohort-row.off { opacity: .25; }
+  .cohort-pid { font-weight: 650; color: var(--ink); }
+  .cohort-sp { font-size: 11px; color: var(--muted); margin-left: 3px; }
+  .cohort-tbl a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .cohort-tbl a:hover { text-decoration: underline; }
+  .cohort-foot { font-size: 11.5px; color: var(--muted); margin: 9px 0 0; line-height: 1.45; }
+  .cohort-foot a { color: var(--accent); text-decoration: none; }
+  .cohort-foot a:hover { text-decoration: underline; }
+
   /* ---------- spotlight ---------- */
   #spotlight { position: relative; border: 1.5px solid var(--accent); border-radius: 16px;
                background: #fdfeff; padding: 22px 26px 16px; margin: 26px 0 24px; scroll-margin-top: 68px; }
@@ -1995,12 +2059,18 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   /* ---------- study cards ---------- */
   #cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
+  .cards-row-break { grid-column: 1 / -1; height: 0; border-top: 1px dashed var(--line); margin: 2px 0; }
   .study-card { --spine: #9aa3af; background: var(--card); border: 1px solid var(--line);
                 border-left: 4px solid var(--spine); border-radius: 12px; padding: 14px 16px 12px;
                 cursor: pointer; transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease; }
   .study-card:hover { box-shadow: 0 4px 18px rgba(15, 36, 64, .10); transform: translateY(-1px); }
   .study-card.selected { border-color: var(--accent); border-left-color: var(--accent);
                          box-shadow: 0 0 0 2px var(--accent-soft); }
+  .study-card.pinned { border-color: rgba(0, 107, 89, .38); border-left: 4px solid #006b59;
+                       background: linear-gradient(180deg, rgba(0, 160, 135, .045) 0%, #ffffff 42%); }
+  .sc-pin { display: inline-flex; align-items: center; gap: 3px; background: rgba(0, 160, 135, .13);
+            color: #005f4f; font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+            padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
   .sc-head { display: flex; align-items: center; gap: 8px; }
   .sc-dot { width: 10px; height: 10px; border-radius: 50%; flex: none;
             box-shadow: 0 0 0 2px #fff, 0 0 0 3px rgba(0,0,0,.10); }
@@ -2028,7 +2098,6 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   <header>
     <div class="head-row">
       <h1>__TITLE__</h1>
-      <span class="head-sub">Interactive edition · click any card for details, toggle filters to explore</span>
       <div class="head-tools">
         <span class="stat">Studies <b id="vis-count"></b></span>
         <span class="stat">Participants <b id="vis-people"></b></span>
@@ -2047,10 +2116,16 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
         <button data-mode="reflow">Reflow</button>
         <button data-mode="hide">Hide in place</button>
       </div>
-      <span class="hint">Dim fades filtered studies to the background · Reflow re-packs the remaining cards around their time anchors · the in-figure legends are clickable too</span>
+      <button id="pinned-only-btn" type="button" title="Toggle showing only the 3 open-data studies with vocabulary &gt; 71.4k and online WER &lt; 12.8%: Fan et al. (2023), Card et al. (2024) &amp; Jude et al. (2026a)">★ Open Data, Vocab &gt; 71.4k, WER &lt; 12.8%</button>
     </div>
   </div>
 
+  <div class="sec" id="tl-sec" style="margin-top:20px">
+    <h2>Timeline</h2>
+    <span class="count" id="tl-count"></span>
+    <span class="rule"></span>
+    <button id="tl-toggle" class="sec-btn" type="button">Hide</button>
+  </div>
   <div id="figbox">
     <button id="fs-btn" type="button" title="Toggle full screen (F)" aria-label="Toggle full screen">
       <svg id="fs-ico" viewBox="0 0 16 16"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg>
@@ -2059,8 +2134,145 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
     <svg id="tl-svg" viewBox="0 0 __VW__ __VH__" xmlns="http://www.w3.org/2000/svg">__CHROME__</svg>
   </div>
 
+  <div class="sec" id="cohort-sec">
+    <h2>Participant Cohort</h2>
+    <span class="count" id="cohort-count"></span>
+    <span class="rule"></span>
+    <button id="cohort-toggle" class="sec-btn" type="button">Show</button>
+  </div>
+  <div id="cohortbox" style="display:none">
+    <p class="cohort-sub">
+      <b>Ch. (impl.)</b> = total implanted channels · <b>Ch. (dec.)</b> = channels fed into the communication decoder ·
+      <b>Interval</b> = symptom onset or diagnosis to implantation · <b>Home use</b> = independent daily use
+    </p>
+    <table class="cohort-tbl" aria-label="Table 1: The twenty participants of the communication-neuroprosthesis literature and company reports">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Institute</th>
+          <th>Etiology</th>
+          <th>Electrode</th>
+          <th>Ch. (impl.)</th>
+          <th>Ch. (dec.)</th>
+          <th>Side</th>
+          <th>Modality</th>
+          <th>Interval</th>
+          <th>Implanted</th>
+          <th>Home use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="cohort-row" data-pid="T5">
+          <td class="cohort-pid">T5<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>192</td><td>192</td><td>L</td>
+          <td>handwriting</td><td>9 y</td><td>2016-08</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T12">
+          <td class="cohort-pid">T12<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>128<br>128</td><td>L</td>
+          <td>speech<br>handwriting</td><td>9 y</td><td>2022-03</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T15">
+          <td class="cohort-pid">T15<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>256<br>256</td><td>L</td>
+          <td>speech<br>cursor</td><td>5 y</td><td>2023-07</td>
+          <td><a href="https://doi.org/10.1038/s41591-026-04414-6" target="_blank" rel="noopener" onclick="event.stopPropagation()">3,800 h, 444 d ↗</a></td>
+        </tr>
+        <tr class="cohort-row" data-pid="T16">
+          <td class="cohort-pid">T16<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>256</td><td>64</td><td>L</td>
+          <td>speech</td><td>19 y</td><td>2023-12</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T17">
+          <td class="cohort-pid">T17<span class="cohort-sp" title="Vocal paralysis (dysarthria / locked-in syndrome)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>256<br>256</td><td>L</td>
+          <td>speech<br>typing</td><td>3 y</td><td>2024-02</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T18">
+          <td class="cohort-pid">T18<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>384</td><td>384<br>384</td><td>bi</td>
+          <td>typing<br>handwriting</td><td>1.5 y</td><td>2024-10<sup>†</sup></td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T21">
+          <td class="cohort-pid">T21<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>384</td><td>bi</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="T22">
+          <td class="cohort-pid">T22<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>384</td><td>256</td><td>L</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B1">
+          <td class="cohort-pid">B1<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>UCSF</td><td>stroke</td><td>ECoG</td><td>128<br>253</td><td>128<br>253</td><td>L</td>
+          <td>speech<br>speech</td><td>16 y<br>21 y</td><td>2019-02<br>2024-04</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B3">
+          <td class="cohort-pid">B3<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
+          <td>UCSF</td><td>stroke</td><td>ECoG</td><td>253</td><td>253</td><td>L</td>
+          <td>speech</td><td>17 y</td><td>2022-09</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="B6">
+          <td class="cohort-pid">B6<span class="cohort-sp" title="Vocal paralysis (severe vocal-tract paralysis)">△</span></td>
+          <td>UCSF</td><td>ALS</td><td>ECoG</td><td>253</td><td>253<br>253</td><td>L</td>
+          <td>speech<br>gesture</td><td>4 y</td><td>2025-03</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="CC01">
+          <td class="cohort-pid">CC01<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>JHU</td><td>ALS</td><td>ECoG</td><td>128</td><td>64</td><td>L</td>
+          <td>speech</td><td>8 y</td><td>2022-07</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P1">
+          <td class="cohort-pid">P1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Caltech</td><td>SCI</td><td>Utah</td><td>288</td><td>96</td><td>L</td>
+          <td>speech</td><td>1.5 y</td><td>2016-11</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P2">
+          <td class="cohort-pid">P2<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Caltech</td><td>SCI</td><td>Utah</td><td>320</td><td>64</td><td>L</td>
+          <td>speech</td><td>3 y</td><td>2022-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="Z1">
+          <td class="cohort-pid">Z1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>ZJU</td><td>SCI</td><td>Utah</td><td>192</td><td>96</td><td>L</td>
+          <td>handwriting</td><td>~3 y</td><td>2019-08</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V1">
+          <td class="cohort-pid">V1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V2">
+          <td class="cohort-pid">V2<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="V3">
+          <td class="cohort-pid">V3<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>3,072</td><td>—</td><td>L</td>
+          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="P7">
+          <td class="cohort-pid">P7<span class="cohort-sp" title="Can speak naturally">▲</span></td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>—</td><td>—</td><td>—</td>
+          <td>typing</td><td>—</td><td>2025-06<sup>‡</sup></td><td>—</td>
+        </tr>
+        <tr class="cohort-row" data-pid="C1">
+          <td class="cohort-pid">C1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
+          <td>Paradromics</td><td>MND</td><td>Connexus</td><td>—</td><td>—</td><td>—</td>
+          <td>speech</td><td>—</td><td>2026-06<sup>‡</sup></td><td>—</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="cohort-foot">
+      <b>▲</b> can speak naturally (6/20) · <b>△</b> vocal paralysis (14/20) · <b>Z1, V1–V3, C1</b> coined IDs ·
+      <b>&lt;yyyy-mm</b> implanted before given month · <sup>†</sup>derived from post-implant day · <sup>‡</sup>company report
+    </p>
+  </div>
+
   <div class="sec" id="bench-sec">
-    <h2>Benchmark overview: vocabulary funnel &amp; open-data metrics</h2>
+    <h2>Vocabulary, Dataset Size, Word Error Rate &amp; Speed</h2>
     <span class="count" id="bench-count"></span>
     <span class="rule"></span>
     <button id="bench-toggle" class="sec-btn" type="button">Hide</button>
@@ -2083,13 +2295,16 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
     </div>
   </div>
 
-  <div class="sec">
-    <h2>Study cards</h2>
+  <div class="sec" id="cards-sec">
+    <h2>Study Cards</h2>
     <span class="count" id="cards-count"></span>
     <span class="rule"></span>
+    <button id="cards-toggle" class="sec-btn" type="button">Show</button>
   </div>
-  <div id="cards"></div>
-  <div id="cards-empty">No studies match the current filters.</div>
+  <div id="cardsbox" style="display:none">
+    <div id="cards"></div>
+    <div id="cards-empty">No studies match the current filters.</div>
+  </div>
 </div>
 
 <script>
@@ -2131,8 +2346,8 @@ function markerPath(shape, r){
     return `M ${-r} 0 A ${r} ${r} 0 1 0 ${r} 0 A ${r} ${r} 0 1 0 ${-r} 0 Z`;
   let p;
   if (shape === 's'){ const k = r * 0.92; p = [[k,k],[-k,k],[-k,-k],[k,-k]]; }
-  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = i*Math.PI/3; p.push([r*1.06*Math.cos(a), r*1.06*Math.sin(a)]); } }
-  else { p = [[0,-r*1.12],[r*1.05, r*0.78],[-r*1.05, r*0.78]]; }
+  else if (shape === 'h'){ p = []; for (let i=0;i<6;i++){ const a = Math.PI/2 + i*Math.PI/3; p.push([r*1.06*Math.cos(a), -r*1.06*Math.sin(a)]); } }
+  else { p = [[0, r*1.12],[r*1.05, -r*0.78],[-r*1.05, -r*0.78]]; }
   return 'M ' + p.map(q => q[0].toFixed(2) + ' ' + q[1].toFixed(2)).join(' L ') + ' Z';
 }
 
@@ -2149,13 +2364,15 @@ const DIMS = {
   task_instruction: ['inner','intended'],
   lane: ['speech','typing','handwriting'],
 };
+const STAR_STUDY_IDS = new Set(['fan2023', 'card2024', 'jude2026a']);
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
 const ALL_DATES = STUDIES.map(r => r.date).sort();
 const MIN_DATE = ALL_DATES[0] || '2021-01-01';
 const MAX_DATE = ALL_DATES[ALL_DATES.length - 1] || '2026-12-31';
-let searchStr = '', dateFrom = MIN_DATE, dateTo = MAX_DATE, mode = 'dim', selectedId = null;
+let searchStr = '', dateFrom = MIN_DATE, dateTo = MAX_DATE, mode = 'dim', selectedId = null, selectedPid = null, pinnedOnly = false;
 
 function matches(rec){
+  if (pinnedOnly && !STAR_STUDY_IDS.has(rec.id)) return false;
   if (!sel.data_availability.has(rec.opn)) return false;
   if (!sel.decoding_mode.has(rec.decoding_mode)) return false;
   if (!sel.electrode.has(rec.electrode)) return false;
@@ -2166,6 +2383,7 @@ function matches(rec){
   if (rec.task_instruction === 'both' ? tsel.size === 0 : !tsel.has(rec.task_instruction)) return false;
   if (rec.speech_abilities.length &&
       !rec.speech_abilities.some(a => sel.speech_ability.has(a))) return false;
+  if (selectedPid && !rec.unique_pids.includes(selectedPid)) return false;
   const lo = dateFrom && dateTo && dateFrom > dateTo ? dateTo : dateFrom;
   const hi = dateFrom && dateTo && dateFrom > dateTo ? dateFrom : dateTo;
   if (lo && rec.date < lo) return false;
@@ -2333,6 +2551,8 @@ function drawAll(active, geomOf){
 /* ---------- standalone study cards ---------- */
 function cardHtml(rec){
   const m = rec.metrics;
+  const isStar = STAR_STUDY_IDS.has(rec.id);
+  const pinBadge = isStar ? `<span class="sc-pin" title="Pinned: low online WER (&lt;13%)">★ Pinned</span>` : '';
   const dataHref = rec.data_url || (rec.data_doi ? 'https://doi.org/' + encodeURIComponent(rec.data_doi) : '');
   const links = [
     rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper ↗</a>` : '',
@@ -2341,7 +2561,7 @@ function cardHtml(rec){
   ].join('');
   return `
     <div class="sc-head"><span class="sc-dot" style="background:${COLORS[rec.opn]}"></span>
-      <span class="sc-title">${esc(rec.citation)}</span>
+      <span class="sc-title">${esc(rec.citation)}</span>${pinBadge}
       <span class="sc-glyph">${SHAPE_GLYPH[rec.shape]} ${ELEC_LBL[rec.electrode]}</span></div>
     <div class="sc-date">${esc(rec.date)} · ${LANE_LBL[rec.lane]} lane · ${AVAIL_LBL[rec.opn]} · ${MODE_LBL[rec.decoding_mode]}</div>
     <div class="sc-desc">${esc(rec.descriptor)}</div>
@@ -2360,14 +2580,24 @@ function cardHtml(rec){
 const cardsBox = document.getElementById('cards');
 function rebuildCards(visNodes){
   cardsBox.innerHTML = '';
-  for (const n of visNodes.slice().sort((a, b) => a.rec.xm - b.rec.xm)){
+  const pinnedNodes = visNodes.filter(n => STAR_STUDY_IDS.has(n.rec.id)).sort((a, b) => a.rec.xm - b.rec.xm);
+  const restNodes = visNodes.filter(n => !STAR_STUDY_IDS.has(n.rec.id)).sort((a, b) => a.rec.xm - b.rec.xm);
+  const appendCard = (n, isPinned) => {
     const d = document.createElement('div');
-    d.className = 'study-card'; d.dataset.id = n.rec.id;
+    d.className = 'study-card' + (isPinned ? ' pinned' : '');
+    d.dataset.id = n.rec.id;
     d.style.setProperty('--spine', COLORS[n.rec.opn]);
     d.innerHTML = cardHtml(n.rec);
     d.addEventListener('click', () => selectStudy(n.rec.id, false));
     cardsBox.appendChild(d);
+  };
+  for (const n of pinnedNodes) appendCard(n, true);
+  if (pinnedNodes.length && restNodes.length){
+    const br = document.createElement('div');
+    br.className = 'cards-row-break';
+    cardsBox.appendChild(br);
   }
+  for (const n of restNodes) appendCard(n, false);
   document.getElementById('cards-empty').style.display = visNodes.length ? 'none' : '';
   document.getElementById('cards-count').textContent =
     visNodes.length + ' of ' + N + ' studies';
@@ -2381,6 +2611,13 @@ function selectStudy(id, scrollPage){
   for (const n of nodes) n.gCard.classList.toggle('selected', n.rec.id === id);
   document.querySelectorAll('.study-card, .f2-slot').forEach(c =>
     c.classList.toggle('selected', c.dataset.id === id));
+  const selRec = id ? STUDIES.find(r => r.id === id) : null;
+  const selStudyPids = new Set(selRec ? selRec.unique_pids : []);
+  document.querySelectorAll('.cohort-row').forEach(row => {
+    const pid = row.dataset.pid;
+    const on = !row.classList.contains('off');
+    row.classList.toggle('selected', on && (pid === selectedPid || selStudyPids.has(pid)));
+  });
   const sp = document.getElementById('spotlight');
   if (!id){ sp.style.display = 'none'; return; }
   const rec = STUDIES.find(r => r.id === id);
@@ -2425,12 +2662,34 @@ document.addEventListener('keydown', e => {
 });
 
 /* ---------- totals ---------- */
+function pidMatchesSearch(pid, rawTok, q){
+  return pid.toLowerCase().includes(q) || Boolean(rawTok && rawTok.toLowerCase().includes(q));
+}
+function pidActiveInStudy(pid, rec){
+  if (selectedPid && pid !== selectedPid) return false;
+  const idx = rec.unique_pids.indexOf(pid);
+  if (idx < 0) return false;
+  const rawTok = rec.participants[idx] || '';
+  const ability = rawTok.endsWith('▲') ? 'intact' : 'paralysis';
+  if (!sel.speech_ability.has(ability)) return false;
+  if (searchStr){
+    const anyPidMatch = rec.unique_pids.some((p, i) => pidMatchesSearch(p, rec.participants[i], searchStr));
+    const studyMetaHay = (rec.citation + ' ' + rec.id + ' ' + rec.descriptor).toLowerCase();
+    if (anyPidMatch && !studyMetaHay.includes(searchStr)){
+      if (!pidMatchesSearch(pid, rawTok, searchStr)) return false;
+    }
+  }
+  return true;
+}
 function updateTotals(visNodes){
   const all = new Set(), perLane = {speech:new Set(), typing:new Set(), handwriting:new Set()};
   for (const n of visNodes) for (const pid of n.rec.unique_pids){
+    if (!pidActiveInStudy(pid, n.rec)) continue;
     all.add(pid); perLane[n.rec.lane].add(pid);
   }
   document.getElementById('vis-count').textContent = visNodes.length + ' / ' + N;
+  const tlCountEl = document.getElementById('tl-count');
+  if (tlCountEl) tlCountEl.textContent = visNodes.length + ' of ' + N + ' studies';
   document.getElementById('vis-people').textContent = all.size + ' / ' + META.total_unique;
   document.getElementById('total-note').textContent = visNodes.length
     ? all.size + ' unique participants in total; ' + META.home_summary
@@ -2438,6 +2697,20 @@ function updateTotals(visNodes){
   for (const lane of LANES)
     document.getElementById('lt-' + lane).textContent =
       'n = ' + perLane[lane].size + ' unique participants';
+  const cohortCountEl = document.getElementById('cohort-count');
+  if (cohortCountEl){
+    cohortCountEl.textContent =
+      all.size + ' of ' + META.total_unique + ' participants' +
+      (selectedPid ? ' · filtered by ' + selectedPid : '');
+  }
+  const selRec = selectedId ? STUDIES.find(r => r.id === selectedId) : null;
+  const selStudyPids = new Set(selRec ? selRec.unique_pids : []);
+  document.querySelectorAll('.cohort-row').forEach(row => {
+    const pid = row.dataset.pid;
+    const on = all.has(pid);
+    row.classList.toggle('off', !on);
+    row.classList.toggle('selected', on && (pid === selectedPid || selStudyPids.has(pid)));
+  });
   emptyMsg.style.display = visNodes.length ? 'none' : '';
 }
 
@@ -2488,7 +2761,7 @@ function apply(){
   const benchCountEl = document.getElementById('bench-count');
   if (benchCountEl){
     benchCountEl.textContent =
-      f2VisA + ' of ' + f2TotA + ' communication-neuroprostheses studies';
+      f2VisA + ' of ' + f2TotA + ' English communication-neuroprostheses studies';
   }
   if (selectedId && !visIds.has(selectedId) && mode !== 'dim') updateSpotlightNav();
   if (selectedId){
@@ -2588,7 +2861,13 @@ function syncUI(){
   });
   const isDateFiltered = Boolean((dateFrom && dateFrom > MIN_DATE) || (dateTo && dateTo < MAX_DATE));
   dateWrap.classList.toggle('filtered', isDateFiltered);
+  const pinBtn = document.getElementById('pinned-only-btn');
+  if (pinBtn) pinBtn.classList.toggle('on', pinnedOnly);
 }
+document.getElementById('pinned-only-btn').addEventListener('click', () => {
+  pinnedOnly = !pinnedOnly;
+  syncUI(); apply();
+});
 function toggleVal(dim, val, on){
   if (on) sel[dim].add(val); else sel[dim].delete(val);
   syncUI(); apply();
@@ -2609,6 +2888,8 @@ document.querySelectorAll('#modebar button').forEach(b =>
 document.getElementById('reset').addEventListener('click', () => {
   for (const d in DIMS) sel[d] = new Set(DIMS[d]);
   searchStr = ''; document.getElementById('search').value = '';
+  selectedPid = null;
+  pinnedOnly = false;
   dateFrom = MIN_DATE; dateTo = MAX_DATE;
   dateFromEl.value = MIN_DATE; dateToEl.value = MAX_DATE;
   mode = 'dim';
@@ -2618,14 +2899,19 @@ document.getElementById('reset').addEventListener('click', () => {
 });
 /* ---------- full screen ---------- */
 const figbox = document.getElementById('figbox');
+const tlToggle = document.getElementById('tl-toggle');
 const fsBtn = document.getElementById('fs-btn');
 const fsLbl = document.getElementById('fs-lbl');
 const fsIco = document.getElementById('fs-ico');
+const cohortbox = document.getElementById('cohortbox');
+const cohortToggle = document.getElementById('cohort-toggle');
 const benchbox = document.getElementById('benchbox');
 const f2FsBtn = document.getElementById('f2-fs-btn');
 const f2FsLbl = document.getElementById('f2-fs-lbl');
 const f2FsIco = document.getElementById('f2-fs-ico');
 const benchToggle = document.getElementById('bench-toggle');
+const cardsbox = document.getElementById('cardsbox');
+const cardsToggle = document.getElementById('cards-toggle');
 const FS_ENTER_PATH = 'M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4';
 const FS_EXIT_PATH  = 'M6 2v4H2M10 2v4h4M6 14v-4H2M10 14v-4h4';
 function isBoxFs(box){
@@ -2675,10 +2961,36 @@ f2FsBtn.addEventListener('click', ev => { ev.stopPropagation(); toggleBoxFs(benc
 document.addEventListener('fullscreenchange', syncFsUI);
 document.addEventListener('webkitfullscreenchange', syncFsUI);
 
+tlToggle.addEventListener('click', () => {
+  const hidden = figbox.style.display === 'none';
+  figbox.style.display = hidden ? '' : 'none';
+  tlToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+cohortToggle.addEventListener('click', () => {
+  const hidden = cohortbox.style.display === 'none';
+  cohortbox.style.display = hidden ? '' : 'none';
+  cohortToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+document.querySelectorAll('.cohort-row').forEach(row => {
+  const pid = row.dataset.pid;
+  row.addEventListener('click', () => {
+    selectedPid = (selectedPid === pid) ? null : pid;
+    apply();
+  });
+});
+
 benchToggle.addEventListener('click', () => {
   const hidden = benchbox.style.display === 'none';
   benchbox.style.display = hidden ? '' : 'none';
   benchToggle.textContent = hidden ? 'Hide' : 'Show';
+});
+
+cardsToggle.addEventListener('click', () => {
+  const hidden = cardsbox.style.display === 'none';
+  cardsbox.style.display = hidden ? '' : 'none';
+  cardsToggle.textContent = hidden ? 'Hide' : 'Show';
 });
 
 document.querySelectorAll('.f2-slot').forEach(slot => {

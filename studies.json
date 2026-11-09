@@ -2,7 +2,7 @@
   "metadata": {
     "title": "Living Timeline of Communication Neuroprostheses for People with Paralysis",
     "repository": "communication-neuroprostheses-timeline",
-    "last_updated": "2026-11-06",
+    "last_updated": "2026-11-09",
     "update_cadence": "weekly",
     "home_use_summary": "1 used a system at home (T15)",
     "participant_aliases": {
@@ -24,7 +24,7 @@
       "descriptor": "brain-to-text",
       "metrics": {
         "vocab_size": "open vocab",
-        "sentences": "1,000 sentences (10 sentence sessions, 95 blocks, 8,198 words)",
+        "sentences": "1,000 sentences",
         "wer": "WER 25.1%",
         "speed": "90 cpm"
       },
@@ -48,7 +48,7 @@
       "descriptor": "real-time sentence decoding",
       "metrics": {
         "vocab_size": "vocab 50",
-        "sentences": "9,800 isolated-word trials (22.5 h) + 250 sentence trials (2.1 h)",
+        "sentences": "250 sentences + 9,800 word trials",
         "wer": "WER 25.6%",
         "speed": "15.2 wpm"
       },
@@ -71,7 +71,7 @@
       "descriptor": "NATO code-word spelling",
       "metrics": {
         "vocab_size": "vocab 1,152",
-        "sentences": "150 sentence copy trials (75 unique AAC sentences) + isolated NATO code-word trials",
+        "sentences": "150 sentences + code-word trials",
         "wer": "WER 10.5%",
         "speed": "29.4 cpm"
       },
@@ -95,7 +95,7 @@
       "descriptor": "78 wpm + avatar",
       "metrics": {
         "vocab_size": "vocab 1,024",
-        "sentences": "9,506 training sentence trials (~22.4 h across 14 days) + 249 held-out evaluation trials",
+        "sentences": "9,755 sentences",
         "wer": "WER 25.5%",
         "speed": "78 wpm"
       },
@@ -119,7 +119,7 @@
       "descriptor": "large-vocab decoding",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "10,880 sentences (24 sessions: 9,680 labeled train/val + 1,200 competition test)",
+        "sentences": "9,680 sentences",
         "wer": "WER 23.9%",
         "speed": "62 wpm"
       },
@@ -143,7 +143,7 @@
       "descriptor": "speech synthesis",
       "metrics": {
         "vocab_size": "vocab 6",
-        "sentences": "6 isolated command words across chronic online sessions",
+        "sentences": "6 isolated command words",
         "wer": "listener WER 20%",
         "speed": "n/r"
       },
@@ -167,7 +167,7 @@
       "descriptor": "403-day plug-and-play",
       "metrics": {
         "vocab_size": "vocab 130k",
-        "sentences": "1,315 released sentences (21 sessions, 105 blocks, 9,926 words; 11 seed + 15 eval sessions in paper)",
+        "sentences": "1,315 sentences",
         "wer": "WER 4.0%",
         "speed": "73.2 cpm"
       },
@@ -175,7 +175,7 @@
       "participants": [
         "T5▲"
       ],
-      "doi": "10.1038/s41467-023-42555-1",
+      "doi": "10.52202/075280-1831",
       "data_doi": "10.5061/dryad.hqbzkh1p6"
     },
     {
@@ -192,7 +192,7 @@
       "descriptor": "internal speech",
       "metrics": {
         "vocab_size": "vocab 8",
-        "sentences": "8 isolated words (6 English words + 2 pseudowords; 64–160 trials/session)",
+        "sentences": "8 isolated words (64–160 trials/session)",
         "wer": "WER 21%/77%",
         "speed": "n/r"
       },
@@ -217,7 +217,7 @@
       "descriptor": "bilingual",
       "metrics": {
         "vocab_size": "vocab 178",
-        "sentences": "Bilingual English + Spanish phrase trials from 111-word core / 178-word extended lexicon",
+        "sentences": "Bilingual phrase trials (178-word lexicon)",
         "wer": "WER 25.0%",
         "speed": "n/r"
       },
@@ -240,7 +240,7 @@
       "descriptor": "rapid calibration",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "10,948 released sentences (45 sessions: 9,498 labeled + 1,450 test; 10,481 copy sentences / 67.4 h in paper)",
+        "sentences": "9,498 sentences",
         "wer": "WER 4.9%",
         "speed": "31.6 wpm"
       },
@@ -265,7 +265,7 @@
       "descriptor": "E2E RNN-LLM",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)",
+        "sentences": "9,680 sentences (Willett et al., 2023)",
         "wer": "WER 26.3% (B2T 24.69%)",
         "speed": "n/r"
       },
@@ -288,7 +288,7 @@
       "descriptor": "FALCON H2 benchmark",
       "metrics": {
         "vocab_size": "vocab 130k",
-        "sentences": "1,315 sentences (reanalysis of Fan et al., 2023 H2 handwriting dataset)",
+        "sentences": "1,315 sentences (Fan et al., 2023)",
         "wer": "WER 11.0% (held-in 2.0%)",
         "speed": "n/r"
       },
@@ -311,7 +311,7 @@
       "descriptor": "streaming voice",
       "metrics": {
         "vocab_size": "vocab 1,024",
-        "sentences": "9,655 training sentences (1024-word-General + AAC phrases) + 249 held-out evaluation trials",
+        "sentences": "9,904 sentences",
         "wer": "listener WER 58.8%",
         "speed": "47.5 wpm"
       },
@@ -335,7 +335,7 @@
       "descriptor": "voice synthesis",
       "metrics": {
         "vocab_size": "open vocab",
-        "sentences": "8,489 cued sentences (37 sessions, 53,278 words; 956 vocalized + 58 mimed held-out)",
+        "sentences": "8,489 sentences",
         "wer": "listener WER 43.8%",
         "speed": "n/r"
       },
@@ -343,7 +343,7 @@
         "T15△"
       ],
       "doi": "10.1038/s41586-025-09127-3",
-      "data_doi": "10.5061/dryad.dncjsxm85"
+      "data_doi": "10.5061/dryad.2280gb64f"
     },
     {
       "id": "xu2025",
@@ -359,7 +359,7 @@
       "descriptor": "video-cued trajectory decoding",
       "metrics": {
         "vocab_size": "vocab 1,000",
-        "sentences": "30 basic strokes + video-guided Chinese character trials across multi-day sessions",
+        "sentences": "30 strokes + character trials",
         "wer": "CER 8.9% (WER n/r)",
         "speed": "n/r"
       },
@@ -382,7 +382,7 @@
       "descriptor": "inner speech",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "1,670 released inner/attempted sentences (6 days, 44 blocks: T12 500, T15 720, T16 450)",
+        "sentences": "1,670 sentences (T12: 500, T15: 720, T16: 450)",
         "wer": "WER 23.7%/51.3%/46.6%",
         "speed": "n/r"
       },
@@ -408,7 +408,7 @@
       "descriptor": "DConD-LIFT",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)",
+        "sentences": "9,680 sentences (Willett et al., 2023)",
         "wer": "WER 5.77% (1-model 8.06%)",
         "speed": "n/r"
       },
@@ -431,7 +431,7 @@
       "descriptor": "time-masked Transformer",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "10,880 sentences (reanalysis of Willett et al., 2023 Brain-to-Text '24 benchmark)",
+        "sentences": "9,680 sentences (Willett et al., 2023)",
         "wer": "WER 7.98% (ens. 5.68%)",
         "speed": "n/r"
       },
@@ -454,7 +454,7 @@
       "descriptor": "cross-brain transfer",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "40 speech sessions across T12/T15/T16 (24 public + 16 new T16 sessions)",
+        "sentences": "40 speech sessions",
         "wer": "PER 23-40% (WER n/r)",
         "speed": "n/r"
       },
@@ -480,7 +480,7 @@
       "sep_after_output": "; ",
       "metrics": {
         "vocab_size": "open vocab",
-        "sentences": "25 handwriting sessions across T5/T12/T18 (21 public T5 + 3 T12 + 1 T18 session)",
+        "sentences": "25 handwriting sessions",
         "wer": "CER 2% (WER n/r)",
         "speed": "n/r"
       },
@@ -505,7 +505,7 @@
       "descriptor": "BraIn-to-Text (BIT)",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "21,828 sentences across T12 (10,880) + T15 (10,948) open benchmarks + multi-species pretraining",
+        "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)",
         "wer": "WER 5.10%/1.76% (E2E 10.22%/7.76%)",
         "speed": "n/r"
       },
@@ -529,7 +529,7 @@
       "descriptor": "Q&A 27.7 wpm",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "11,274 copy-task sentences (93 days) + spontaneous ChatGPT Q&A blocks",
+        "sentences": "11,274 sentences + Q&A blocks",
         "wer": "WER 35.2%",
         "speed": "27.7 wpm"
       },
@@ -553,7 +553,7 @@
       "descriptor": "cross-subject CTC",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "27,172 sentences across T12/T15/T16/T17 public Dryad releases",
+        "sentences": "27,172 sentences (T12/T15/T16/T17)",
         "wer": "WER 10.3%/5.9%",
         "speed": "n/r"
       },
@@ -579,7 +579,7 @@
       "descriptor": "touch typing neuroprosthesis",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "1,701 released sentences (17 sentence sessions, 144 blocks: T17 668, T18 1,033)",
+        "sentences": "1,701 sentences (T17: 668, T18: 1,033)",
         "wer": "WER 12.5%/3.4%",
         "speed": "110 cpm"
       },
@@ -604,7 +604,7 @@
       "descriptor": "intended speech in LIS",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "3,674 released sentences (13 sentence sessions, 96 blocks; 3,763 copy trials in Fogg et al., 2026)",
+        "sentences": "3,674 sentences",
         "wer": "WER 66.5%",
         "speed": "45-60 wpm"
       },
@@ -629,7 +629,7 @@
       "descriptor": "real-time ensembles",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "Bilateral 6-array T12 online blocks + offline T12/T15/T16 Switchboard corpora",
+        "sentences": "T12 online blocks + T12/T15/T16 corpora",
         "wer": "WER 33.7→26.0%",
         "speed": "65.4 wpm"
       },
@@ -653,7 +653,7 @@
       "descriptor": "3,800 h home",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "260,424 self-generated home sentences (183,060 personal-use + copy benchmarks across 748 d)",
+        "sentences": "260,424 sentences",
         "wer": "WER 0.8-3.5%",
         "speed": "56 wpm"
       },
@@ -666,18 +666,18 @@
     {
       "id": "wairagkar2026",
       "citation": "Wairagkar et al., 2026",
-      "date": "2026-06-28",
-      "year_fraction": 2026.49,
+      "date": "2026-12-08",
+      "year_fraction": 2026.94,
       "lane": "speech",
       "electrode": "utah",
-      "data_availability": "preprint",
+      "data_availability": "reanalysis",
       "decoding_mode": "offline",
       "task_instruction": "intended",
       "decoded_output": "voice",
       "descriptor": "Brain2voice 2.0",
       "metrics": {
         "vocab_size": "open vocab",
-        "sentences": "8,489 cued sentences (reanalysis of Wairagkar et al., 2025 37-session Dryad corpus)",
+        "sentences": "8,489 sentences (Wairagkar et al., 2025)",
         "wer": "listener WER 5.24%",
         "speed": "n/r"
       },
@@ -700,7 +700,7 @@
       "descriptor": "multi-user",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "311,602 total training sentences across 6 participants (51,178 copy + 260,424 T15 home)",
+        "sentences": "311,602 sentences",
         "wer": "WER 3.9-8.0%",
         "speed": "n/r"
       },
@@ -728,7 +728,7 @@
       "descriptor": "ALIGN cross-day",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "20,378 sentences across T12 (9,680) + T15 (10,698) multi-day benchmarks",
+        "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)",
         "wer": "unseen-day WER 32.2%/45.5%",
         "speed": "n/r"
       },
@@ -752,7 +752,7 @@
       "descriptor": "speech+gesture avatar",
       "metrics": {
         "vocab_size": "vocab 5-10",
-        "sentences": "Closed sets of 5 phrases × 4 gestures (B1r) and 10 phrases × 10 gestures (B6) + conversational blocks",
+        "sentences": "5–10 phrase sets + conversational blocks",
         "wer": "WER 30.0%",
         "speed": "n/r"
       },
@@ -800,7 +800,7 @@
       "descriptor": "LightBeam",
       "metrics": {
         "vocab_size": "vocab 100k",
-        "sentences": "20,378 sentences across T12 (Brain-to-Text '24) + T15 (Brain-to-Text '25)",
+        "sentences": "19,178 sentences (T12: 9,680, T15: 9,498)",
         "wer": "WER 5.01%/2.36%",
         "speed": "n/r"
       },
@@ -824,7 +824,7 @@
       "descriptor": "fully implanted speech BCI",
       "metrics": {
         "vocab_size": "vocab 125k",
-        "sentences": "n/r (125k-word structured evaluation in V2/V3; 220-word set in V1)",
+        "sentences": "n/r",
         "wer": "WER 5.8%",
         "speed": "75 wpm"
       },
@@ -834,6 +834,29 @@
         "V3△"
       ],
       "doi": "10.1002/mus.70436"
+    },
+    {
+      "id": "yang2026",
+      "citation": "Yang et al., 2026",
+      "date": "2026-11-05",
+      "year_fraction": 2026.85,
+      "lane": "handwriting",
+      "electrode": "utah",
+      "data_availability": "on_request",
+      "decoding_mode": "online",
+      "task_instruction": "intended",
+      "decoded_output": "text",
+      "descriptor": "online Chinese character decoding",
+      "metrics": {
+        "vocab_size": "vocab 295",
+        "sentences": "216 online trials (4 sessions)",
+        "wer": "CER 5.6%",
+        "speed": "8.55 cpm"
+      },
+      "participants": [
+        "Z1▲"
+      ],
+      "doi": "10.1038/s42003-026-11194-9"
     },
     {
       "id": "neuralink2026_p7",
