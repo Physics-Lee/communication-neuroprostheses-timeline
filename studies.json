@@ -493,9 +493,9 @@
     },
     {
       "id": "yzhang2026_bit",
-      "citation": "Y. Zhang et al., 2026",
-      "date": "2026-01-26",
-      "year_fraction": 2026.07,
+      "citation": "Y. Zhang et al., 2025",
+      "date": "2025-11-21",
+      "year_fraction": 2025.89,
       "lane": "speech",
       "electrode": "utah",
       "data_availability": "reanalysis",
@@ -513,7 +513,7 @@
         "T12△",
         "T15△"
       ],
-      "doi": "10.48550/arXiv.2601.18977"
+      "doi": "10.48550/arXiv.2511.21740"
     },
     {
       "id": "nason2026",
@@ -717,8 +717,8 @@
     {
       "id": "zzhang2026_align",
       "citation": "Z. Zhang et al., 2026",
-      "date": "2026-08-18",
-      "year_fraction": 2026.63,
+      "date": "2026-03-18",
+      "year_fraction": 2026.21,
       "lane": "speech",
       "electrode": "utah",
       "data_availability": "reanalysis",
@@ -736,7 +736,7 @@
         "T12△",
         "T15△"
       ],
-      "doi": "10.48550/arXiv.2608.11120"
+      "doi": "10.48550/arXiv.2603.18299"
     },
     {
       "id": "brosler2026",

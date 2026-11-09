@@ -424,9 +424,9 @@ studies:
     doi: "10.64898/2026.01.12.699110"
 
   - id: yzhang2026_bit
-    citation: "Y. Zhang et al., 2026"
-    date: "2026-01-26"
-    year_fraction: 2026.07
+    citation: "Y. Zhang et al., 2025"
+    date: "2025-11-21"
+    year_fraction: 2025.89
     lane: speech
     electrode: utah
     data_availability: reanalysis
@@ -440,7 +440,7 @@ studies:
       wer: "WER 5.10%/1.76% (E2E 10.22%/7.76%)"
       speed: "n/r"
     participants: ["T12△", "T15△"]
-    doi: "10.48550/arXiv.2601.18977"
+    doi: "10.48550/arXiv.2511.21740"
 
   - id: nason2026
     citation: "Nason-Tomaszewski et al., 2026"
@@ -602,8 +602,8 @@ studies:
 
   - id: zzhang2026_align
     citation: "Z. Zhang et al., 2026"
-    date: "2026-08-18"
-    year_fraction: 2026.63
+    date: "2026-03-18"
+    year_fraction: 2026.21
     lane: speech
     electrode: utah
     data_availability: reanalysis
@@ -617,7 +617,7 @@ studies:
       wer: "unseen-day WER 32.2%/45.5%"
       speed: "n/r"
     participants: ["T12△", "T15△"]
-    doi: "10.48550/arXiv.2608.11120"
+    doi: "10.48550/arXiv.2603.18299"
 
   - id: brosler2026
     citation: "Brosler et al., 2026"
