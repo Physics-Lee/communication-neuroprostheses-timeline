@@ -1188,11 +1188,11 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
     <div class="bottom-row">
       <span class="mode-lbl">Layout</span>
       <div id="modebar">
-        <button data-mode="reflow" class="on">Reflow</button>
+        <button data-mode="dim" class="on">Dim</button>
+        <button data-mode="reflow">Reflow</button>
         <button data-mode="hide">Hide in place</button>
-        <button data-mode="dim">Dim</button>
       </div>
-      <span class="hint">Refiltering re-packs the remaining cards around their time anchors · the in-figure legends are clickable too</span>
+      <span class="hint">Dim fades filtered studies to the background · Reflow re-packs the remaining cards around their time anchors · the in-figure legends are clickable too</span>
     </div>
   </div>
 
@@ -1277,7 +1277,7 @@ const DIMS = {
   lane: ['speech','typing','handwriting'],
 };
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
-let searchStr = '', mode = 'reflow', selectedId = null;
+let searchStr = '', mode = 'dim', selectedId = null;
 
 function matches(rec){
   if (!sel.data_availability.has(rec.opn)) return false;
@@ -1661,9 +1661,9 @@ document.querySelectorAll('#modebar button').forEach(b =>
 document.getElementById('reset').addEventListener('click', () => {
   for (const d in DIMS) sel[d] = new Set(DIMS[d]);
   searchStr = ''; document.getElementById('search').value = '';
-  mode = 'reflow';
+  mode = 'dim';
   document.querySelectorAll('#modebar button').forEach(x =>
-    x.classList.toggle('on', x.dataset.mode === 'reflow'));
+    x.classList.toggle('on', x.dataset.mode === 'dim'));
   selectStudy(null); syncUI(); apply();
 });
 let debounce = null;
