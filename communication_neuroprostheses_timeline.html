@@ -323,7 +323,6 @@ const AVAIL_LBL = { open:'open data', partial:'data on request', closed:'closed 
                     unknown:'preprint', reanalysis:'reanalysis on open data' };
 const MODE_LBL = { online:'online', offline:'offline' };
 const ELEC_LBL = { ecog:'ECoG', utah:'Utah array', thin_film:'thin-film', microwire:'microwire' };
-const ELEC_GLYPH = { ecog:'●', utah:'■', thin_film:'⬢', microwire:'▼' };
 const TASK_LBL = { inner:'inner speech ◆', intended:'overt / intended ◇', both:'inner ◆ + overt ◇' };
 const OUT_LBL = { voice:'brain-to-voice ⬟', text:'brain-to-text ⬠', both:'voice ⬟ + text ⬠' };
 const SHAPE_GLYPH = { o:'●', s:'■', h:'⬢', v:'▼' };
@@ -548,7 +547,7 @@ function cardHtml(rec){
   return `
     <div class="sc-head"><span class="sc-dot" style="background:${COLORS[rec.opn]}"></span>
       <span class="sc-title">${esc(rec.citation)}</span>
-      <span class="sc-glyph">${ELEC_GLYPH[rec.shape]} ${ELEC_LBL[rec.electrode]}</span></div>
+      <span class="sc-glyph">${SHAPE_GLYPH[rec.shape]} ${ELEC_LBL[rec.electrode]}</span></div>
     <div class="sc-date">${esc(rec.date)} · ${LANE_LBL[rec.lane]} lane · ${AVAIL_LBL[rec.opn]} · ${MODE_LBL[rec.decoding_mode]}</div>
     <div class="sc-desc">${esc(rec.descriptor)}</div>
     <div class="sc-grid">
