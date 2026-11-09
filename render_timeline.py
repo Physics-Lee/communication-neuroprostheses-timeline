@@ -728,7 +728,7 @@ def render_timeline(
           Line2D([], [], marker="D", ls="", markerfacecolor="white",
                  markeredgecolor="#1a1a1a", markersize=3.65,
                  markeredgewidth=0.72,
-                 label="overt / mouthing / intended")]
+                 label="overt/mouthing/intended")]
     leg5 = ax.legend(handles=h5, loc="upper left", bbox_to_anchor=(0.338, 1.0),
                      title="task instruction", fontsize=7.8, title_fontsize=8.2,
                      frameon=True, framealpha=0.95, edgecolor="#cccccc",
@@ -988,7 +988,7 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
         ]),
         ("task_instruction", "task instruction", [
             ("solid-diamond", "#1a1a1a", "inner speech", "inner"),
-            ("hollow-diamond", "#1a1a1a", "overt / mouthing / intended", "intended"),
+            ("hollow-diamond", "#1a1a1a", "overt/mouthing/intended", "intended"),
         ]),
         ("decoded_output", "decoded output", [
             ("solid-pentagon", "#1a1a1a", "brain-to-voice", "voice"),
@@ -1237,7 +1237,7 @@ const AVAIL_LBL = { open:'open data', partial:'data on request', closed:'closed 
                     unknown:'preprint', reanalysis:'reanalysis on open data' };
 const MODE_LBL = { online:'online', offline:'offline' };
 const ELEC_LBL = { ecog:'ECoG', utah:'Utah array', thin_film:'thin-film', microwire:'microwire' };
-const TASK_LBL = { inner:'inner speech ◆', intended:'overt / intended ◇', both:'inner ◆ + overt ◇' };
+const TASK_LBL = { inner:'inner speech ◆', intended:'overt/mouthing/intended ◇', both:'inner ◆ + overt ◇' };
 const OUT_LBL = { voice:'brain-to-voice ⬟', text:'brain-to-text ⬠', both:'voice ⬟ + text ⬠' };
 const SHAPE_GLYPH = { o:'●', s:'■', h:'⬢', v:'▼' };
 const LANE_LBL = { speech:'Speech', typing:'Typing', handwriting:'Handwriting' };
@@ -1596,7 +1596,7 @@ const GROUPS = [
     {v:'text', label:'brain-to-text', glyph:'⬠'}]},
   {dim:'task_instruction', title:'Task instruction', opts:[
     {v:'inner', label:'inner', glyph:'◆'},
-    {v:'intended', label:'overt / intended', glyph:'◇'}]},
+    {v:'intended', label:'overt/mouthing/intended', glyph:'◇'}]},
   {dim:'electrode', title:'Electrode', opts:[
     {v:'ecog', label:'ECoG', glyph:'●'},
     {v:'utah', label:'Utah', glyph:'■'},
