@@ -1603,8 +1603,8 @@ const GROUPS = [
     {v:'thin_film', label:'thin-film', glyph:'⬢'},
     {v:'microwire', label:'microwire', glyph:'▼'}]},
   {dim:'speech_ability', title:'Speech ability', opts:[
-    {v:'intact', label:'participants who can speak naturally', glyph:'▲'},
-    {v:'paralysis', label:'participants who have vocal paralysis', glyph:'△'}]},
+    {v:'intact', label:'can speak naturally', glyph:'▲'},
+    {v:'paralysis', label:'vocal paralysis', glyph:'△'}]},
   {dim:'lane', title:'Modality', opts:[
     {v:'speech', label:'speech'},
     {v:'typing', label:'typing'},
