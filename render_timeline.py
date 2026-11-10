@@ -1095,7 +1095,7 @@ def _build_fig2_upper_svg(
         spdsd = r["speed_wpm_sd"]
         state_c = OPEN_C[r["openness_code"]]
         if spd is None:
-            ax3.text(x, 1.2, "n/r", ha="center", va="bottom", fontsize=5.6, color="#777777")
+            ax3.text(x, 1.75, "n/r", ha="center", va="bottom", fontsize=5.6, color="#777777")
             continue
         ax3.bar(x, spd, width=0.76, color=(*to_rgb(state_c), 0.35),
                 edgecolor=state_c, linewidth=0.8)
@@ -1104,29 +1104,34 @@ def _build_fig2_upper_svg(
             ax3.errorbar(x, spd, yerr=spdsd, color="#333333", capsize=2.0,
                          elinewidth=1.0, capthick=1.0, zorder=4)
         note = f"{spd:.1f}\u00b1{spdsd:.1f}" if spdsd is not None else f"{spd:.1f}"
-        ax3.text(x, top * 1.06 + 2.0, note, ha="center", va="bottom", fontsize=6.8)
-        ax3.text(x, max(top * 1.31, top * 1.06 + 8.0) + 2.0,
+        ax3.text(x, top * 1.07, note, ha="center", va="bottom", fontsize=6.8)
+        ax3.text(x, top * 1.32,
                  f"vocab {r['vocab_tag']}\n{r['speed_caliber']}",
                  ha="center", va="bottom", fontsize=4.6, color="#555555", linespacing="normal")
-    for spd_v in (160, 51.6, 36.2, 10, 8):
-        ax3.axhline(spd_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
     LX = 3.92
-    for spd_v, spd_lab in (
-            (160, "160 wpm natural conversation (Card et al., 2024)"),
-            (51.6, "51.6 wpm keyboard typing (Dhakal et al., 2018)"),
-            (36.2, "36.2 wpm smartphone typing (Palin et al., 2019)"),
-            (10, "5\u201310 wpm eye typing (Hamid & Kristensson, 2024)")):
-        t_obj = ax3.text(LX, spd_v + 0.6, spd_lab, ha="left", va="bottom", fontsize=5.6,
+    for spd_v, spd_lab, above in (
+            (160, "160 wpm natural conversation (Card et al., 2024)", True),
+            (51.6, "51.6 wpm keyboard typing (Dhakal et al., 2018)", True),
+            (36.2, "36.2 wpm smartphone typing (Palin et al., 2019)", True),
+            (25.1, "25.1 wpm handwriting (Kaifosh et al., 2025)", True),
+            (10, "5\u201310 wpm eye typing (Hamid & Kristensson, 2024)", True),
+            (8, "8 wpm point-and-click BCI (Willett et al., 2021)", False)):
+        ax3.axhline(spd_v, color="#7F7F7F", linewidth=0.9, linestyle=(0, (4, 2)))
+        yv = spd_v * 1.04 if above else spd_v / 1.05
+        t_obj = ax3.text(LX, yv, spd_lab, ha="left",
+                         va="bottom" if above else "top", fontsize=5.6,
                          color="#666666", zorder=3,
                          bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.88))
-        d_badges.append((spd_v + 0.6, spd_lab, t_obj))
-    ax3.plot([5.5, 5.5], [8, 19.8], color="#999999", lw=0.55, zorder=2)
-    t_obj_8 = ax3.text(LX, 20.0, "8 wpm point-and-click BCI (Willett et al., 2021)",
-                       ha="left", va="bottom", fontsize=5.6, color="#666666", zorder=3,
-                       bbox=dict(boxstyle="round,pad=0.12", fc="white", ec="none", alpha=0.88))
-    d_badges.append((20.0, "8 wpm point-and-click BCI (Willett et al., 2021)", t_obj_8))
-    ax3.set_ylim(0, 200)
-    ax3.set_yticks(range(0, 201, 50))
+        d_badges.append((yv, spd_lab, above, t_obj))
+    ax3.set_yscale("log")
+    ax3.set_ylim(1.5, 420)
+    ax3.set_yticks([2, 5, 10, 20, 50, 100, 200])
+    ax3.set_yticklabels(["2", "5", "10", "20", "50", "100", "200"])
+    ax3.yaxis.set_minor_locator(
+        matplotlib.ticker.FixedLocator(
+            [3, 4, 6, 7, 8, 9, 30, 40, 60, 70, 80, 90, 300, 400]
+        )
+    )
     ax3.set_xticks(range(len(rows_cd)))
     ax3.set_xticklabels([("\u2605 " + r["label"]) if r["id"] in STAR_IDS else r["label"] for r in rows_cd],
                         fontsize=6.4, rotation=75, ha="right", rotation_mode="anchor")
@@ -1544,29 +1549,27 @@ def _build_fig2_upper_svg(
     # ---- Panel (d) ----
     ch_d, d_x0, d_x1, d_y0, d_y1 = draw_axes_chrome(
         ax3,
-        list(range(0, 201, 50)),
-        [str(v) for v in range(0, 201, 50)],
+        [2, 5, 10, 20, 50, 100, 200],
+        ["2", "5", "10", "20", "50", "100", "200"],
         "words per minute",
         "(d) Communication speed (online)\nn/r: speed not reported",
         title_fs=9.8,
+        minor_yticks=[3, 4, 6, 7, 8, 9, 30, 40, 60, 70, 80, 90, 300, 400],
     )
     s.append(ch_d)
-    for spd_v in (160, 51.6, 36.2, 10, 8):
+    for spd_v in (160, 51.6, 36.2, 25.1, 10, 8):
         _, sy_l = d2svg(ax3, 0, spd_v)
         s.append(f'<line x1="{d_x0:.1f}" y1="{sy_l:.1f}" x2="{d_x1:.1f}" y2="{sy_l:.1f}" '
                  f'stroke="#7F7F7F" stroke-width="{SW(0.9)}" stroke-dasharray="5.5,2.8"/>')
-    sx_ld8, sy_8_0 = d2svg(ax3, 5.5, 8)
-    _, sy_8_1 = d2svg(ax3, 5.5, 19.8)
-    s.append(f'<line x1="{sx_ld8:.1f}" y1="{sy_8_0:.1f}" x2="{sx_ld8:.1f}" y2="{sy_8_1:.1f}" '
-             f'stroke="#999999" stroke-width="{SW(0.55)}"/>')
-    for ly_d, spd_lab, t_obj in d_badges:
+    for ly_d, spd_lab, above, t_obj in d_badges:
         bp = t_obj.get_bbox_patch().get_window_extent(renderer)
         s.append(f'<rect x="{SX(bp.x0):.1f}" y="{SY(bp.y1):.1f}" width="{bp.width * 0.5:.1f}" '
                  f'height="{bp.height * 0.5:.1f}" rx="2.5" fill="#ffffff" fill-opacity="0.88"/>')
         tx, ty = d2svg(ax3, LX, ly_d)
-        s.append(multiline_svg(tx, ty, spd_lab, 5.6, "#666666", anchor="start", va="bottom"))
+        s.append(multiline_svg(tx, ty, spd_lab, 5.6, "#666666", anchor="start",
+                               va="bottom" if above else "top"))
     s.append(multiline_svg(
-        d_x0 + 0.98 * (d_x1 - d_x0), d_y0 + 0.015 * (d_y1 - d_y0),
+        d_x0 + 0.98 * (d_x1 - d_x0), d_y0 + 0.015 * (c_y1 - c_y0),
         dagger_note, 6.0, "#555555", anchor="end", va="top"
     ))
     for x, r in enumerate(rows_cd):
@@ -1575,15 +1578,15 @@ def _build_fig2_upper_svg(
         col = OPEN_C[r["openness_code"]]
         is_star = r["id"] in STAR_IDS
         lbl_txt = ("\u2605 " + r["label"]) if is_star else r["label"]
-        bx0, _ = d2svg(ax3, x - 0.38, 0)
-        bx1, by1 = d2svg(ax3, x + 0.38, 0)
+        bx0, _ = d2svg(ax3, x - 0.38, 1.5)
+        bx1, by1 = d2svg(ax3, x + 0.38, 1.5)
         bw = bx1 - bx0
         cx = 0.5 * (bx0 + bx1)
         s.append(f'<g class="f2-slot" data-id="{r["id"]}">')
         if spd is None:
             s.append(f'<title>{esc(r["label"])} \u2014 speed not reported (click to inspect study)</title>')
             s.append(f'<rect class="f2-hit" x="{bx0 - 3:.1f}" y="{d_y0:.1f}" width="{bw + 6:.1f}" height="{d_y1 - d_y0 + 125:.1f}"/>')
-            _, nry = d2svg(ax3, x, 1.2)
+            _, nry = d2svg(ax3, x, 1.75)
             s.append(multiline_svg(cx, nry, "n/r", 5.6, "#777777", anchor="middle", va="bottom", cls="f2-val"))
         else:
             _, by0 = d2svg(ax3, x - 0.38, spd)
@@ -1603,10 +1606,10 @@ def _build_fig2_upper_svg(
                          f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
                 s.append(f'<line x1="{cx - 2.8:.1f}" y1="{ey_lo:.1f}" x2="{cx + 2.8:.1f}" y2="{ey_lo:.1f}" '
                          f'stroke="#333333" stroke-width="{SW(1.0)}"/>')
-            _, vy = d2svg(ax3, x, top * 1.06 + 2.0)
+            _, vy = d2svg(ax3, x, top * 1.07)
             s.append(multiline_svg(cx, vy, note, 6.8, "#1f2937",
                                    anchor="middle", va="bottom", cls="f2-val"))
-            _, ny = d2svg(ax3, x, max(top * 1.31, top * 1.06 + 8.0) + 2.0)
+            _, ny = d2svg(ax3, x, top * 1.32)
             s.append(multiline_svg(cx, ny, f"vocab {r['vocab_tag']}\n{r['speed_caliber']}", 4.6, "#555555", anchor="middle", va="bottom"))
         s.append(f'<line x1="{cx:.1f}" y1="{d_y1:.1f}" x2="{cx:.1f}" y2="{d_y1 + 3.5:.1f}" '
                  f'stroke="#1f2937" stroke-width="{SW(0.8)}"/>')
