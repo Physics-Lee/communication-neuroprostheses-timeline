@@ -107,6 +107,17 @@
                                     box-shadow: 0 2px 8px rgba(15, 36, 64, .10); }
   #fs-btn svg, #f2-fs-btn svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 1.8;
                                 fill: none; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  /* left-to-right build animation (first load & timeline full-screen entry);
+     .pre-reveal snaps study nodes invisible, .revealing runs the staggered
+     fade-in driven by per-node transition-delay set in revealTimeline(). */
+  #tl-svg.pre-reveal .mark, #tl-svg.pre-reveal .stem, #tl-svg.pre-reveal .card {
+    opacity: 0 !important; }
+  #tl-svg.revealing .mark, #tl-svg.revealing .stem, #tl-svg.revealing .card {
+    transition: opacity .45s ease; }
+  @media (prefers-reduced-motion: reduce) {
+    #tl-svg.revealing .mark, #tl-svg.revealing .stem, #tl-svg.revealing .card {
+      transition: none; }
+  }
   #tl-svg text, #f2-svg text { font-family: "Segoe UI", "DejaVu Sans", Arial, sans-serif; }
   .f2-slot { cursor: pointer; transition: opacity .15s ease; }
   .f2-slot .f2-hit { fill: transparent; }
@@ -1551,7 +1562,7 @@ const nodes = STUDIES.map(rec => {
   else
     el('path', {d: markerPath(rec.shape, r), fill: 'white', stroke: COLORS[rec.opn],
                 'stroke-width': 2.0 * PT}, gMark);
-  const gStem = el('g', {}, layerStems);
+  const gStem = el('g', {class:'stem'}, layerStems);
   const gCard = el('g', {class:'card'}, layerCards);
   const t1 = el('text', {class:'t-name', 'font-size': (8.8*PT).toFixed(2), 'font-weight': 600,
                          fill:'#1f2937', 'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
@@ -2036,6 +2047,37 @@ document.getElementById('reset').addEventListener('click', () => {
     x.classList.toggle('on', x.dataset.mode === 'dim'));
   selectStudy(null); syncUI(); apply();
 });
+/* ---------- left-to-right build reveal ---------- */
+const REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const REVEAL_SPAN = 1400, REVEAL_FADE = 450;
+let revealTimer = null;
+function revealTimeline(){
+  if (REDUCE_MOTION) return;
+  clearTimeout(revealTimer);
+  const span = GEOM.x1 - GEOM.x0;
+  let maxDelay = 0;
+  for (const n of nodes){
+    const d = Math.max(0, Math.min(1, (n.rec.xm - GEOM.x0) / span)) * REVEAL_SPAN;
+    maxDelay = Math.max(maxDelay, d);
+    const ds = d.toFixed(0) + 'ms';
+    n.gMark.style.transitionDelay = ds;
+    n.gStem.style.transitionDelay = ds;
+    n.gCard.style.transitionDelay = ds;
+  }
+  svg.classList.add('pre-reveal');
+  void svg.getBoundingClientRect();        // flush: nodes compute invisible before transitions arm
+  svg.classList.add('revealing');
+  svg.classList.remove('pre-reveal');      // staggered fade-in sweeps left -> right
+  revealTimer = setTimeout(() => {
+    svg.classList.remove('revealing');
+    for (const n of nodes){
+      n.gMark.style.transitionDelay = '';
+      n.gStem.style.transitionDelay = '';
+      n.gCard.style.transitionDelay = '';
+    }
+  }, maxDelay + REVEAL_FADE);
+}
+
 /* ---------- full screen ---------- */
 const figbox = document.getElementById('figbox');
 const tlToggle = document.getElementById('tl-toggle');
@@ -2068,6 +2110,8 @@ function syncFsUI(){
   f2FsIco.innerHTML = `<path d="${on2 ? FS_EXIT_PATH : FS_ENTER_PATH}"/>`;
   document.body.style.overflow =
     (figbox.classList.contains('is-fullscreen') || benchbox.classList.contains('is-fullscreen')) ? 'hidden' : '';
+  if (on1 && !tlWasFs) revealTimeline();   // entering the timeline full screen replays the build
+  tlWasFs = on1;
 }
 function exitFs(){
   if ((document.fullscreenElement === figbox || document.fullscreenElement === benchbox) && document.exitFullscreen)
@@ -2078,6 +2122,8 @@ function exitFs(){
   benchbox.classList.remove('is-fullscreen');
   syncFsUI();
 }
+let tlWasFs = false;   // edge-trigger: exitFs() runs syncFsUI while fullscreenElement
+                       // is not cleared yet, so a level check would replay on exit
 function toggleBoxFs(box){
   if (isBoxFs(box)){ exitFs(); return; }
   if (isFs()) exitFs();
@@ -2154,6 +2200,7 @@ document.getElementById('search').addEventListener('input', e => {
 
 syncUI();
 apply();
+revealTimeline();
 </script>
 </body>
 </html>
