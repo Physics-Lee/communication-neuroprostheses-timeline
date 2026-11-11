@@ -45,6 +45,15 @@ plt.rcParams.update({
 
 LANE_SPEECH, LANE_TYPE, LANE_HAND = "speech", "typing", "handwriting"
 
+# Study-card & legend typography (pt). CARD_FS* also feed the interactive
+# HTML card renderer via __CARD_FS*__ template placeholders; the packing
+# ceiling (~+10% over the original 8/7 pt) is Gate-verified against the
+# densest 2026-2027 speech rows.
+CARD_FS1 = 8.8      # card line 1: citation + task-instruction glyph (bold)
+CARD_FS2 = 7.7      # card line 2: descriptor + decoded-output glyph + metrics
+LEG_FS = 9.0        # six legend boxes: entry labels
+LEG_TITLE_FS = 9.4  # six legend boxes: box titles
+
 OPEN_C = {
     2: "#00A087",    # open data (NPG teal)
     1: "#c07f00",    # data on request (amber)
@@ -637,10 +646,10 @@ def render_timeline(
             name_dy, met_dy = ((0.59, 0.22) if side == "above"
                                else (-0.22, -0.59))
             texts.append(ax.text(cx, y + name_dy, name, ha="center",
-                                 va="center", fontsize=8, fontweight="bold",
-                                 color="#1a1a1a", zorder=5))
+                                 va="center", fontsize=CARD_FS1,
+                                 fontweight="bold", color="#1a1a1a", zorder=5))
             texts.append(ax.text(cx, y + met_dy, metric, ha="center",
-                                 va="center", fontsize=7, color="#555555",
+                                 va="center", fontsize=CARD_FS2, color="#555555",
                                  zorder=5))
         return leads, texts
 
@@ -696,18 +705,18 @@ def render_timeline(
                          ("h", "thin-film threads"),
                          ("v", "microwire array")]]
     leg1 = ax.legend(handles=h1, loc="upper left", bbox_to_anchor=(0.002, 1.0),
-                     title="data availability", fontsize=7.8, title_fontsize=8.2,
+                     title="data availability", fontsize=LEG_FS, title_fontsize=LEG_TITLE_FS,
                      frameon=True, framealpha=0.95, edgecolor="#cccccc",
                      borderpad=0.7, labelspacing=0.45)
     ax.add_artist(leg1)
     leg2 = ax.legend(handles=h2, loc="upper left", bbox_to_anchor=(0.080, 1.0),
-                     title="decoding mode", fontsize=7.8,
-                     title_fontsize=8.2, frameon=True, framealpha=0.95,
+                     title="decoding mode", fontsize=LEG_FS,
+                     title_fontsize=LEG_TITLE_FS, frameon=True, framealpha=0.95,
                      edgecolor="#cccccc", borderpad=0.7, labelspacing=0.45)
     ax.add_artist(leg2)
     leg3 = ax.legend(handles=h3, loc="upper left", bbox_to_anchor=(0.155, 1.0),
-                     title="electrode type", fontsize=7.8,
-                     title_fontsize=8.2, frameon=True, framealpha=0.95,
+                     title="electrode type", fontsize=LEG_FS,
+                     title_fontsize=LEG_TITLE_FS, frameon=True, framealpha=0.95,
                      edgecolor="#cccccc", borderpad=0.7, labelspacing=0.45)
     ax.add_artist(leg3)
     h4 = [Line2D([], [], marker="^", ls="", markerfacecolor="#1a1a1a",
@@ -718,7 +727,7 @@ def render_timeline(
                  markersize=6.0,
                  label="participants who have vocal paralysis")]
     leg4 = ax.legend(handles=h4, loc="upper left", bbox_to_anchor=(0.231, 1.0),
-                     title="speech ability", fontsize=7.8, title_fontsize=8.2,
+                     title="speech ability", fontsize=LEG_FS, title_fontsize=LEG_TITLE_FS,
                      frameon=True, framealpha=0.95, edgecolor="#cccccc",
                      borderpad=0.7, labelspacing=0.45)
     ax.add_artist(leg4)
@@ -731,7 +740,7 @@ def render_timeline(
                  markeredgewidth=0.72,
                  label="overt/mouthing/intended")]
     leg5 = ax.legend(handles=h5, loc="upper left", bbox_to_anchor=(0.338, 1.0),
-                     title="task instruction", fontsize=7.8, title_fontsize=8.2,
+                     title="task instruction", fontsize=LEG_FS, title_fontsize=LEG_TITLE_FS,
                      frameon=True, framealpha=0.95, edgecolor="#cccccc",
                      borderpad=0.7, labelspacing=0.45)
     ax.add_artist(leg5)
@@ -744,8 +753,8 @@ def render_timeline(
                  markeredgewidth=0.72,
                  label="brain-to-text")]
     leg6 = ax.legend(handles=h6, loc="upper left", bbox_to_anchor=(0.460, 1.0),
-                     title="decoded output", fontsize=7.8,
-                     title_fontsize=8.2, frameon=True, framealpha=0.95,
+                     title="decoded output", fontsize=LEG_FS,
+                     title_fontsize=LEG_TITLE_FS, frameon=True, framealpha=0.95,
                      edgecolor="#cccccc", borderpad=0.7, labelspacing=0.45)
 
     ax.text(x1, -4.21,
@@ -1836,21 +1845,25 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
         ]),
     ]
 
+    # Legend replica: boxes come from measured geometry (auto-scaled by the
+    # figure fonts); text sizes and internal offsets must scale to match.
+    leg_k = LEG_FS / 7.8
+    t_fs, l_fs = 7.4 * leg_k * PT, LEG_FS * PT
     for (dim, title, rows), box in zip(LEG_DEFS, geom["legend_boxes"]):
         bx, by, bw, bh = box["x"], box["y"], box["w"], box["h"]
         g = [f'<g class="legend" data-dim="{dim}">',
              f'<rect class="frame" x="{bx:.1f}" y="{by:.1f}" width="{bw:.1f}" height="{bh:.1f}" rx="10" '
              f'fill="white" fill-opacity="0.97" stroke="#e2e6ec"/>',
-             f'<text class="lg-title" x="{bx + 12:.1f}" y="{by + 15:.1f}" font-size="{7.4 * PT:.1f}" '
+             f'<text class="lg-title" x="{bx + 12 * leg_k:.1f}" y="{by + 15 * leg_k:.1f}" font-size="{t_fs:.1f}" '
              f'font-weight="bold" letter-spacing="0.8" fill="#8a93a0">{title.upper()}</text>']
-        ry = by + 32
+        ry = by + 32 * leg_k
         for kind, color, label, val in rows:
             g.append(f'<g class="lg-row" data-dim="{dim}" data-val="{val}">')
-            g.append(marker_svg(kind, color, bx + 17, ry))
-            g.append(f'<text x="{bx + 30:.1f}" y="{ry:.1f}" font-size="{7.8 * PT:.1f}" fill="#374151" '
+            g.append(marker_svg(kind, color, bx + 17 * leg_k, ry))
+            g.append(f'<text x="{bx + 30 * leg_k:.1f}" y="{ry:.1f}" font-size="{l_fs:.1f}" fill="#374151" '
                      f'dominant-baseline="central">{label}</text>')
             g.append('</g>')
-            ry += 15.5
+            ry += 15.5 * leg_k
         g.append('</g>')
         s.extend(g)
 
@@ -2417,10 +2430,10 @@ const nodes = STUDIES.map(rec => {
                 'stroke-width': 2.0 * PT}, gMark);
   const gStem = el('g', {}, layerStems);
   const gCard = el('g', {class:'card'}, layerCards);
-  const t1 = el('text', {class:'t-name', 'font-size': (8*PT).toFixed(2), 'font-weight': 600,
+  const t1 = el('text', {class:'t-name', 'font-size': (__CARD_FS1__*PT).toFixed(2), 'font-weight': 600,
                          fill:'#1f2937', 'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
   t1.textContent = rec.name_line;
-  const t2 = el('text', {class:'t-metric', 'font-size': (7*PT).toFixed(2), fill:'#6b7280',
+  const t2 = el('text', {class:'t-metric', 'font-size': (__CARD_FS2__*PT).toFixed(2), fill:'#6b7280',
                          'text-anchor':'middle', 'dominant-baseline':'central'}, gCard);
   t2.textContent = rec.metric_line;
   const rv = {rec, gMark, gStem, gCard, t1, t2};
@@ -3071,6 +3084,8 @@ def export_interactive_html(
     studies_json = json.dumps(studies, ensure_ascii=False).replace("</", "<\\/")
     doc = (_HTML_TEMPLATE
            .replace("__CHROME__", _build_chrome_svg(geom))
+           .replace("__CARD_FS1__", str(CARD_FS1))
+           .replace("__CARD_FS2__", str(CARD_FS2))
            .replace("__FIG2_UPPER__", f2_svg_inner)
            .replace("__F2_VW__", str(f2_vw))
            .replace("__F2_VH__", str(f2_vh))
