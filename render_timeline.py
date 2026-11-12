@@ -46,13 +46,27 @@ plt.rcParams.update({
 LANE_SPEECH, LANE_TYPE, LANE_HAND = "speech", "typing", "handwriting"
 
 # Study-card & legend typography (pt). CARD_FS* also feed the interactive
-# HTML card renderer via __CARD_FS*__ template placeholders; the packing
-# ceiling (~+10% over the original 8/7 pt) is Gate-verified against the
-# densest 2026-2027 speech rows.
-CARD_FS1 = 8.8      # card line 1: citation + task-instruction glyph (bold)
-CARD_FS2 = 7.7      # card line 2: descriptor + decoded-output glyph + metrics
-LEG_FS = 9.0        # six legend boxes: entry labels
-LEG_TITLE_FS = 9.4  # six legend boxes: box titles
+# HTML card renderer via __CARD_FS*__ template placeholders. FS2 (the metric
+# line) sets the card width, so its ceiling is set by row capacity and the
+# right-edge shift buffer (X1_MARGIN): on the 31.0 x 22.0 in canvas with the
+# stretched rows (speech 7+6, handwriting 2+1), 13.0/10.4 packs from
+# X1_MARGIN >= 2.5 (shipped 2.6 leaves weekly-growth slack); 13.6/10.9
+# needs >= 2.9. All canvas annotation fonts below scale with the figure
+# width so the fit-to-width HTML keeps its perceived size.
+CARD_FS1 = 13.0     # card line 1: citation + task-instruction glyph (bold)
+CARD_FS2 = 10.4     # card line 2: descriptor + decoded-output glyph + metrics
+LEG_FS = 10.3       # six legend boxes: entry labels
+LEG_TITLE_FS = 10.8 # six legend boxes: box titles
+# Timeline-canvas annotation sizes (pt), shared by the static figure and the
+# interactive HTML exporter. Scale these together with the figure width.
+YEAR_FS = 11.5      # year tick labels on the time axis
+LANE_FS = 13.2      # bold lane names left of each track
+LANE_TOTAL_FS = 11.5  # bold blue "n = ... unique participants" per lane
+NOTE_FS = 9.4       # italic blue total-participants footnote (bottom right)
+X1_MARGIN = 2.75    # right-edge slack in years beyond the latest marker (x1);
+                    # raise it when late-timeline cards can no longer pack
+                    # (2.6 packs the full set but not every HTML filter subset;
+                    # 2.75 clears the tightest single-chip subset).
 
 OPEN_C = {
     2: "#00A087",    # open data (NPG teal)
@@ -409,34 +423,43 @@ def render_timeline(
         "reanalysis": OPEN_C["R"],
     }
 
-    fig, ax = plt.subplots(figsize=(27.0, 19.2))
+    # Vertical layout is stretched (fig height 22.0 in for a 36.52-unit y-span,
+    # same pt/unit ratio as the classic 19.2-in/31.87-unit figure) so the
+    # legend-to-speech and speech-to-typing gaps grow and the speech lane
+    # gains rows (7 above + 6 below) without compacting the row pitch -- this
+    # is what buys headroom for CARD_FS2. The 31.0-in width restores the
+    # original 1.41 aspect; x1 keeps X1_MARGIN of shift buffer past the last
+    # marker (late cards such as Pouratian 2026 pack into it) with a floor of
+    # vis_end + 1.20 so the buffer never collapses as the axis grows.
+    Y0, Y1 = -4.62, 31.90
+    fig, ax = plt.subplots(figsize=(31.0, 22.0))
     max_xm = max(it[1] for it in items)
     max_yr_tick = max(2028, int(max_xm) + 2)
+    vis_end = max(2027.10, (max_yr_tick - 1) + 0.10)
     x0 = 2020.85
-    x1 = max(2029.55, max_xm + 2.74)
+    x1 = max(vis_end + 1.20, max_xm + X1_MARGIN)
     ax.set_xlim(x0, x1)
-    ax.set_ylim(-4.62, 27.25)
+    ax.set_ylim(Y0, Y1)
     ax.axis("off")
 
     yax = -2.94
-    vis_end = max(2027.10, (max_yr_tick - 1) + 0.10)
     ax.plot([x0, vis_end], [yax, yax], color="#3a3a3a", lw=1.2, zorder=3)
     for yr in range(2021, max_yr_tick):
         ax.plot([yr, yr], [yax, yax - 0.15], color="#3a3a3a", lw=1.2, zorder=3)
         ax.text(yr, -3.57, str(yr), ha="center", va="center",
-                fontsize=10, color="#3a3a3a")
+                fontsize=YEAR_FS, color="#3a3a3a")
 
-    TRACKS = {LANE_SPEECH: 18.28, LANE_TYPE: 8.98, LANE_HAND: -0.32}
+    TRACKS = {LANE_SPEECH: 18.28, LANE_TYPE: 6.20, LANE_HAND: -0.32}
     for lane, ty in TRACKS.items():
         ax.hlines(ty, x0, x1, color="#d3d3d3", lw=1.3, zorder=1)
         ax.text(x0 - 0.18, ty, lane.capitalize(), ha="right", va="center",
-                fontsize=11.5, fontweight="bold", color="#404040")
+                fontsize=LANE_FS, fontweight="bold", color="#404040")
 
     ROWS = {
-        LANE_SPEECH: {"above": [19.83, 21.44, 23.05, 24.66, 26.27],
-                      "below": [16.87, 15.32, 13.79, 12.24]},
-        LANE_TYPE:   {"above": [10.12],      "below": [7.31]},
-        LANE_HAND:   {"above": [0.82],       "below": [-1.46]},
+        LANE_SPEECH: {"above": [19.83, 21.33, 22.83, 24.33, 25.83, 27.33, 28.83],
+                      "below": [16.87, 15.42, 13.97, 12.52, 11.07, 9.62]},
+        LANE_TYPE:   {"above": [7.60],       "below": [4.80]},
+        LANE_HAND:   {"above": [0.82, 2.35], "below": [-1.46]},
     }
     GAP, PADX_L, PADX_R, MAXSHIFT = 0.13, x0 + 0.15, x1 - 0.12, 2.05
 
@@ -760,14 +783,14 @@ def render_timeline(
     ax.text(x1, -4.21,
             f"{counts_summary['total_unique']} unique participants in total; "
             f"{counts_summary['home_summary']}",
-            ha="right", va="center", fontsize=8.2, style="italic",
+            ha="right", va="center", fontsize=NOTE_FS, style="italic",
             color="#3C5488", zorder=5)
 
     LANE_TOTALS = counts_summary["lane_totals"]
     for lane, ty in TRACKS.items():
         ax.text(x1 - 0.03, ty - 0.18, LANE_TOTALS[lane], ha="right",
-                va="top", fontsize=10, fontweight="bold", color="#3C5488",
-                zorder=5)
+                va="top", fontsize=LANE_TOTAL_FS, fontweight="bold",
+                color="#3C5488", zorder=5)
 
     fig.tight_layout()
 
@@ -804,8 +827,8 @@ def render_timeline(
 
     # Capture exact geometry for the interactive HTML/SVG before closing `fig`
     fig_w_px, fig_h_px = fig.canvas.get_width_height()
-    p_x0_y0 = ax.transData.transform((x0, -4.62))
-    p_x1_y1 = ax.transData.transform((x1, 27.25))
+    p_x0_y0 = ax.transData.transform((x0, Y0))
+    p_x1_y1 = ax.transData.transform((x1, Y1))
     svg_geom = {
         "fig_w": round(fig_w_px * 0.5, 2),
         "fig_h": round(fig_h_px * 0.5, 2),
@@ -815,8 +838,8 @@ def render_timeline(
         "sy0": round((fig_h_px - p_x1_y1[1]) * 0.5, 3),
         "x0": x0,
         "x1": x1,
-        "y0": -4.62,
-        "y1": 27.25,
+        "y0": Y0,
+        "y1": Y1,
         "yax": yax,
         "vis_end": vis_end,
         "max_yr_tick": max_yr_tick,
@@ -1026,7 +1049,7 @@ def _build_fig2_upper_svg(
         fontsize=10, fontweight="bold"
     )
 
-    STAR_IDS = {"fan2023", "card2024", "jude2026a"}
+    STAR_IDS = {"card2024", "jude2026a"}
     gs_r2 = outer[2].subgridspec(1, 5, width_ratios=(1.176, 0.12, 1.176, 0.12, 1.176), wspace=0.0)
     ax_b = fig.add_subplot(gs_r2[0, 0])
     ax2 = fig.add_subplot(gs_r2[0, 2])
@@ -1087,7 +1110,7 @@ def _build_fig2_upper_svg(
     ax2.set_ylabel("word error rate (%)")
     ax2.set_title(
         "(c) Word error rate (online)\n"
-        "\u2605 3 studies satisfy: Open Data, Vocab > 71.4k, WER < 12.8%",
+        "\u2605 2 studies satisfy: Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis \u25b3",
         fontsize=9.8, fontweight="bold"
     )
     dagger_note = (
@@ -1267,7 +1290,7 @@ def _build_fig2_upper_svg(
         out_t.append("</text>")
         return "".join(out_t)
 
-    STAR_IDS = {"fan2023", "card2024", "jude2026a"}
+    STAR_IDS = {"card2024", "jude2026a"}
 
     def rot_xtick_svg(tx: float, ty: float, label: str, fs_pt: float,
                       bold: bool = False, color: str = "#1f2937") -> str:
@@ -1494,7 +1517,7 @@ def _build_fig2_upper_svg(
         [str(v) for v in range(0, 101, 25)],
         "word error rate (%)",
         "(c) Word error rate (online)\n"
-        "\u2605 3 studies satisfy: Open Data, Vocab > 71.4k, WER < 12.8%",
+        "\u2605 2 studies satisfy: Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis \u25b3",
         title_fs=9.8,
     )
     s.append(ch_c)
@@ -1769,7 +1792,7 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
     for yr in range(2021, geom["max_yr_tick"]):
         s.append(f'<line x1="{X(yr):.1f}" y1="{Y(geom["yax"]):.1f}" '
                  f'x2="{X(yr):.1f}" y2="{Y(geom["yax"] - 0.15):.1f}" stroke="#9aa3af" stroke-width="{SW(1.2)}"/>')
-        s.append(f'<text x="{X(yr):.1f}" y="{Y(-3.57):.1f}" font-size="{10 * PT:.1f}" fill="#6b7280" '
+        s.append(f'<text x="{X(yr):.1f}" y="{Y(-3.57):.1f}" font-size="{YEAR_FS * PT:.1f}" fill="#6b7280" '
                  f'text-anchor="middle" dominant-baseline="central">{yr}</text>')
 
     # Lane tracks
@@ -1777,7 +1800,7 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
     for lane, ty in geom["tracks"].items():
         s.append(f'<line x1="{X(geom["x0"]):.1f}" y1="{Y(ty):.1f}" x2="{X(geom["x1"] + 0.6):.1f}" '
                  f'y2="{Y(ty):.1f}" stroke="#e2e6ec" stroke-width="{SW(1.6)}"/>')
-        s.append(f'<text x="{X(geom["x0"] - 0.18):.1f}" y="{Y(ty):.1f}" font-size="{11.5 * PT:.1f}" '
+        s.append(f'<text x="{X(geom["x0"] - 0.18):.1f}" y="{Y(ty):.1f}" font-size="{LANE_FS * PT:.1f}" '
                  f'font-weight="bold" fill="#4b5563" text-anchor="end" dominant-baseline="central">'
                  f'{lane_label[lane]}</text>')
 
@@ -1868,11 +1891,11 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
         s.extend(g)
 
     # Footer note + per-lane totals (JS keeps them in sync with the filter)
-    s.append(f'<text id="total-note" x="{X(geom["x1"]):.1f}" y="{Y(-4.21):.1f}" font-size="{8.2 * PT:.1f}" '
+    s.append(f'<text id="total-note" x="{X(geom["x1"]):.1f}" y="{Y(-4.21):.1f}" font-size="{NOTE_FS * PT:.1f}" '
              f'font-style="italic" fill="#3C5488" text-anchor="end" dominant-baseline="central"></text>')
     for lane, ty in geom["tracks"].items():
         s.append(f'<text id="lt-{lane}" x="{X(geom["x1"] - 0.03):.1f}" y="{Y(ty - 0.18):.1f}" '
-                 f'font-size="{10 * PT:.1f}" font-weight="bold" fill="#3C5488" text-anchor="end"></text>')
+                 f'font-size="{LANE_TOTAL_FS * PT:.1f}" font-weight="bold" fill="#3C5488" text-anchor="end"></text>')
 
     # Empty-state message (topmost)
     mid_x = 0.5 * (geom["sx0"] + geom["sx1"])
@@ -2143,7 +2166,7 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
         <button data-mode="reflow">Reflow</button>
         <button data-mode="hide">Hide in place</button>
       </div>
-      <button id="pinned-only-btn" type="button" title="Toggle showing only the 3 open-data studies with vocabulary &gt; 71.4k and online WER &lt; 12.8%: Fan et al. (2023), Card et al. (2024) &amp; Jude et al. (2026a)">★ Open Data, Vocab &gt; 71.4k, WER &lt; 12.8%</button>
+      <button id="pinned-only-btn" type="button" title="Toggle showing only the 2 open-data, online (closed-loop) studies with vocabulary &gt; 71.4k, online WER &lt; 12.8% and at least one vocal-paralysis (△) participant: Card et al. (2024) &amp; Jude et al. (2026a)">★ Open Data, Online, Vocab &gt; 71.4k, WER &lt; 12.8%, Vocal paralysis</button>
     </div>
   </div>
 
@@ -2391,7 +2414,7 @@ const DIMS = {
   task_instruction: ['inner','intended'],
   lane: ['speech','typing','handwriting'],
 };
-const STAR_STUDY_IDS = new Set(['fan2023', 'card2024', 'jude2026a']);
+const STAR_STUDY_IDS = new Set(['card2024', 'jude2026a']);
 const sel = {}; for (const d in DIMS) sel[d] = new Set(DIMS[d]);
 const ALL_DATES = STUDIES.map(r => r.date).sort();
 const MIN_DATE = ALL_DATES[0] || '2021-01-01';
@@ -2486,7 +2509,11 @@ function computeLayout(vis){
   for (const n of vis){
     const rec = n.rec, hw = n.rec.hw;
     const pref = resolveSide(rec.lane, ordMap[rec.id]);
-    const sides = rec.lane === 'speech' ? [pref] : [pref, pref === 'below' ? 'above' : 'below'];
+    // Speech cards prefer their chronological side like the static figure,
+    // but unlike the static packer (full set only) a filtered subset can
+    // re-deal parities and saturate one side, so the opposite side is a
+    // last-resort fallback before the pack-fallback overlap path.
+    const sides = [pref, pref === 'below' ? 'above' : 'below'];
     let got = null;
     for (const cap of [0.45, GEOM.maxshift]){
       for (const s of sides){
@@ -2579,7 +2606,7 @@ function drawAll(active, geomOf){
 function cardHtml(rec){
   const m = rec.metrics;
   const isStar = STAR_STUDY_IDS.has(rec.id);
-  const pinBadge = isStar ? `<span class="sc-pin" title="Pinned: low online WER (&lt;13%)">★ Pinned</span>` : '';
+  const pinBadge = isStar ? `<span class="sc-pin" title="Pinned: open data, online (closed-loop), vocab &gt; 71.4k, online WER &lt; 12.8%, vocal paralysis">★ Pinned</span>` : '';
   const dataHref = rec.data_url || (rec.data_doi ? 'https://doi.org/' + encodeURIComponent(rec.data_doi) : '');
   const links = [
     rec.doi ? `<a href="https://doi.org/${encodeURIComponent(rec.doi)}" target="_blank" rel="noopener">Paper ↗</a>` : '',
