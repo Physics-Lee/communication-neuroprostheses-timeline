@@ -4,3 +4,5 @@ __pycache__/
 .venv/
 venv/
 weekly_candidates.md
+.zcode-site/
+.zcode-site.json
