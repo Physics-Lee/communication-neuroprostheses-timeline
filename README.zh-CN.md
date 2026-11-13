@@ -29,6 +29,9 @@
 | **5. 任务范式** | `task_instruction` | 第 1 行（文献引用行）末尾菱形后缀 | `inner`（`◆` 内部言语 / 默念）· `intended`（`◇` 尝试发声 / 口型 / 意图运动）· `both`（`◆/◇` 两种范式均进行了验证） |
 | **6. 解码输出** | `decoded_output` | 第 2 行（方法简述后）末尾五边形后缀 | `voice`（`⬟` 直接神经到语音合成）· `text`（`⬠` 脑到文本解码，含可选的解码文本 TTS 朗读）· `both`（`⬟/⬠` 两种输出均进行了演示） |
 
+### 星标研究（`★`）
+满足全部五项星标判据——**开源数据**、**在线（闭环）解码**、**词表 > 71.4k** 词形、**在线 WER < 12.8%**、且**至少一位受试者为言语瘫痪（`△`）**——的研究，其引用名前缀 `★`。当前共两篇：**Card et al., 2024**（T15）与 **Jude et al., 2026a**（T17/T18）。判据键印刷在两个版本图的左下角（`★ Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis`）；星标集合定义于 [`render_timeline.py`](render_timeline.py) 的 `STAR_IDS`（渲染层标注，非 `studies.yaml` 数据字段）。
+
 ### 四项结构化指标（`metrics` Schema）
 每项研究在 `metrics:` 下统一记录四项定量指标：
 1. **`vocab_size`**（词表规模）：如 `"vocab 125k"`、`"open vocab"`、`"vocab 1,024"`、`"vocab 50"`、`"vocab n/r"`。

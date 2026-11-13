@@ -68,6 +68,15 @@ X1_MARGIN = 2.75    # right-edge slack in years beyond the latest marker (x1);
                     # (2.6 packs the full set but not every HTML filter subset;
                     # 2.75 clears the tightest single-chip subset).
 
+# Starred-study criterion (2026-11-12 round; printed in-figure since
+# 2026-11-13): \u2605 prefixes the citation of every study satisfying ALL of
+# open data, online (closed-loop) decoding, vocabulary > 71.4k word forms,
+# online WER < 12.8%, and at least one vocal-paralysis (\u25b3) participant --
+# currently Card et al., 2024 (T15) and Jude et al., 2026a (T17/T18).
+# Fan et al., 2023 (T5, intact speech \u25b2) fails the vocal-paralysis term.
+STAR_IDS = {"card2024", "jude2026a"}
+STAR_NOTE = "\u2605 Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis"
+
 OPEN_C = {
     2: "#00A087",    # open data (NPG teal)
     1: "#c07f00",    # data on request (amber)
@@ -205,6 +214,8 @@ def load_studies(
         if task_k not in TASK_GLYPH:
             raise ValueError(f"{entry['id']}: invalid task_instruction {task_k!r}")
         name_line = f"{cit} {TASK_GLYPH[task_k]}"
+        if entry["id"] in STAR_IDS:
+            name_line = "\u2605 " + name_line
 
         xm = float(entry.get("year_fraction") or date_to_year_fraction(entry["date"]))
         elec_k = entry["electrode"]
@@ -785,6 +796,10 @@ def render_timeline(
             f"{counts_summary['home_summary']}",
             ha="right", va="center", fontsize=NOTE_FS, style="italic",
             color="#3C5488", zorder=5)
+    # Starred-study criterion key, bottom-left mirror of the cohort note
+    ax.text(x0, -4.21, STAR_NOTE,
+            ha="left", va="center", fontsize=NOTE_FS, color="#1a1a1a",
+            zorder=5)
 
     LANE_TOTALS = counts_summary["lane_totals"]
     for lane, ty in TRACKS.items():
@@ -1049,7 +1064,6 @@ def _build_fig2_upper_svg(
         fontsize=10, fontweight="bold"
     )
 
-    STAR_IDS = {"card2024", "jude2026a"}
     gs_r2 = outer[2].subgridspec(1, 5, width_ratios=(1.176, 0.12, 1.176, 0.12, 1.176), wspace=0.0)
     ax_b = fig.add_subplot(gs_r2[0, 0])
     ax2 = fig.add_subplot(gs_r2[0, 2])
@@ -1289,8 +1303,6 @@ def _build_fig2_upper_svg(
             out_t.append(f'<tspan x="{sx:.1f}" y="{yy:.1f}">{esc(line)}</tspan>')
         out_t.append("</text>")
         return "".join(out_t)
-
-    STAR_IDS = {"card2024", "jude2026a"}
 
     def rot_xtick_svg(tx: float, ty: float, label: str, fs_pt: float,
                       bold: bool = False, color: str = "#1f2937") -> str:
@@ -1890,6 +1902,12 @@ def _build_chrome_svg(geom: dict[str, Any]) -> str:
         g.append('</g>')
         s.extend(g)
 
+    # Starred-study criterion key (bottom-left mirror of the cohort note,
+    # same position as the static figure's footer text)
+    _star_note_svg = (STAR_NOTE.replace("&", "&amp;")
+                      .replace("<", "&lt;").replace(">", "&gt;"))
+    s.append(f'<text x="{X(geom["x0"]):.1f}" y="{Y(-4.21):.1f}" font-size="{NOTE_FS * PT:.1f}" '
+             f'fill="#1a1a1a" text-anchor="start" dominant-baseline="central">{_star_note_svg}</text>')
     # Footer note + per-lane totals (JS keeps them in sync with the filter)
     s.append(f'<text id="total-note" x="{X(geom["x1"]):.1f}" y="{Y(-4.21):.1f}" font-size="{NOTE_FS * PT:.1f}" '
              f'font-style="italic" fill="#3C5488" text-anchor="end" dominant-baseline="central"></text>')

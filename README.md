@@ -29,6 +29,9 @@ Every study in [`studies.yaml`](studies.yaml) is encoded across **six orthogonal
 | **5. Task instruction** | `task_instruction` | Lozenge suffix on line 1 (citation line) | `inner` (`◆` inner speech) · `intended` (`◇` overt / mouthing / intended movement) · `both` (`◆/◇` decoded under both instructions) |
 | **6. Decoded output** | `decoded_output` | Pentagon suffix on line 2 (after descriptor) | `voice` (`⬟` direct neural-to-voice synthesis) · `text` (`⬠` brain-to-text, including optional TTS read-aloud of decoded text) · `both` (`⬟/⬠` both demonstrated) |
 
+### Starred Studies (`★`)
+A `★` prefixes the citation of every study satisfying **all five** starred-criterion terms: **open data**, **online (closed-loop) decoding**, **vocabulary > 71.4k** word forms, **online WER < 12.8%**, and **at least one participant with vocal paralysis (`△`)**. Currently two studies qualify: **Card et al., 2024** (T15) and **Jude et al., 2026a** (T17/T18). The criterion key is printed at the bottom left of both editions (`★ Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis`); the set lives in `STAR_IDS` in [`render_timeline.py`](render_timeline.py) (a render-layer annotation, not a `studies.yaml` field).
+
 ### Four-Item `metrics` Schema
 Each study records four standardized quantitative metrics under `metrics:`:
 1. **`vocab_size`** (Vocabulary size): e.g., `"vocab 125k"`, `"open vocab"`, `"vocab 1,024"`, `"vocab 50"`, `"vocab n/r"`.

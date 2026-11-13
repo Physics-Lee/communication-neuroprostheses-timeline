@@ -68,6 +68,8 @@ Every card in `studies.yaml` belongs to one of three entry types and must follow
 - `decoded_output`: `voice` (`⬟`) | `text` (`⬠`) | `both` (`⬟/⬠`) — appended automatically after `descriptor` on Line 2.
 - Link fields (interactive HTML edition only): `doi:` (Paper ↗), `data_doi:` (Dataset ↗ via `https://doi.org/<data_doi>`), `data_url:` (Dataset ↗ direct URL — use **only** when the repository deposit has no registered DOI, e.g. the Angrick et al., 2024 OSF view-only link `https://osf.io/49rt7/`), `url:` (Announcement ↗). Before adding preprint DOIs, note **bioRxiv/medRxiv switched their DOI prefix from `10.1101` to `10.64898`** (e.g. `10.64898/2026.06.30.735633`); older deposits keep `10.1101`.
 
+- **Starred studies (`★`, render-layer only — not a `studies.yaml` field)**: `STAR_IDS` in `render_timeline.py` prefixes `★` on the citation line of studies satisfying **open data + online + vocab > 71.4k + online WER < 12.8% + at least one vocal-paralysis (`△`) participant** (currently `card2024` and `jude2026a`; `STAR_NOTE` prints the criterion key at the figure's bottom-left in both the static and HTML editions). Update `STAR_IDS`/`STAR_NOTE` together when the criterion or qualifying set changes.
+
 ### 3. Four-Item `metrics` Block & Card Line 2 Formatting
 Every entry must define all four keys under `metrics:`:
 - `vocab_size`: e.g., `"vocab 125k"`, `"open vocab"`, `"vocab 50"`, `"vocab n/r"`
