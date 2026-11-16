@@ -77,6 +77,11 @@ X1_MARGIN = 2.75    # right-edge slack in years beyond the latest marker (x1);
 STAR_IDS = {"card2024", "jude2026a"}
 STAR_NOTE = "\u2605 Open Data, Online, Vocab > 71.4k, WER < 12.8%, Vocal paralysis"
 
+# Interactive-edition header (2026-11-16): this exact phrase of
+# metadata.title gets a <u> underline in the HTML <h1> (the browser-tab
+# <title> stays plain text). Update together with studies.yaml metadata.title.
+TITLE_UNDERLINE = "Data Openness"
+
 OPEN_C = {
     2: "#00A087",    # open data (NPG teal)
     1: "#c07f00",    # data on request (amber)
@@ -2178,7 +2183,7 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
 <div class="wrap">
   <header>
     <div class="head-row">
-      <h1>__TITLE__</h1>
+      <h1>__TITLE_H1__</h1>
       <div class="head-tools">
         <span class="stat">Studies <b id="vis-count"></b></span>
         <span class="stat">Participants <b id="vis-people"></b></span>
@@ -2393,9 +2398,9 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
     <h2>Study Cards</h2>
     <span class="count" id="cards-count"></span>
     <span class="rule"></span>
-    <button id="cards-toggle" class="sec-btn" type="button">Show</button>
+    <button id="cards-toggle" class="sec-btn" type="button">Hide</button>
   </div>
-  <div id="cardsbox" style="display:none">
+  <div id="cardsbox">
     <div id="cards"></div>
     <div id="cards-empty">No studies match the current filters.</div>
   </div>
@@ -2407,6 +2412,12 @@ const STUDIES = __STUDIES__;
 const GEOM = __GEOM__;
 const META = __META__;
 const N = STUDIES.length;
+// Study totals count unique publications (doi/url dedup): a publication split
+// across lanes (Levin et al., 2026: speech + handwriting) is one publication
+// even though it renders one card per lane, so PUB_TOTAL = N - splits.
+const pubKey = r => r.doi || r.url || r.id;
+const PUB_TOTAL = new Set(STUDIES.map(pubKey)).size;
+const visiblePubs = visNodes => new Set(visNodes.map(n => pubKey(n.rec))).size;
 
 const SVGNS = 'http://www.w3.org/2000/svg';
 const PT = 1.3889;                       // svg units per pt (200 dpi, 0.5 scale)
@@ -2698,7 +2709,7 @@ function rebuildCards(visNodes){
   for (const n of restNodes) appendCard(n, false);
   document.getElementById('cards-empty').style.display = visNodes.length ? 'none' : '';
   document.getElementById('cards-count').textContent =
-    visNodes.length + ' of ' + N + ' studies';
+    visiblePubs(visNodes) + ' of ' + PUB_TOTAL + ' studies';
 }
 
 /* ---------- spotlight ---------- */
@@ -2732,7 +2743,7 @@ function updateSpotlightNav(){
   const i = list.indexOf(selectedId);
   document.getElementById('sp-pos').textContent =
     (i >= 0 ? (i + 1) + ' of ' + list.length + ' shown' : 'filtered out') +
-    ' · ' + (STUDIES.findIndex(r => r.id === selectedId) + 1) + ' of ' + N + ' total';
+    ' · card ' + (STUDIES.findIndex(r => r.id === selectedId) + 1) + ' of ' + N;
   document.getElementById('sp-prev').disabled = i <= 0;
   document.getElementById('sp-next').disabled = i < 0 || i >= list.length - 1;
 }
@@ -2785,9 +2796,10 @@ function updateTotals(visNodes){
     if (!pidActiveInStudy(pid, n.rec)) continue;
     all.add(pid); perLane[n.rec.lane].add(pid);
   }
-  document.getElementById('vis-count').textContent = visNodes.length + ' / ' + N;
+  const nPubs = visiblePubs(visNodes);
+  document.getElementById('vis-count').textContent = nPubs + ' / ' + PUB_TOTAL;
   const tlCountEl = document.getElementById('tl-count');
-  if (tlCountEl) tlCountEl.textContent = visNodes.length + ' of ' + N + ' studies';
+  if (tlCountEl) tlCountEl.textContent = nPubs + ' of ' + PUB_TOTAL + ' studies';
   document.getElementById('vis-people').textContent = all.size + ' / ' + META.total_unique;
   document.getElementById('total-note').textContent = visNodes.length
     ? all.size + ' unique participants in total; ' + META.home_summary
@@ -3198,6 +3210,11 @@ def export_interactive_html(
         "total_unique": counts_summary.get("total_unique", 0),
         "home_summary": str(counts_summary.get("home_summary", "")),
     }
+    # Visible <h1> carries the underline span (TITLE_UNDERLINE); the
+    # browser-tab <title> substitutes the plain escaped text instead.
+    title_esc = html_lib.escape(meta_out["title"])
+    title_h1 = (title_esc.replace(TITLE_UNDERLINE, f"<u>{TITLE_UNDERLINE}</u>", 1)
+                if TITLE_UNDERLINE and TITLE_UNDERLINE in title_esc else title_esc)
     f2_svg_inner, f2_vw, f2_vh = _build_fig2_upper_svg(studies, verify_overlaps=verify_overlaps)
     studies_json = json.dumps(studies, ensure_ascii=False).replace("</", "<\\/")
     doc = (_HTML_TEMPLATE
@@ -3210,7 +3227,8 @@ def export_interactive_html(
            .replace("__STUDIES__", studies_json)
            .replace("__GEOM__", json.dumps(geom, ensure_ascii=False).replace("</", "<\\/"))
            .replace("__META__", json.dumps(meta_out, ensure_ascii=False).replace("</", "<\\/"))
-           .replace("__TITLE__", html_lib.escape(meta_out["title"]))
+           .replace("__TITLE__", title_esc)
+           .replace("__TITLE_H1__", title_h1)
            .replace("__VW__", f'{geom["sx1"] + 8:.0f}')
            .replace("__VH__", f'{geom["sy1"] + 8:.0f}'))
     with open(out_html, "w", encoding="utf-8", newline="\n") as f:

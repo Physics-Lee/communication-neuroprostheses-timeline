@@ -2,6 +2,8 @@
 
 This repository maintains the **Living Timeline of Communication Neuroprostheses for People with Paralysis (2021–present)**—a weekly-updated dataset (`studies.yaml`) and a self-contained two-pass Matplotlib layout/verification engine (`render_timeline.py`) that produces publication-grade raster (`.png`) and vector (`.pdf`) figures across three modality lanes (`speech`, `typing`, `handwriting`).
 
+**Working language: English.** All commits (messages), code comments, commit messages written by automation, and agent/user-facing communication in this repository must use English. (`README.zh-CN.md` is the sole exception as the Simplified Chinese documentation mirror.)
+
 ---
 
 ## Repository Contents
@@ -46,6 +48,9 @@ Expected clean output:
 ---
 
 ## Load-Bearing Conventions & Invariants (Do Not Break)
+
+### 0. Card Count ≠ Publication Count
+One publication spanning several modality lanes is split into one card per lane with modality-specific metrics and participants (currently only Levin et al., 2026, DOI `10.64898/2026.01.12.699110` → `levin2026_speech` + `levin2026_handwriting`); the `a`/`b` citation suffix stays reserved for genuinely distinct papers (cf. `jude2026a`/`jude2026b`). Hence 36 cards = 35 unique publications (Figure 2 Panel a's 32-card funnel = 31 unique English publications). In the interactive HTML, all "studies" counters (Studies stat, `#tl-count`, `#cards-count`) count **unique publications** via `doi`/`url` dedup (`pubKey`/`PUB_TOTAL`/`visiblePubs` in the template JS) and therefore read 35; only the spotlight position hint ("card X of 36") counts cards. Keep README wording in sync.
 
 ### 1. Date Convention (`date` & `year_fraction`)
 Every card in `studies.yaml` belongs to one of three entry types and must follow these exact date rules:
