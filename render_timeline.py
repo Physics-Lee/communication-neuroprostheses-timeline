@@ -1385,6 +1385,7 @@ def _build_fig2_upper_svg(
     # 6th legend item: our reproduction (matches Figure 2's lower-half bracket color)
     rep_c = "#3C5488"
     repro_url = "https://github.com/Physics-Lee/communication-neuroprostheses-reproduction"
+    repro_html_url = "https://physics-lee.github.io/communication-neuroprostheses-reproduction/"
     s.append(f'<a href="{repro_url}" target="_blank" rel="noopener" style="text-decoration:none">')
     s.append(f'<rect x="1395.0" y="{leg_y - 5.5:.1f}" width="17" height="10" '
              f'fill="{rep_c}" fill-opacity="0.35" stroke="{rep_c}" stroke-width="{SW(0.8)}"/>')
@@ -1722,7 +1723,7 @@ def _build_fig2_upper_svg(
     box_w, box_h = 880.0, 42.0
     box_x = sx_bm - 0.5 * box_w
     box_y = sy_tip_r + 4.0
-    s.append(f'<a href="{repro_url}" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">')
+    s.append(f'<a href="{repro_html_url}" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">')
     s.append(f'<rect x="{box_x:.1f}" y="{box_y:.1f}" width="{box_w:.1f}" height="{box_h:.1f}" rx="9" '
              f'fill="#f5f7fc" stroke="{rep_c}" stroke-opacity="0.38" stroke-width="1.1"/>')
     s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 16.0:.1f}" font-size="{8.2 * PT:.2f}" '
@@ -2007,6 +2008,11 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
                      font-weight: 600; cursor: pointer; transition: all .12s ease; }
   #pinned-only-btn:hover { border-color: #006b59; background: rgba(0, 160, 135, .15); }
   #pinned-only-btn.on { background: #006b59; border-color: #006b59; color: #fff; }
+  .ext-links { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+  .nav-pill { display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--line);
+              background: #fafbfc; color: var(--accent); border-radius: 999px; padding: 4px 13px;
+              font-size: 12px; font-weight: 600; text-decoration: none; transition: all .12s ease; }
+  .nav-pill:hover { border-color: var(--accent); background: var(--accent-soft); }
 
   /* ---------- figure ---------- */
   #figbox, #benchbox { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px;
@@ -2104,6 +2110,13 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
   .cohort-sp { font-size: 11px; color: var(--muted); margin-left: 3px; }
   .cohort-tbl a { color: var(--accent); text-decoration: none; font-weight: 600; }
   .cohort-tbl a:hover { text-decoration: underline; }
+  .prom-badge { display: inline-flex; align-items: center; background: rgba(0, 160, 135, .13);
+                color: #005f4f; font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+                padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
+  .cohort-tbl .nr { color: #94a3b8; font-style: italic; }
+  .nyet-badge { display: inline-flex; align-items: center; background: #eef1f4; color: #64748b;
+                font-size: 10.5px; font-weight: 700; letter-spacing: .04em;
+                padding: 1px 7px; border-radius: 999px; white-space: nowrap; }
   .cohort-foot { font-size: 11.5px; color: var(--muted); margin: 9px 0 0; line-height: 1.45; }
   .cohort-foot a { color: var(--accent); text-decoration: none; }
   .cohort-foot a:hover { text-decoration: underline; }
@@ -2185,6 +2198,9 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
         <button data-mode="hide">Hide in place</button>
       </div>
       <button id="pinned-only-btn" type="button" title="Toggle showing only the 2 open-data, online (closed-loop) studies with vocabulary &gt; 71.4k, online WER &lt; 12.8% and at least one vocal-paralysis (△) participant: Card et al. (2024) &amp; Jude et al. (2026a)">★ Open Data, Online, Vocab &gt; 71.4k, WER &lt; 12.8%, Vocal paralysis</button>
+      <div class="ext-links">
+        <a href="https://github.com/Physics-Lee/communication-neuroprostheses-timeline" target="_blank" rel="noopener" class="nav-pill">GitHub Repo ↗</a>
+      </div>
     </div>
   </div>
 
@@ -2206,9 +2222,9 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
     <h2>Participant Cohort</h2>
     <span class="count" id="cohort-count"></span>
     <span class="rule"></span>
-    <button id="cohort-toggle" class="sec-btn" type="button">Show</button>
+    <button id="cohort-toggle" class="sec-btn" type="button">Hide</button>
   </div>
-  <div id="cohortbox" style="display:none">
+  <div id="cohortbox">
     <p class="cohort-sub">
       <b>Ch. (impl.)</b> = total implanted channels · <b>Ch. (dec.)</b> = channels fed into the communication decoder ·
       <b>Interval</b> = symptom onset or diagnosis to implantation · <b>Home use</b> = independent daily use
@@ -2233,109 +2249,119 @@ _HTML_TEMPLATE = r"""<!DOCTYPE html>
         <tr class="cohort-row" data-pid="T5">
           <td class="cohort-pid">T5<span class="cohort-sp" title="Can speak naturally">▲</span></td>
           <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>192</td><td>192</td><td>L</td>
-          <td>handwriting</td><td>9 y</td><td>2016-08</td><td>—</td>
+          <td>handwriting</td><td>9 y</td><td>2016-08</td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="T12">
           <td class="cohort-pid">T12<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
           <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>128<br>128</td><td>L</td>
-          <td>speech<br>handwriting</td><td>9 y</td><td>2022-03</td><td>—</td>
+          <td>speech<br>handwriting</td><td>9 y</td><td>2022-03</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="T15">
           <td class="cohort-pid">T15<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
           <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>256</td><td>256<br>256</td><td>L</td>
-          <td>speech<br>cursor</td><td>5 y</td><td>2023-07</td>
+          <td>speech</td><td>5 y</td><td>2023-07</td>
           <td><a href="https://doi.org/10.1038/s41591-026-04414-6" target="_blank" rel="noopener" onclick="event.stopPropagation()">3,800 h, 444 d ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="T16">
           <td class="cohort-pid">T16<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
           <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>256</td><td>64</td><td>L</td>
-          <td>speech</td><td>19 y</td><td>2023-12</td><td>—</td>
+          <td>speech</td><td>19 y</td><td>2023-12</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.64898/2026.07.23.739430" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fogg et al., 2026 ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="T17">
           <td class="cohort-pid">T17<span class="cohort-sp" title="Vocal paralysis (dysarthria / locked-in syndrome)">△</span></td>
           <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>256<br>256</td><td>L</td>
-          <td>speech<br>typing</td><td>3 y</td><td>2024-02</td><td>—</td>
+          <td>speech<br>typing</td><td>3 y</td><td>2024-02</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.1038/s41593-026-02218-y" target="_blank" rel="noopener" onclick="event.stopPropagation()">Jude et al., 2026a ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="T18">
           <td class="cohort-pid">T18<span class="cohort-sp" title="Can speak naturally">▲</span></td>
           <td>BrainGate2</td><td>SCI</td><td>Utah</td><td>384</td><td>384<br>384</td><td>bi</td>
-          <td>typing<br>handwriting</td><td>1.5 y</td><td>2024-10<sup>†</sup></td><td>—</td>
+          <td>typing<br>handwriting</td><td>1.5 y</td><td>2024-10<sup>†</sup></td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="T21">
           <td class="cohort-pid">T21<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
           <td>BrainGate2</td><td>ALS</td><td>Utah</td><td>384</td><td>384</td><td>bi</td>
-          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.64898/2026.07.23.739430" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fogg et al., 2026 ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="T22">
           <td class="cohort-pid">T22<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
           <td>BrainGate2</td><td>stroke</td><td>Utah</td><td>384</td><td>256</td><td>L</td>
-          <td>speech</td><td>3 y</td><td>&lt;2026-07</td><td>—</td>
+          <td>speech</td><td>3 y</td><td>&lt;2026-07</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.64898/2026.07.23.739430" target="_blank" rel="noopener" onclick="event.stopPropagation()">Fogg et al., 2026 ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="B1">
           <td class="cohort-pid">B1<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
           <td>UCSF</td><td>stroke</td><td>ECoG</td><td>128<br>253</td><td>128<br>253</td><td>L</td>
-          <td>speech<br>speech</td><td>16 y<br>21 y</td><td>2019-02<br>2024-04</td><td>—</td>
+          <td>speech<br>speech</td><td>16 y<br>21 y</td><td>2019-02<br>2024-04</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="B3">
           <td class="cohort-pid">B3<span class="cohort-sp" title="Vocal paralysis (anarthria)">△</span></td>
           <td>UCSF</td><td>stroke</td><td>ECoG</td><td>253</td><td>253</td><td>L</td>
-          <td>speech</td><td>17 y</td><td>2022-09</td><td>—</td>
+          <td>speech</td><td>17 y</td><td>2022-09</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="B6">
           <td class="cohort-pid">B6<span class="cohort-sp" title="Vocal paralysis (severe vocal-tract paralysis)">△</span></td>
           <td>UCSF</td><td>ALS</td><td>ECoG</td><td>253</td><td>253<br>253</td><td>L</td>
-          <td>speech<br>gesture</td><td>4 y</td><td>2025-03</td><td>—</td>
+          <td>speech</td><td>4 y</td><td>2025-03</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="CC01">
           <td class="cohort-pid">CC01<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
           <td>JHU</td><td>ALS</td><td>ECoG</td><td>128</td><td>64</td><td>L</td>
-          <td>speech</td><td>8 y</td><td>2022-07</td><td>—</td>
+          <td>speech</td><td>8 y</td><td>2022-07</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="P1">
           <td class="cohort-pid">P1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
           <td>Caltech</td><td>SCI</td><td>Utah</td><td>288</td><td>96</td><td>L</td>
-          <td>speech</td><td>1.5 y</td><td>2016-11</td><td>—</td>
+          <td>speech</td><td>1.5 y</td><td>2016-11</td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="P2">
           <td class="cohort-pid">P2<span class="cohort-sp" title="Can speak naturally">▲</span></td>
           <td>Caltech</td><td>SCI</td><td>Utah</td><td>320</td><td>64</td><td>L</td>
-          <td>speech</td><td>3 y</td><td>2022-10</td><td>—</td>
+          <td>speech</td><td>3 y</td><td>2022-10</td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="Z1">
           <td class="cohort-pid">Z1<span class="cohort-sp" title="Can speak naturally">▲</span></td>
           <td>ZJU</td><td>SCI</td><td>Utah</td><td>192</td><td>96</td><td>L</td>
-          <td>handwriting</td><td>~3 y</td><td>2019-08</td><td>—</td>
+          <td>handwriting</td><td>~3 y</td><td>2019-08</td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="V1">
           <td class="cohort-pid">V1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
-          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
-          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td><span class="nr">n/r</span></td><td>L</td>
+          <td>speech</td><td><span class="nr">n/r</span></td><td>&lt;2026-10</td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
         <tr class="cohort-row" data-pid="V2">
           <td class="cohort-pid">V2<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
-          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td>—</td><td>L</td>
-          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>1,020</td><td><span class="nr">n/r</span></td><td>L</td>
+          <td>speech</td><td><span class="nr">n/r</span></td><td>&lt;2026-10</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.1002/mus.70436" target="_blank" rel="noopener" onclick="event.stopPropagation()">Pouratian et al., 2026 ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="V3">
           <td class="cohort-pid">V3<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
-          <td>Neuralink</td><td>ALS</td><td>N1</td><td>3,072</td><td>—</td><td>L</td>
-          <td>speech</td><td>—</td><td>&lt;2026-10</td><td>—</td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td>3,072</td><td><span class="nr">n/r</span></td><td>L</td>
+          <td>speech</td><td><span class="nr">n/r</span></td><td>&lt;2026-10</td>
+          <td><span class="prom-badge" title="Online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis">Promising</span>
+              <a href="https://doi.org/10.1002/mus.70436" target="_blank" rel="noopener" onclick="event.stopPropagation()">Pouratian et al., 2026 ↗</a></td>
         </tr>
         <tr class="cohort-row" data-pid="P7">
           <td class="cohort-pid">P7<span class="cohort-sp" title="Can speak naturally">▲</span></td>
-          <td>Neuralink</td><td>ALS</td><td>N1</td><td>—</td><td>—</td><td>—</td>
-          <td>typing</td><td>—</td><td>2025-06<sup>‡</sup></td><td>—</td>
+          <td>Neuralink</td><td>ALS</td><td>N1</td><td><span class="nr">n/r</span></td><td><span class="nr">n/r</span></td><td><span class="nr">n/r</span></td><td>typing</td><td><span class="nr">n/r</span></td><td>2025-06<sup>‡</sup></td><td>n/a</td>
         </tr>
         <tr class="cohort-row" data-pid="C1">
           <td class="cohort-pid">C1<span class="cohort-sp" title="Vocal paralysis (dysarthria)">△</span></td>
-          <td>Paradromics</td><td>MND</td><td>Connexus</td><td>—</td><td>—</td><td>—</td>
-          <td>speech</td><td>—</td><td>2026-06<sup>‡</sup></td><td>—</td>
+          <td>Paradromics</td><td>MND</td><td>Connexus</td><td><span class="nr">n/r</span></td><td><span class="nr">n/r</span></td><td><span class="nr">n/r</span></td><td>speech</td><td><span class="nr">n/r</span></td><td>2026-06<sup>‡</sup></td><td><span class="nyet-badge" title="Performance has not reached the Promising criteria; home use not yet feasible">Not yet</span></td>
         </tr>
       </tbody>
     </table>
     <p class="cohort-foot">
-      <b>▲</b> can speak naturally (6/20) · <b>△</b> vocal paralysis (14/20) · <b>Z1, V1–V3, C1</b> coined IDs ·
-      <b>&lt;yyyy-mm</b> implanted before given month · <sup>†</sup>derived from post-implant day · <sup>‡</sup>company report
+      <b>▲</b> can speak naturally (6/20) · <b>△</b> vocal paralysis (14/20) · <b>Z1, V1–V3, C1</b> coined IDs · <sup>†</sup>derived from post-implant day · <sup>‡</sup>company report · <b>n/r</b> = not reported · <b>n/a</b> = not applicable · <b>Not yet</b> = performance below the Promising criteria ·
+      <b>Promising</b> = online, vocab &gt; 71.4k, WER &lt; 12.8%, vocal paralysis
     </p>
   </div>
 
