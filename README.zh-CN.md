@@ -2,7 +2,9 @@
 
 [English (`README.md`)](README.md) | **简体中文**
 
-面向瘫痪患者的皮层内（Intracortical）与皮层脑电（ECoG）**通信神经假体开源动态基准与时间线**（涵盖**语音解码 Speech**、**打字 Typing** 与**手写 Handwriting** 三大模态，收录 2021 年至今的代表性研究与临床进展，每周自动巡检更新）。
+面向瘫痪患者的皮层内（Intracortical）与皮层脑电（ECoG）**通信神经假体开放动态基准与时间线**（涵盖**语音解码 Speech**、**打字 Typing** 与**手写 Handwriting** 三大模态，收录 2021 年至今的代表性研究与临床进展，每周自动巡检更新）。
+
+> **本项目为 we-linking 公司成果。** 本仓库全部内容采用 **CC BY-NC 4.0**（知识共享 署名-非商业性使用 4.0 国际）协议授权：注明 we-linking 署名后可用于**学术研究及其他非商业用途**；未经 we-linking 事先书面许可，禁止任何商业使用（详见[许可与署名](#4-许可与署名)）。
 
 ![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
 
@@ -96,3 +98,14 @@ python weekly_patrol.py --days 7 --output weekly_candidates.md
     participants: ["T15△"]
     doi: "10.1038/..."
 ```
+
+---
+
+## 4. 许可与署名
+
+本项目为 **we-linking** 公司成果，仓库全部内容采用 **CC BY-NC 4.0**（[知识共享 署名-非商业性使用 4.0 国际](LICENSE)，英文原文为准）协议授权：
+
+- ✅ **允许（署名 BY）**：在**学术研究及其他非商业用途**中使用、修改与再分发，并注明 we-linking 署名。
+- ❌ **禁止（非商业 NC）**：任何**商业使用**（包括出售、有偿授权、并入商业产品或服务等），如需商业授权请联系 we-linking。
+
+数据集中聚合的文献元数据与指标来自第三方论文及公开数据存储库，该部分内容仍遵循其各自的许可与使用条款。

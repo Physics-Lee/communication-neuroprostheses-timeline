@@ -2,7 +2,9 @@
 
 **English** | [简体中文 (`README.zh-CN.md`)](README.zh-CN.md)
 
-A **weekly-updated, open-source living benchmark and timeline** of intracortical and electrocorticographic (ECoG) communication neuroprostheses—spanning **speech**, **typing**, and **handwriting**—for people with paralysis (2021–present).
+A **weekly-updated, openly available living benchmark and timeline** of intracortical and electrocorticographic (ECoG) communication neuroprostheses—spanning **speech**, **typing**, and **handwriting**—for people with paralysis (2021–present).
+
+> **This project is a research outcome of [we-linking](LICENSE).** All materials in this repository are licensed under **CC BY-NC 4.0** (Creative Commons Attribution-NonCommercial 4.0 International): use, modification, and redistribution are permitted for **academic research and other non-commercial purposes with attribution** to we-linking; commercial use requires the prior written permission of we-linking (see [License & Attribution](#4-license--attribution)).
 
 ![Living Timeline of Communication Neuroprostheses](communication_neuroprostheses_timeline.png)
 
@@ -96,3 +98,14 @@ Append an entry to [`studies.yaml`](studies.yaml) and run `python render_timelin
     participants: ["T15△"]
     doi: "10.1038/..."
 ```
+
+---
+
+## 4. License & Attribution
+
+This project is a research outcome of **we-linking**. All materials in this repository are licensed under the **Creative Commons Attribution-NonCommercial 4.0 International ([CC BY-NC 4.0](LICENSE))** license:
+
+- ✅ **Permitted (BY)**: use, modification, and redistribution for **academic research and any other non-commercial purpose**, with attribution to we-linking.
+- ❌ **Prohibited (NC)**: any **commercial use** — including sale, licensing for a fee, or incorporation into a commercial product or service — without the prior written permission of we-linking.
+
+The dataset aggregates bibliographic metadata and metrics from third-party publications and public data deposits; such third-party content remains subject to its own licenses and terms.
