@@ -1724,18 +1724,20 @@ def _build_fig2_upper_svg(
         7.4, rep_c, anchor="end", va="center", weight="bold"
     ))
 
-    # Reproduction callout under the second bracket
-    box_w, box_h = 880.0, 42.0
+    # Reproduction callout under the second bracket.
+    # Box height is 1.5x the original 42.0 (width unchanged); the two text lines
+    # keep their relative vertical position by scaling their offsets by 1.5 too.
+    box_w, box_h = 880.0, 63.0
     box_x = sx_bm - 0.5 * box_w
     box_y = sy_tip_r + 4.0
     s.append(f'<a href="{repro_html_url}" target="_blank" rel="noopener" class="f2-repro-link" style="text-decoration:none">')
     s.append(f'<rect x="{box_x:.1f}" y="{box_y:.1f}" width="{box_w:.1f}" height="{box_h:.1f}" rx="9" '
              f'fill="#f5f7fc" stroke="{rep_c}" stroke-opacity="0.38" stroke-width="1.1"/>')
-    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 16.0:.1f}" font-size="{8.2 * PT:.2f}" '
+    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 24.0:.1f}" font-size="{10.2 * PT:.2f}" '
              f'font-weight="bold" fill="{rep_c}" text-anchor="middle" dominant-baseline="central">'
              f'Please refer to our reproduction repositories (<tspan text-decoration="underline">link \u2197</tspan>).</text>')
-    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 31.5:.1f}" font-size="{7.5 * PT:.2f}" '
-             f'fill="#4b5563" text-anchor="middle" dominant-baseline="central">'
+    s.append(f'<text x="{sx_bm:.1f}" y="{box_y + 47.25:.1f}" font-size="{9.5 * PT:.2f}" '
+             f'font-weight="bold" fill="#4b5563" text-anchor="middle" dominant-baseline="central">'
              f'We promised to update the timeline and reproduction for future communication neuroprostheses studies.</text>')
     s.append("</a>")
 
